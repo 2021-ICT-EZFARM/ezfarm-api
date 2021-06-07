@@ -11,16 +11,17 @@ import javax.persistence.Id;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Getter
-@Setter
 public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)

@@ -7,10 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,14 +17,15 @@ public class UserFarmHistory {
 
     @Id
     @GeneratedValue
+    @Column(name = "user_farm_history_id")
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    private MyFarm myFarm;
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
 
-    @ManyToOne
-    private BestFarm bestFarm;
 }
