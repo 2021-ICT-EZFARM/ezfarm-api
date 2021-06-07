@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.farm.domain;
+package com.ezfarm.ezfarmback.farm.domain.enums;
 
 public enum FarmType {
 

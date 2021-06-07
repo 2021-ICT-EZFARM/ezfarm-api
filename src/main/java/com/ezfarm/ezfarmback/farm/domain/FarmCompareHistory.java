@@ -1,23 +1,20 @@
-package com.ezfarm.ezfarmback.user.domain;
+package com.ezfarm.ezfarmback.farm.domain;
 
-import com.ezfarm.ezfarmback.farm.domain.BestFarm;
-import com.ezfarm.ezfarmback.farm.domain.MyFarm;
+import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class UserFarmHistory {
+public class FarmCompareHistory {
 
     @Id
     @GeneratedValue
-    @Column(name = "user_farm_history_id")
+    @Column(name = "fm_cp_hstr_id")
     private Long id;
 
     @ManyToOne

@@ -1,29 +1,27 @@
-package com.ezfarm.ezfarmback.favorite.domain;
+package com.ezfarm.ezfarmback.facility.domain;
 
+
+import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
-import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Entity
-public class Favorite {
-
+public class FacilityWeekAvg {
     @Id
     @GeneratedValue
-    @Column(name = "favorite_id")
+    @Column(name = "facility_id")
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @ManyToOne
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
+    @Embedded
+    private FacilityAvg facilityAvg;
 }

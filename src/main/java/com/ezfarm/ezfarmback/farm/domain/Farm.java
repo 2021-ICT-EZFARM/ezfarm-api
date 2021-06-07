@@ -1,30 +1,39 @@
 package com.ezfarm.ezfarmback.farm.domain;
 
 
+import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@MappedSuperclass
-public abstract class Farm {
+@Getter
+@Entity
+public class Farm extends BaseTimeEntity {
 
     @Id
     @GeneratedValue
+    @Column(name = "farm_id")
     private Long id;
 
     private String address;
+
+    private String phoneNumber;
+
+    private String area;
+
+    private Boolean isMain;
 
     @Enumerated(value = EnumType.STRING)
     private FarmType farmType;
 
     @Enumerated(value = EnumType.STRING)
-    private Crop crop;
+    private CropType cropType;
 
-    @Column(nullable = false)
-    private String area;
-
+    private LocalDateTime startDate;
 }
