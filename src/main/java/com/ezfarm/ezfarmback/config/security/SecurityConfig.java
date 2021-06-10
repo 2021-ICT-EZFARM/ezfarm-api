@@ -4,6 +4,7 @@ import com.ezfarm.ezfarmback.security.filter.LoginFilter;
 import com.ezfarm.ezfarmback.security.filter.TokenAuthenticationFilter;
 import com.ezfarm.ezfarmback.security.handler.LoginSuccessHandler;
 import com.ezfarm.ezfarmback.security.local.CustomAuthenticationEntryPoint;
+import com.ezfarm.ezfarmback.security.local.CustomUserDetailsService;
 import com.ezfarm.ezfarmback.security.local.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -16,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String USER = "USER";
 
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     private final TokenProvider tokenProvider;
 
@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(userDetailsService)
+                .userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
 
@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .addFilter(corsFilter)
                 .addFilter(loginFilter())
-                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProvider, userDetailsService))
+                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProvider, customUserDetailsService))
 
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
@@ -69,7 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .authorizeRequests()
-                .antMatchers("/")
+                .antMatchers("/",
+                        "/api/user/signup")
                 .permitAll()
                 .anyRequest().authenticated();
     }

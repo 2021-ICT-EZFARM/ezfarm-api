@@ -1,8 +1,8 @@
 package com.ezfarm.ezfarmback.security.handler;
 
 import com.ezfarm.ezfarmback.security.local.TokenProvider;
+import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -24,15 +24,5 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         new ObjectMapper().writeValue(response.getWriter(), new AuthResponse(tokenProvider.createToken(authentication)));
-    }
-
-    @Getter
-    private static class AuthResponse {
-        private String accessToken;
-        private String tokenType = "Bearer";
-
-        public AuthResponse(String accessToken) {
-            this.accessToken = accessToken;
-        }
     }
 }
