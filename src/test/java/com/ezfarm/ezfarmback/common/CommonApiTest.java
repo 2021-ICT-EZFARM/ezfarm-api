@@ -15,10 +15,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-public class ControllerTest {
-
-
-
+public class CommonApiTest {
 
     @MockBean
     protected CustomUserDetailsService customUserDetailsService;
