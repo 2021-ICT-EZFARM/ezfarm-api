@@ -3,11 +3,11 @@ package com.ezfarm.ezfarmback.security;
 import com.ezfarm.ezfarmback.config.security.AppProperties;
 import com.ezfarm.ezfarmback.security.local.TokenProvider;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
+import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,7 +27,8 @@ public class TokenTest extends CommonSecurityTest {
     @Test
     void ValidToken() throws JsonProcessingException {
         //given
-        AuthResponse authResponse = getAuthResponse();
+        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        AuthResponse authResponse = getAuthResponse(loginRequest);
         String accessToken = authResponse.getAccessToken();
 
         //when

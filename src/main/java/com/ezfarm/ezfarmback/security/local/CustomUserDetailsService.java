@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.security.local;
 
 import com.ezfarm.ezfarmback.security.UserPrincipal;
 import com.ezfarm.ezfarmback.user.domain.User;
-import com.ezfarm.ezfarmback.user.repository.UserRepository;
+import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

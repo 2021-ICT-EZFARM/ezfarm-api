@@ -1,6 +1,7 @@
 package com.ezfarm.ezfarmback.user.domain;
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,7 +35,8 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     @Builder
-    public User(String email, String password, String name, String phoneNumber, String address, String imageUrl, Role role) {
+    public User(Long id, String email, String password, String name, String phoneNumber, String address, String imageUrl, Role role) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
@@ -46,5 +48,12 @@ public class User extends BaseTimeEntity {
 
     public String roleName() {
         return role.name();
+    }
+
+    public void updateUser(UserUpdateRequest userUpdateRequest) {
+        this.name = userUpdateRequest.getName();
+        this.phoneNumber = userUpdateRequest.getPhoneNumber();
+        this.address = userUpdateRequest.getAddress();
+        this.imageUrl = userUpdateRequest.getImageUrl();
     }
 }

@@ -2,6 +2,8 @@ package com.ezfarm.ezfarmback.security;
 
 
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
+import com.ezfarm.ezfarmback.user.dto.LoginRequest;
+import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
@@ -17,9 +19,10 @@ public class AuthenticationFilterTest extends CommonSecurityTest {
 
     @DisplayName("옳바른 토큰을 가지고 API에 요청한다.")
     @Test
-    void AccessApiWithValidToken() throws JsonProcessingException {
+    void AccessApiWithValidToken() {
         //given
-        AuthResponse authResponse = getAuthResponse();
+        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        AuthResponse authResponse = getAuthResponse(loginRequest);
 
         //when
         ExtractableResponse<Response> response = getAuthenticationResponse(authResponse);
@@ -30,9 +33,10 @@ public class AuthenticationFilterTest extends CommonSecurityTest {
 
     @DisplayName("옳바른 현재 유저 정보를 가지고 있다.")
     @Test
-    void HaveValidCurrentUserInfo() throws JsonProcessingException {
+    void HaveValidCurrentUserInfo() {
         //given
-        AuthResponse authResponse = getAuthResponse();
+        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        AuthResponse authResponse = getAuthResponse(loginRequest);
 
         //when
         ExtractableResponse<Response> response = getAuthenticationResponse(authResponse);

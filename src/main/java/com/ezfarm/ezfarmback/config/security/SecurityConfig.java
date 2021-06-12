@@ -23,7 +23,6 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -69,10 +68,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .authorizeRequests()
-                .antMatchers("/",
+                .antMatchers(
+                        "/",
+                        "/swagger-ui/",
                         "/api/user/signup")
                 .permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/api/**").hasRole(USER);
     }
 
     @Override

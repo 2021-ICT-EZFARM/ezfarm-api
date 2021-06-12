@@ -1,6 +1,5 @@
-package com.ezfarm.ezfarmback.user.repository;
+package com.ezfarm.ezfarmback.user.domain;
 
-import com.ezfarm.ezfarmback.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

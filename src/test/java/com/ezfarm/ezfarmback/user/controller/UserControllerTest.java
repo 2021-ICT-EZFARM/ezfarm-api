@@ -1,76 +1,107 @@
 package com.ezfarm.ezfarmback.user.controller;
 
-import com.ezfarm.ezfarmback.security.local.CustomUserDetailsService;
-import com.ezfarm.ezfarmback.security.local.TokenProvider;
+import com.ezfarm.ezfarmback.common.CommonApiTest;
+import com.ezfarm.ezfarmback.common.WithMockCustomUser;
+import com.ezfarm.ezfarmback.user.domain.Role;
+import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
+import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CorsFilter;
 
+import static java.util.Optional.ofNullable;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@AutoConfigureMockMvc
-@WebMvcTest(UserController.class)
 @DisplayName("유저 단위 테스트(Controller)")
-public class UserControllerTest {
+public class UserControllerTest extends CommonApiTest {
 
     @MockBean
-    private UserService userService;
+    UserService userService;
 
     @MockBean
-    private CustomUserDetailsService customUserDetailsService;
+    UserRepository userRepository;
 
-    @MockBean
-    TokenProvider tokenProvider;
-
-    @MockBean
-    CorsFilter corsFilter;
-
-    private MockMvc mockMvc;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    //private Map
+    User user;
 
     @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext) {
-
-
-        this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .apply(springSecurity())
+    @Override
+    public void setUp(WebApplicationContext webApplicationContext) {
+        super.setUp(webApplicationContext);
+        user = User.builder()
+                .name("남상우")
+                .email("a@gmail.com")
+                .password("비밀번호")
+                .role(Role.ROLE_USER)
                 .build();
     }
 
     @DisplayName("유저 회원가입을 한다.")
-    @WithMockUser(roles = "USER")
     @Test
-    void registerUser() throws Exception {
+    void createUser() throws Exception {
         //given
         SignUpRequest signUpRequest = new SignUpRequest("highright", "highright@mail.com", "비밀번호");
 
         //when, then
-        when(userService.registerUser(any())).thenReturn(1L);
+        when(userService.createUser(any())).thenReturn(1L);
 
         mockMvc.perform(post("/api/user/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signUpRequest)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
+
+    @DisplayName("유저 정보를 조회한다.")
+    @WithMockCustomUser
+    @Test
+    void readUser() throws Exception {
+        when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
+        mockMvc.perform(get("/api/user"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @DisplayName("유저 정보를 수정한다.")
+    @WithMockCustomUser
+    @Test
+    void updateUser() throws Exception {
+        //given
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
+                "user",
+                "010-1234-1234",
+                "address",
+                "image");
+
+        //when, then
+        doNothing().when(userService).updateUser(any(), any());
+
+        mockMvc.perform(patch("/api/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userUpdateRequest)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @DisplayName("회원 탈퇴한다.")
+    @WithMockCustomUser
+    @Test
+    void deleteUser() throws Exception {
+        //given
+        doNothing().when(userRepository).deleteAllById(any());
+
+        //when, then
+        mockMvc.perform(delete("/api/user"))
+                .andExpect(status().isNoContent());
     }
 }
 

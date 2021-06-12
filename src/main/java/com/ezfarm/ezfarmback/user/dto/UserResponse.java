@@ -6,7 +6,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserResponse {
     private Long id;
     private String email;

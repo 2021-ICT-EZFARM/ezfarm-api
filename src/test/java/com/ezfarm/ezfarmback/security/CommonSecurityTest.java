@@ -1,11 +1,11 @@
 package com.ezfarm.ezfarmback.security;
 
-import com.ezfarm.ezfarmback.common.acceptance.AcceptanceTest;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
-import com.ezfarm.ezfarmback.user.repository.UserRepository;
+import com.ezfarm.ezfarmback.user.domain.UserRepository;
+import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -14,8 +14,6 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -27,7 +25,7 @@ import java.util.Date;
 import static io.restassured.RestAssured.given;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CommonSecurityTest {
+public abstract class CommonSecurityTest {
 
     @LocalServerPort
     int port;
@@ -45,8 +43,8 @@ public class CommonSecurityTest {
     @BeforeEach
     public void setUp() {
         clearUserTable();
-        objectMapper = new ObjectMapper();
         mockUser = createMockUser();
+        objectMapper = new ObjectMapper();
         if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
             RestAssured.port = port;
         }
@@ -57,14 +55,14 @@ public class CommonSecurityTest {
     }
 
     protected User createMockUser() {
-        User user = User.builder()
-                .name("남상우")
-                .email("a@gmail.com")
+        User mockUser = User.builder()
+                .name("테스트 유저")
+                .email("test@email.com")
                 .password(passwordEncoder.encode("비밀번호"))
                 .role(Role.ROLE_USER)
                 .build();
-        userRepository.save(user);
-        return user;
+        userRepository.save(mockUser);
+        return mockUser;
     }
 
     protected String getAccessJsonWebToken(String secretKey) {
@@ -74,6 +72,16 @@ public class CommonSecurityTest {
                 .setExpiration(new Date())
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
+    }
+
+    protected ExtractableResponse<Response> getSignupResponse(SignUpRequest signUpRequest) {
+        return given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(signUpRequest)
+                .when()
+                .post("/api/user/signup")
+                .then().log().all()
+                .extract();
     }
 
     protected ExtractableResponse<Response> getLoginResponse(LoginRequest loginRequest) throws JsonProcessingException {
@@ -87,18 +95,20 @@ public class CommonSecurityTest {
     }
 
     protected ExtractableResponse<Response> getAuthenticationResponse(AuthResponse authResponse) {
-        ExtractableResponse<Response> response = given().log().all()
+        return given().log().all()
                 .header("Authorization", authResponse.getTokenType() + " " + authResponse.getAccessToken())
                 .when()
                 .get("/api/user/access-test")
                 .then().log().all()
                 .extract();
-        return response;
     }
 
-    protected AuthResponse getAuthResponse() throws JsonProcessingException {
-        LoginRequest loginRequest = new LoginRequest("a@gmail.com", "비밀번호");
-        ExtractableResponse<Response> loginResponse = getLoginResponse(loginRequest);
-        return loginResponse.body().as(AuthResponse.class);
+    protected AuthResponse getAuthResponse(LoginRequest loginRequest) {
+        try {
+            return getLoginResponse(loginRequest).as(AuthResponse.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
