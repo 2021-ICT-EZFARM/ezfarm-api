@@ -1,5 +1,7 @@
 package com.ezfarm.ezfarmback.user.service;
 
+import com.ezfarm.ezfarmback.common.exception.CustomException;
+import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
@@ -21,7 +23,7 @@ public class UserService {
 
     public Long createUser(SignUpRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new IllegalArgumentException("존재하는 이메일입니다.");
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
         }
 
         User user = User.builder()
@@ -36,7 +38,8 @@ public class UserService {
     }
 
     public void updateUser(User user, UserUpdateRequest userUpdateRequest) {
-        User findUser = userRepository.findByEmail(user.getEmail()).orElseThrow(IllegalArgumentException::new);
+        User findUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
+                () -> new CustomException(ErrorCode.NON_EXISTENT_USER));
         findUser.updateUser(userUpdateRequest);
     }
 }

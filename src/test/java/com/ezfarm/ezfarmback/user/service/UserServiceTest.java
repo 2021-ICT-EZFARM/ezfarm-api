@@ -1,6 +1,8 @@
 package com.ezfarm.ezfarmback.user.service;
 
 
+import com.ezfarm.ezfarmback.common.exception.CustomException;
+import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
@@ -75,8 +77,8 @@ public class UserServiceTest {
 
         //when, then
         assertThatThrownBy(() -> userService.createUser(signUpRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하는 이메일입니다.");
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.DUPLICATED_EMAIL.getMessage());
     }
 
     @DisplayName("유저 정보를 수정한다.")
@@ -115,6 +117,7 @@ public class UserServiceTest {
 
         //when, then
         assertThatThrownBy(() -> userService.updateUser(user, userUpdateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.NON_EXISTENT_USER.getMessage());
     }
 }

@@ -3,9 +3,7 @@ package com.ezfarm.ezfarmback.security;
 
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
-import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +17,7 @@ public class AuthenticationFilterTest extends CommonSecurityTest {
 
     @DisplayName("옳바른 토큰을 가지고 API에 요청한다.")
     @Test
-    void AccessApiWithValidToken() {
+    void accessApiWithValidToken() {
         //given
         LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
@@ -31,9 +29,22 @@ public class AuthenticationFilterTest extends CommonSecurityTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
+    @DisplayName("잘못된 토큰을 가지고 API에 요청한다.")
+    @Test
+    void accessApiWithInValidToken() {
+        //given
+        AuthResponse authResponse = new AuthResponse("test");
+
+        //when
+        ExtractableResponse<Response> response = getAuthenticationResponse(authResponse);
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+    }
+
     @DisplayName("옳바른 현재 유저 정보를 가지고 있다.")
     @Test
-    void HaveValidCurrentUserInfo() {
+    void haveValidCurrentUserInfo() {
         //given
         LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
@@ -44,6 +55,5 @@ public class AuthenticationFilterTest extends CommonSecurityTest {
 
         //then
         assertThat(userResponse).isEqualTo(UserResponse.of(mockUser));
-
     }
 }

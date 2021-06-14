@@ -42,7 +42,7 @@ public class TokenTest extends CommonSecurityTest {
 
     @DisplayName("기간이 만료된 토큰은 ExpiredJwtException 에러를 발생시킨다.")
     @Test
-    void UnValidTokenExpiredJwtException() {
+    void inValidTokenExpiredJwtException() {
         //given
         String accessToken = getAccessJsonWebToken(appProperties.getAuth().getTokenSecret());
 
@@ -54,7 +54,7 @@ public class TokenTest extends CommonSecurityTest {
 
     @DisplayName("잘못된 키로 인증되는 토큰은 SignatureException 에러를 발생시킨다.")
     @Test
-    void UnValidTokenSignatureException() {
+    void inValidTokenSignatureException() {
         //given
         String accessToken = getAccessJsonWebToken("secretKey");
 

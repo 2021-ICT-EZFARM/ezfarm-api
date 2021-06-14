@@ -22,15 +22,15 @@ public class LoginFilterTest extends CommonSecurityTest {
 
     @DisplayName("잘못된 아이디로 로그인 요청을 한다.")
     @Test
-    void UnValidIdLoginTest() throws JsonProcessingException {
+    void inValidIdLoginTest() throws JsonProcessingException {
         LoginRequest loginRequest = new LoginRequest("test2@email.com", "비밀번호");
         ExtractableResponse<Response> response = getLoginResponse(loginRequest);
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
     @DisplayName("잘못된 비밀번호로 로그인 요청을 한다")
     @Test
-    void UnValidPasswordLoginTest() throws JsonProcessingException {
+    void inValidPasswordLoginTest() throws JsonProcessingException {
         LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
         ExtractableResponse<Response> response = getLoginResponse(loginRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
