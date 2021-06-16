@@ -1,20 +1,18 @@
 package com.ezfarm.ezfarmback.user.domain;
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
 @Getter
 public class User extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
 
@@ -31,13 +29,31 @@ public class User extends BaseTimeEntity {
 
     private String address;
 
+    private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Builder
-    public User(Long id, String email, String password, String name, String phoneNumber, String address) {
+    public User(Long id, String email, String password, String name, String phoneNumber, String address, String imageUrl, Role role) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.imageUrl = imageUrl;
+        this.role = role;
+    }
+
+    public String roleName() {
+        return role.name();
+    }
+
+    public void updateUser(UserUpdateRequest userUpdateRequest) {
+        this.name = userUpdateRequest.getName();
+        this.phoneNumber = userUpdateRequest.getPhoneNumber();
+        this.address = userUpdateRequest.getAddress();
+        this.imageUrl = userUpdateRequest.getImageUrl();
     }
 }
