@@ -23,7 +23,6 @@ public class UserController {
 
     private final UserRepository userRepository;
 
-    //접근 테스트를 위한 컨트롤러
     @GetMapping("/access-test")
     public ResponseEntity<UserResponse> accessTest(@CurrentUser User user) {
         return ResponseEntity.ok(UserResponse.of(user));
