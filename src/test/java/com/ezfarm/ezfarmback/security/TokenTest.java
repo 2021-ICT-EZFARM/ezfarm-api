@@ -56,7 +56,7 @@ public class TokenTest extends CommonSecurityTest {
     @Test
     void inValidTokenSignatureException() {
         //given
-        String accessToken = getAccessJsonWebToken("secretKey");
+        String accessToken = getAccessJsonWebToken("test");
 
         //when then
         assertThat(tokenProvider.validateToken(accessToken)).isFalse();
