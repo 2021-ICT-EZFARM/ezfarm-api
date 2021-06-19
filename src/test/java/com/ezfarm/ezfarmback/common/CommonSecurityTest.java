@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.security;
+package com.ezfarm.ezfarmback.common;
 
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;

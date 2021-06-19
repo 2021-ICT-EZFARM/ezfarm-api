@@ -1,5 +1,6 @@
-package com.ezfarm.ezfarmback.security;
+package com.ezfarm.ezfarmback.auth;
 
+import com.ezfarm.ezfarmback.common.CommonSecurityTest;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;

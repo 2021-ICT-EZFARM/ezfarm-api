@@ -16,6 +16,9 @@ spring:
     properties:
       show_sql: true
       format_sql: true
-
+app:
+  auth:
+    tokenSecret: secretKey
+    tokenExpirationMsec: 999999
   #logging.level:
   #  org.hibernate.SQL: debug

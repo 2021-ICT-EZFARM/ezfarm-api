@@ -1,6 +1,7 @@
-package com.ezfarm.ezfarmback.security;
+package com.ezfarm.ezfarmback.auth;
 
 
+import com.ezfarm.ezfarmback.common.CommonSecurityTest;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;

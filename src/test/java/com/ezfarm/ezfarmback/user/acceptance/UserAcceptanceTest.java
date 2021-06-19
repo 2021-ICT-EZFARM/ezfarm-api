@@ -1,14 +1,13 @@
 package com.ezfarm.ezfarmback.user.acceptance;
 
 import com.ezfarm.ezfarmback.common.AcceptanceStep;
-import com.ezfarm.ezfarmback.security.CommonSecurityTest;
+import com.ezfarm.ezfarmback.common.CommonSecurityTest;
 import com.ezfarm.ezfarmback.user.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import static io.restassured.RestAssured.given;

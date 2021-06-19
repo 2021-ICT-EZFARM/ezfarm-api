@@ -1,8 +1,10 @@
 package com.ezfarm.ezfarmback.common;
 
+import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,6 +22,9 @@ public class CommonApiTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @MockBean
+    protected UserRepository userRepository;
 
     protected MockMvc mockMvc;
 

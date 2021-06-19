@@ -29,9 +29,6 @@ public class UserControllerTest extends CommonApiTest{
     @MockBean
     UserService userService;
 
-    @MockBean
-    UserRepository userRepository;
-
     @DisplayName("유저 회원가입을 한다.")
     @Test
     void createUser() throws Exception {
