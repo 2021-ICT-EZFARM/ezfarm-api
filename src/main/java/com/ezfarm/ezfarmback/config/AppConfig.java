@@ -15,6 +15,7 @@ public class AppConfig {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper =new ModelMapper();
         modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(AccessLevel.PRIVATE)
                 .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE)
