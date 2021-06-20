@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class FarmCompareHistory {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fm_cp_hstr_id")
     private Long id;
 

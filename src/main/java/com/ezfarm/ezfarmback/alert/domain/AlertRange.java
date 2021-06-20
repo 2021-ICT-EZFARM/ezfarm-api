@@ -1,6 +1,7 @@
 package com.ezfarm.ezfarmback.alert.domain;
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import javax.persistence.GenerationType;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -14,7 +15,7 @@ import javax.persistence.Id;
 public class AlertRange extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "alert_range_id")
     private Long id;
 

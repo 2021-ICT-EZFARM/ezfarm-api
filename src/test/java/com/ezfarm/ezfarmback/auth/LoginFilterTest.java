@@ -1,5 +1,6 @@
-package com.ezfarm.ezfarmback.security;
+package com.ezfarm.ezfarmback.auth;
 
+import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
@@ -10,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("시큐리티 테스트(LoginFilter)")
-public class LoginFilterTest extends CommonSecurityTest {
+public class LoginFilterTest extends CommonAcceptanceTest {
 
     @DisplayName("옳바른 로그인 요청을 한다.")
     @Test

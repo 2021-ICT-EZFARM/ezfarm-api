@@ -1,8 +1,12 @@
-package com.ezfarm.ezfarmback.common;
+package com.ezfarm.ezfarmback.common.controller;
 
+import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +25,9 @@ public class CommonApiTest {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @MockBean
+    protected UserRepository userRepository;
+
     protected MockMvc mockMvc;
 
     protected ObjectMapper objectMapper;
@@ -28,6 +35,8 @@ public class CommonApiTest {
     @BeforeEach
     public void setUp() {
         objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))

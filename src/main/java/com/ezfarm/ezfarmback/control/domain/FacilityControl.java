@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class FacilityControl extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fc_ctr_id")
     private Long id;
 

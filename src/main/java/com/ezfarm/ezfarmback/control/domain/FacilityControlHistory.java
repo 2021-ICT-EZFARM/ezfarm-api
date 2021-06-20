@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 public class FacilityControlHistory extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fc_ctr_hstr_id")
     private Long id;
 

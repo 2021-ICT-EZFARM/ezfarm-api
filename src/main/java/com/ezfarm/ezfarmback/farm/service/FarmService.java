@@ -1,9 +1,12 @@
 package com.ezfarm.ezfarmback.farm.service;
 
+import com.ezfarm.ezfarmback.common.exception.CustomException;
+import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
-import com.ezfarm.ezfarmback.farm.dto.FarmForm;
+import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.user.domain.User;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -18,21 +21,36 @@ import java.util.List;
 public class FarmService {
 
     private final FarmRepository farmRepository;
+
     private final ModelMapper modelMapper;
 
-    public Farm createFarm(User user, FarmForm farmForm) {
-        Farm farm = formMapping(farmForm);
+    public Long createFarm(User user, FarmRequest farmRequest) {
+
+        confirmFarmStartDate(farmRequest);
+
+        Farm farm = modelMapper.map(farmRequest, Farm.class);
         farm.addOwner(user);
-        return farmRepository.save(farm);
+
+        Farm saveFarm = farmRepository.save(farm);
+        return saveFarm.getId();
     }
 
-    public Farm updateFarm(User user, Long farmId, FarmForm farmForm) {
+    private void confirmFarmStartDate(FarmRequest farmRequest) {
+        LocalDate farmStartDate = farmRequest.getStartDate();
+        if (farmStartDate != null) {
+            if (farmStartDate.isBefore(LocalDate.now())) {
+                throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
+            }
+        }
+    }
+
+    public Farm updateFarm(User user, Long farmId, FarmRequest farmRequest) {
         Farm farm = checkException(user, farmId);
-        checkStartDate(farm, farmForm);
-        if (canSetMain(farmForm, farm)) {
+        checkStartDate(farm, farmRequest);
+        if (canSetMain(farmRequest, farm)) {
             setMainFarm(user, farm);
         }
-        farm.update(farmForm);
+        farm.update(farmRequest);
         return farm;
     }
 
@@ -53,7 +71,7 @@ public class FarmService {
 
     private Farm checkException(User user, Long farmId) {
         Farm farm = farmRepository.findById(farmId).orElseThrow(
-                () -> new IllegalArgumentException(farmId + "에 매핑되는 농가가 없습니다.")
+            () -> new IllegalArgumentException(farmId + "에 매핑되는 농가가 없습니다.")
         );
         if (farm.getUser().getId() != user.getId()) {
             throw new IllegalArgumentException("농가에 접근 권한이 없습니다.");
@@ -61,25 +79,22 @@ public class FarmService {
         return farm;
     }
 
-    private Farm formMapping(FarmForm farmForm) {
-        modelMapper.getConfiguration()
-                .setFieldMatchingEnabled(true)
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-        return modelMapper.map(farmForm, Farm.class);
-    }
-
-    private boolean canSetMain(FarmForm farmForm, Farm farm) {
-        return !farm.getIsMain() && farmForm.getIsMain();
+    private boolean canSetMain(FarmRequest farmRequest, Farm farm) {
+        //return !farm.get && farmRequest.getIsMain();
+        return true;
     }
 
     private void setMainFarm(User user, Farm farm) {
-        farmRepository.findByIsMainAndUser(true, user).ifPresent(mainFarm -> mainFarm.setMain(false));
+        farmRepository.findByIsMainAndUser(true, user)
+            .ifPresent(mainFarm -> mainFarm.setMain(false));
         farm.setMain(true);
     }
 
-    private void checkStartDate(Farm farm, FarmForm farmForm) {
-        if (farmForm.getStartDate().isBefore(farm.getCreatedDate())) {
+    private void checkStartDate(Farm farm, FarmRequest farmRequest) {
+/*
+        if (farmRequest.getStartDate().isBefore(farm.getCreatedDate())) {
             throw new IllegalArgumentException("농가 재배 시작 일자가 잘못됬습니다.");
         }
+ */
     }
 }
