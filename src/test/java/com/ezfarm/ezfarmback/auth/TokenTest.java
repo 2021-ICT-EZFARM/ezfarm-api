@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.auth;
 
-import com.ezfarm.ezfarmback.common.CommonSecurityTest;
+import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.config.security.AppProperties;
 import com.ezfarm.ezfarmback.security.local.TokenProvider;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("시큐리티 테스트(Token)")
-public class TokenTest extends CommonSecurityTest {
+public class TokenTest extends CommonAcceptanceTest {
 
     @Autowired
     TokenProvider tokenProvider;

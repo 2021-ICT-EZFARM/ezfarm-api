@@ -1,7 +1,7 @@
 package com.ezfarm.ezfarmback.auth;
 
 
-import com.ezfarm.ezfarmback.common.CommonSecurityTest;
+import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("시큐리티 테스트(AuthenticationFilter)")
-public class AuthenticationFilterTest extends CommonSecurityTest {
+public class AuthenticationFilterTest extends CommonAcceptanceTest {
 
     @DisplayName("옳바른 토큰을 가지고 API에 요청한다.")
     @Test

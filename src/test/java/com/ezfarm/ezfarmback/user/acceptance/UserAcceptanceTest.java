@@ -1,7 +1,7 @@
 package com.ezfarm.ezfarmback.user.acceptance;
 
-import com.ezfarm.ezfarmback.common.AcceptanceStep;
-import com.ezfarm.ezfarmback.common.CommonSecurityTest;
+import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
+import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.user.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("유저 통합 테스트")
-public class UserAcceptanceTest extends CommonSecurityTest {
+public class UserAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("회원가입을 한다.")
     @Test

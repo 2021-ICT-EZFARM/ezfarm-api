@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ezfarm.ezfarmback.common.CommonApiTest;
+import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;

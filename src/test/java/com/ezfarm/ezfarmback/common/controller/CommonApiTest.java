@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common;
+package com.ezfarm.ezfarmback.common.controller;
 
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,10 +1,9 @@
 package com.ezfarm.ezfarmback.user.controller;
 
-import com.ezfarm.ezfarmback.common.CommonApiTest;
+import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
-import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import com.ezfarm.ezfarmback.user.service.UserService;

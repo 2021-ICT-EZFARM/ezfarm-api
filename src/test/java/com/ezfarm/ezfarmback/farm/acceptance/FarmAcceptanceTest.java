@@ -3,15 +3,14 @@ package com.ezfarm.ezfarmback.farm.acceptance;
 
 import static io.restassured.RestAssured.given;
 
-import com.ezfarm.ezfarmback.common.AcceptanceStep;
-import com.ezfarm.ezfarmback.common.CommonSecurityTest;
+import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
+import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
 @DisplayName("농장 통합 테스트")
-public class FarmAcceptanceTest extends CommonSecurityTest {
+public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
     String authenticationToken;
 
