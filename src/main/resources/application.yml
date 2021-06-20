@@ -1,14 +1,16 @@
 spring:
   profiles:
-    active: dev
+    active: test
   h2:
     console:
       enabled: true
   datasource:
-    url: jdbc:h2:mem:ezfarmdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    hikari:
+      jdbc-url: jdbc:h2:mem:ezfarmdb
+      driver-class-name: org.h2.Driver
+      username: sa
+      password:
+      maximum-pool-size: 20
 
   jpa:
     hibernate:
@@ -20,5 +22,3 @@ app:
   auth:
     tokenSecret: secretKey
     tokenExpirationMsec: 999999
-  #logging.level:
-  #  org.hibernate.SQL: debug
