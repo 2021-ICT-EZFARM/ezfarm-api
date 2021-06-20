@@ -3,10 +3,10 @@ package com.ezfarm.ezfarmback.farm.dto;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import javax.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data

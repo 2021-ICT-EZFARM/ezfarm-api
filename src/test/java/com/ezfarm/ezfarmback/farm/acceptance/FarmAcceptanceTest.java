@@ -43,11 +43,11 @@ public class FarmAcceptanceTest extends CommonSecurityTest {
             true,
             FarmType.GLASS,
             CropType.PAPRIKA,
-            LocalDate.of(2020,2,1)
+            LocalDate.now()
         );
     }
 
-    @DisplayName("")
+    @DisplayName("농장을 생성한다.")
     @Test
     void createFarm() throws JsonProcessingException {
         //when
