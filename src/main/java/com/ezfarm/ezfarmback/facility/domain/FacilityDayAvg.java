@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity
 public class FacilityDayAvg {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facility_id")
     private Long id;
 
