@@ -62,6 +62,9 @@ public class FarmService {
 
     public List<FarmResponse> viewAllFarms(User user) {
         List<Farm> farms = farmRepository.findAllByUser(user);
+        if (farms == null) {
+            return null;
+        }
         List<FarmResponse> farmResponses = farms.stream()
             .map(farm -> modelMapper.map(farm, FarmResponse.class))
             .collect(Collectors.toList());

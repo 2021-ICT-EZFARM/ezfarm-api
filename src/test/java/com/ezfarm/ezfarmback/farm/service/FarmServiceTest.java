@@ -3,10 +3,10 @@ package com.ezfarm.ezfarmback.farm.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -14,9 +14,13 @@ import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
+import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +47,8 @@ public class FarmServiceTest {
 
     FarmRequest farmRequest;
 
+    FarmResponse farmResponse;
+
     @BeforeEach
     void setUp() {
         farmService = new FarmService(farmRepository, modelMapper);
@@ -63,6 +69,8 @@ public class FarmServiceTest {
             CropType.PAPRIKA,
             null
         );
+        farmResponse = new FarmResponse("경기", "010-2222-2222",
+            "100", true, FarmType.GLASS, CropType.PAPRIKA, LocalDate.now());
 
         farm = Farm.builder()
             .address("경기")
@@ -116,5 +124,64 @@ public class FarmServiceTest {
         assertThatThrownBy(() -> farmService.createFarm(user, farmRequest))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INVALID_FARM_START_DATE.getMessage());
+    }
+
+    @DisplayName("나의 모든 농장을 조회한다.")
+    @Test
+    void viewAllFarms_success() {
+        farm.addOwner(user);
+        when(farmRepository.findAllByUser(user)).thenReturn(Arrays.asList(farm));
+        when(modelMapper.map(any(), any())).thenReturn(farmResponse);
+
+        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+
+        assertThat(farmResponses).extracting("address").containsExactly(farm.getAddress());
+    }
+
+    @DisplayName("나의 농장이 없을 때 모두 조회하면 null이 반환된다.")
+    @Test
+    void viewAllFarms_is_null_success() {
+        when(farmRepository.findAllByUser(user)).thenReturn(null);
+
+        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+
+        assertThat(farmResponses).isNull();
+    }
+
+    @DisplayName("나의 농장을 조회한다")
+    @Test
+    void viewFarm_success() {
+        farm.addOwner(user);
+        when(farmRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(farm));
+        when(modelMapper.map(any(), any())).thenReturn(farmResponse);
+
+        FarmResponse actualResponse = farmService.viewFarm(user, 1L);
+
+        Assertions.assertAll(
+            () -> assertThat(actualResponse.getAddress()).isEqualTo(farm.getAddress()),
+            () -> assertThat(actualResponse.getPhoneNumber()).isEqualTo(farm.getPhoneNumber())
+        );
+    }
+
+    @DisplayName("나의 농장이 아닌경우 예외가 발생한다")
+    @Test
+    void viewFarm_failure_is_not_owner(@Mock User user1, @Mock User user2) {
+        when(user1.getId()).thenReturn(1L);
+        when(user2.getId()).thenReturn(2L);
+        farm.addOwner(user2);
+        when(farmRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(farm));
+
+        assertThatThrownBy(() -> farmService.viewFarm(user1, 1L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("농가에 접근 권한이 없습니다.");
+    }
+
+    @DisplayName("농장 번호가 맞지않거나 농장이 없으면 예외가 발생한다")
+    @Test
+    void viewFarm_failure_invalid_id() {
+        when(farmRepository.findById(2L)).thenThrow(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> farmService.viewFarm(user, 2L))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
