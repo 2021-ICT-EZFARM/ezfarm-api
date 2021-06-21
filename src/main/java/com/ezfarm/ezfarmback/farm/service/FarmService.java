@@ -49,9 +49,10 @@ public class FarmService {
     public void updateFarm(User user, Long farmId, FarmRequest farmRequest) {
         Farm farm = checkException(user, farmId);
         checkStartDate(farm, farmRequest);
-        if (canSetMain(farmRequest, farm)) {
-            setMainFarm(user, farm);
+        if (farmRequest.isMain()) {
+            checkPreviousMain(user);
         }
+        farm.setMain(farmRequest.isMain());
         farm.update(farmRequest);
     }
 
@@ -86,22 +87,14 @@ public class FarmService {
         return farm;
     }
 
-    private boolean canSetMain(FarmRequest farmRequest, Farm farm) {
-        //return !farm.get && farmRequest.getIsMain();
-        return true;
-    }
-
-    private void setMainFarm(User user, Farm farm) {
+    private void checkPreviousMain(User user) {
         farmRepository.findByIsMainAndUser(true, user)
             .ifPresent(mainFarm -> mainFarm.setMain(false));
-        farm.setMain(true);
     }
 
     private void checkStartDate(Farm farm, FarmRequest farmRequest) {
-/*
-        if (farmRequest.getStartDate().isBefore(farm.getCreatedDate())) {
+        if (farmRequest.getStartDate().isBefore(farm.getCreatedDate().toLocalDate())) {
             throw new IllegalArgumentException("농가 재배 시작 일자가 잘못됬습니다.");
         }
- */
     }
 }

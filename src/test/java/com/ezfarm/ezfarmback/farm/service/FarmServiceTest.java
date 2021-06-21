@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -18,6 +17,7 @@ import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -69,8 +69,16 @@ public class FarmServiceTest {
             CropType.PAPRIKA,
             null
         );
-        farmResponse = new FarmResponse("경기", "010-2222-2222",
-            "100", true, FarmType.GLASS, CropType.PAPRIKA, LocalDate.now());
+
+        farmResponse = new FarmResponse(
+            "경기",
+            "010-2222-2222",
+            "100",
+            true,
+            FarmType.GLASS,
+            CropType.PAPRIKA,
+            LocalDate.now()
+        );
 
         farm = Farm.builder()
             .address("경기")
@@ -78,9 +86,10 @@ public class FarmServiceTest {
             .area("100")
             .farmType(FarmType.GLASS)
             .cropType(CropType.PAPRIKA)
-            .isMain(true)
-            .startDate(null)
+            .isMain(false)
+            .startDate(LocalDate.now())
             .build();
+        farm.setCreatedDate(LocalDateTime.now());
     }
 
     @DisplayName("농장 시작일이 없는 농장을 생성한다.")
@@ -183,5 +192,91 @@ public class FarmServiceTest {
 
         assertThatThrownBy(() -> farmService.viewFarm(user, 2L))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("나의 농장을 수정한다.")
+    @Test
+    void updateFarm_success() {
+        farm.addOwner(user);
+        FarmRequest farmRequest2 = new FarmRequest(
+            "부산",
+            "010-3333-3333",
+            "200",
+            true,
+            FarmType.VINYL,
+            CropType.TOMATO,
+            LocalDate.now().plusDays(1)
+        );
+        when(farmRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(farm));
+
+        farmService.updateFarm(user, 1L, farmRequest2);
+
+        Assertions.assertAll(
+            () -> assertThat(farm.getAddress()).isEqualTo(farmRequest2.getAddress()),
+            () -> assertThat(farm.getPhoneNumber()).isEqualTo(farmRequest2.getPhoneNumber()),
+            () -> assertThat(farm.isMain()).isEqualTo(farmRequest2.isMain()),
+            () -> assertThat(farm.getFarmType()).isEqualTo(farmRequest2.getFarmType()),
+            () -> assertThat(farm.getCropType()).isEqualTo(farmRequest2.getCropType())
+        );
+    }
+
+    @DisplayName("새로운 메인 농장으로 수정한다.")
+    @Test
+    void updateFarm_success_change_main() {
+        Farm farm2 =  Farm.builder()
+            .address("경기")
+            .phoneNumber("010-2222-2222")
+            .area("100")
+            .farmType(FarmType.GLASS)
+            .cropType(CropType.PAPRIKA)
+            .isMain(true)
+            .startDate(LocalDate.now())
+            .build();
+        farm2.setCreatedDate(LocalDateTime.now());
+        farm2.addOwner(user);
+        farm.addOwner(user);
+
+        FarmRequest farmRequest2 = new FarmRequest(
+            "부산",
+            "010-3333-3333",
+            "200",
+            true,
+            FarmType.VINYL,
+            CropType.TOMATO,
+            LocalDate.now().plusDays(1)
+        );
+        when(farmRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(farm));
+        when(farmRepository.findByIsMainAndUser(true, user)).thenReturn(
+            java.util.Optional.of(farm2)
+        );
+
+        farmService.updateFarm(user, 1L, farmRequest2);
+
+        Assertions.assertAll(
+            () -> assertThat(farm.isMain()).isEqualTo(farmRequest2.isMain()),
+            () -> assertThat(farm2.isMain()).isEqualTo(false)
+        );
+    }
+
+    @DisplayName("농장 재배 시작 일자가 농장 생성 일자보다 빠르면 예외가 발생한다.")
+    @Test
+    void updateFarm_failure_startDateException() {
+        farm.addOwner(user);
+
+        FarmRequest farmRequest2 = new FarmRequest(
+            "부산",
+            "010-3333-3333",
+            "200",
+            true,
+            FarmType.VINYL,
+            CropType.TOMATO,
+            LocalDate.now().minusDays(1)
+        );
+
+        when(farmRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(farm));
+
+        assertThatThrownBy(() -> farmService.updateFarm(user, 1L, farmRequest2))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("농가 재배 시작 일자가 잘못됬습니다.");
     }
 }
