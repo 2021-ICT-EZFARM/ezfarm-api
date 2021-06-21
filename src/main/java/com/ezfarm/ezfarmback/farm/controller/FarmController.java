@@ -57,8 +57,8 @@ public class FarmController {
     }
 
     @DeleteMapping("/{farmId}")
-    public List<Farm> deleteFarm(@CurrentUser User user, @PathVariable Long farmId) {
+    public ResponseEntity<Void> deleteFarm(@CurrentUser User user, @PathVariable Long farmId) {
         farmService.deleteFarm(user, farmId);
-        return farmRepository.findAll();
+        return ResponseEntity.noContent().build();
     }
 }
