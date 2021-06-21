@@ -5,8 +5,10 @@ import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
+import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -59,9 +61,12 @@ public class FarmService {
         farmRepository.delete(farm);
     }
 
-    public List<Farm> viewAllFarms(User user) {
+    public List<FarmResponse> viewAllFarms(User user) {
         List<Farm> farms = farmRepository.findAllByUser(user);
-        return farms;
+        List<FarmResponse> farmResponses = farms.stream()
+            .map(farm -> modelMapper.map(farm, FarmResponse.class))
+            .collect(Collectors.toList());
+        return farmResponses;
     }
 
     public Farm viewFarm(User user, Long farmId) {

@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.farm.controller;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
+import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.service.FarmService;
 import com.ezfarm.ezfarmback.security.CurrentUser;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -30,9 +31,9 @@ public class FarmController {
     private final FarmService farmService;
 
     @GetMapping
-    public List<Farm> allFarm(@CurrentUser User user) {
-        List<Farm> farms = farmService.viewAllFarms(user);
-        return farms;
+    public ResponseEntity<List<FarmResponse>> allFarm(@CurrentUser User user) {
+        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+        return ResponseEntity.ok(farmResponses);
     }
 
     @GetMapping("/{farmId}")
