@@ -50,10 +50,10 @@ public class FarmController {
     }
 
     @PatchMapping("/{farmId}")
-    public Farm updateFarm(@CurrentUser User user, @PathVariable Long farmId,
+    public ResponseEntity<Void> updateFarm(@CurrentUser User user, @PathVariable Long farmId,
         @Valid @RequestBody FarmRequest farmRequest) {
-        Farm updateFarm = farmService.updateFarm(user, farmId, farmRequest);
-        return updateFarm;
+        farmService.updateFarm(user, farmId, farmRequest);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{farmId}")

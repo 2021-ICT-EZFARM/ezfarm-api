@@ -46,14 +46,13 @@ public class FarmService {
         }
     }
 
-    public Farm updateFarm(User user, Long farmId, FarmRequest farmRequest) {
+    public void updateFarm(User user, Long farmId, FarmRequest farmRequest) {
         Farm farm = checkException(user, farmId);
         checkStartDate(farm, farmRequest);
         if (canSetMain(farmRequest, farm)) {
             setMainFarm(user, farm);
         }
         farm.update(farmRequest);
-        return farm;
     }
 
     public void deleteFarm(User user, Long farmId) {
