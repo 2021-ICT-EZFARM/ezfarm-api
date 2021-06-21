@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.common.modelMapper;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.ezfarm.ezfarmback.config.AppConfig;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
@@ -14,16 +15,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
-import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.convention.NameTokenizers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = AppConfig.class)
 @DisplayName("ModelMapper 매핑 테스트")
 public class ModelMapperTest {
 
+  @Autowired
   ModelMapper modelMapper;
 
   FarmRequest farmRequest;
@@ -34,13 +36,6 @@ public class ModelMapperTest {
 
   @BeforeEach
   void setUp() {
-    modelMapper = new ModelMapper();
-    modelMapper.getConfiguration()
-        .setMatchingStrategy(MatchingStrategies.STRICT)
-        .setFieldMatchingEnabled(true)
-        .setFieldAccessLevel(AccessLevel.PRIVATE)
-        .setDestinationNameTokenizer(NameTokenizers.UNDERSCORE)
-        .setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
 
     farmRequest = new FarmRequest(
         "경기",
