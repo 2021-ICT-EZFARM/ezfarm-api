@@ -37,9 +37,9 @@ public class FarmController {
     }
 
     @GetMapping("/{farmId}")
-    public Farm viewFarm(@CurrentUser User user, @PathVariable Long farmId) {
-        Farm farm = farmService.viewFarm(user, farmId);
-        return farm;
+    public ResponseEntity<FarmResponse> viewFarm(@CurrentUser User user, @PathVariable Long farmId) {
+        FarmResponse farmResponse = farmService.viewFarm(user, farmId);
+        return ResponseEntity.ok(farmResponse);
     }
 
     @PostMapping

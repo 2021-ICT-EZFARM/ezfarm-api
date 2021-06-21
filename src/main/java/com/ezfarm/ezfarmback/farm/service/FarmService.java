@@ -69,9 +69,9 @@ public class FarmService {
         return farmResponses;
     }
 
-    public Farm viewFarm(User user, Long farmId) {
+    public FarmResponse viewFarm(User user, Long farmId) {
         Farm farm = checkException(user, farmId);
-        return farm;
+        return modelMapper.map(farm, FarmResponse.class);
     }
 
     private Farm checkException(User user, Long farmId) {
