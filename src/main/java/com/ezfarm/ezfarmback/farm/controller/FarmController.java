@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.farm.controller;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
+import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.service.FarmService;
 import com.ezfarm.ezfarmback.security.CurrentUser;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -30,15 +31,15 @@ public class FarmController {
     private final FarmService farmService;
 
     @GetMapping
-    public List<Farm> allFarm(@CurrentUser User user) {
-        List<Farm> farms = farmService.viewAllFarms(user);
-        return farms;
+    public ResponseEntity<List<FarmResponse>> allFarm(@CurrentUser User user) {
+        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+        return ResponseEntity.ok(farmResponses);
     }
 
     @GetMapping("/{farmId}")
-    public Farm viewFarm(@CurrentUser User user, @PathVariable Long farmId) {
-        Farm farm = farmService.viewFarm(user, farmId);
-        return farm;
+    public ResponseEntity<FarmResponse> viewFarm(@CurrentUser User user, @PathVariable Long farmId) {
+        FarmResponse farmResponse = farmService.viewFarm(user, farmId);
+        return ResponseEntity.ok(farmResponse);
     }
 
     @PostMapping
@@ -49,15 +50,15 @@ public class FarmController {
     }
 
     @PatchMapping("/{farmId}")
-    public Farm updateFarm(@CurrentUser User user, @PathVariable Long farmId,
+    public ResponseEntity<Void> updateFarm(@CurrentUser User user, @PathVariable Long farmId,
         @Valid @RequestBody FarmRequest farmRequest) {
-        Farm updateFarm = farmService.updateFarm(user, farmId, farmRequest);
-        return updateFarm;
+        farmService.updateFarm(user, farmId, farmRequest);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{farmId}")
-    public List<Farm> deleteFarm(@CurrentUser User user, @PathVariable Long farmId) {
+    public ResponseEntity<Void> deleteFarm(@CurrentUser User user, @PathVariable Long farmId) {
         farmService.deleteFarm(user, farmId);
-        return farmRepository.findAll();
+        return ResponseEntity.noContent().build();
     }
 }

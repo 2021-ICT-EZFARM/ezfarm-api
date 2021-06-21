@@ -5,8 +5,10 @@ import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
+import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -44,14 +46,13 @@ public class FarmService {
         }
     }
 
-    public Farm updateFarm(User user, Long farmId, FarmRequest farmRequest) {
+    public void updateFarm(User user, Long farmId, FarmRequest farmRequest) {
         Farm farm = checkException(user, farmId);
         checkStartDate(farm, farmRequest);
         if (canSetMain(farmRequest, farm)) {
             setMainFarm(user, farm);
         }
         farm.update(farmRequest);
-        return farm;
     }
 
     public void deleteFarm(User user, Long farmId) {
@@ -59,14 +60,17 @@ public class FarmService {
         farmRepository.delete(farm);
     }
 
-    public List<Farm> viewAllFarms(User user) {
+    public List<FarmResponse> viewAllFarms(User user) {
         List<Farm> farms = farmRepository.findAllByUser(user);
-        return farms;
+        List<FarmResponse> farmResponses = farms.stream()
+            .map(farm -> modelMapper.map(farm, FarmResponse.class))
+            .collect(Collectors.toList());
+        return farmResponses;
     }
 
-    public Farm viewFarm(User user, Long farmId) {
+    public FarmResponse viewFarm(User user, Long farmId) {
         Farm farm = checkException(user, farmId);
-        return farm;
+        return modelMapper.map(farm, FarmResponse.class);
     }
 
     private Farm checkException(User user, Long farmId) {
