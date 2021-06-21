@@ -1,7 +1,6 @@
 package com.ezfarm.ezfarmback.common.modelMapper;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 import com.ezfarm.ezfarmback.config.AppConfig;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -11,6 +10,7 @@ import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,11 +64,13 @@ public class ModelMapperTest {
   void request_to_entity_success() {
     farm = modelMapper.map(farmRequest, Farm.class);
 
-    assertEquals("경기", farm.getAddress());
-    assertEquals("010-2222-2222", farm.getPhoneNumber());
-    assertEquals("100", farm.getArea());
-    assertEquals(FarmType.GLASS, farm.getFarmType());
-    assertEquals(CropType.PAPRIKA, farm.getCropType());
+    Assertions.assertAll(
+        () -> assertThat(farm.getAddress()).isEqualTo(farmRequest.getAddress()),
+        () -> assertThat(farm.getPhoneNumber()).isEqualTo(farmRequest.getPhoneNumber()),
+        () -> assertThat(farm.getArea()).isEqualTo(farmRequest.getArea()),
+        () -> assertThat(farm.getFarmType()).isEqualTo(farmRequest.getFarmType()),
+        () -> assertThat(farm.getCropType()).isEqualTo(farmRequest.getCropType())
+    );
   }
 
   @DisplayName("Entity를 Response객체로 매핑한다.")
@@ -76,11 +78,13 @@ public class ModelMapperTest {
   void entity_to_response_success() {
     farmResponse = modelMapper.map(farm, FarmResponse.class);
 
-    assertEquals("서울", farm.getAddress());
-    assertEquals("010-1111-1111", farm.getPhoneNumber());
-    assertEquals("200", farm.getArea());
-    assertEquals(FarmType.VINYL, farm.getFarmType());
-    assertEquals(CropType.TOMATO, farm.getCropType());
+    Assertions.assertAll(
+        () -> assertThat(farmResponse.getAddress().equals(farm.getAddress())),
+        () -> assertThat(farmResponse.getPhoneNumber().equals(farm.getPhoneNumber())),
+        () -> assertThat(farmResponse.getArea().equals(farm.getArea())),
+        () -> assertThat(farmResponse.getFarmType().equals(farm.getFarmType())),
+        () -> assertThat(farmResponse.getCropType().equals(farm.getCropType()))
+    );
   }
 
   @DisplayName("Source가 null인 경우 예외가 발생한다.")
@@ -107,12 +111,12 @@ public class ModelMapperTest {
     Map<String, String> mismatchDto = new HashMap<>();
     mismatchDto.put("address", "부산");
     mismatchDto.put("tel", "010-3333-3333");
-    mismatchDto.put("farmType", String.valueOf(FarmType.GLASS));
 
     farm = modelMapper.map(mismatchDto, Farm.class);
-    assertEquals("부산", farm.getAddress());
-    assertNotEquals("010-3333-3333", farm.getPhoneNumber());
-    assertEquals(null, farm.getPhoneNumber());
-    assertEquals(FarmType.GLASS, farm.getFarmType());
+
+    Assertions.assertAll(
+        () -> assertThat(farm.getAddress()).isEqualTo(mismatchDto.get("address")),
+        () -> assertThat(farm.getPhoneNumber()).isNull()
+    );
   }
 }
