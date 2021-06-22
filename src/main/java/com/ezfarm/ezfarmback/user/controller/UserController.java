@@ -8,6 +8,7 @@ import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,11 @@ public class UserController {
 
     private final UserRepository userRepository;
 
+    private final ModelMapper modelMapper;
+
     @GetMapping("/access-test")
     public ResponseEntity<UserResponse> accessTest(@CurrentUser User user) {
-        return ResponseEntity.ok(UserResponse.of(user));
+        return ResponseEntity.ok(modelMapper.map(user, UserResponse.class));
     }
 
     @PostMapping("/signup")
@@ -36,12 +39,14 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<UserResponse> readUser(@CurrentUser User user) {
-        User findUser = userRepository.findByEmail(user.getEmail()).orElseThrow(IllegalArgumentException::new);
-        return ResponseEntity.ok(UserResponse.of(findUser));
+        User findUser = userRepository.findByEmail(user.getEmail())
+            .orElseThrow(IllegalArgumentException::new);
+        return ResponseEntity.ok(modelMapper.map(findUser, UserResponse.class));
     }
 
     @PatchMapping
-    public ResponseEntity<Void> updateUser(@CurrentUser User user, @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<Void> updateUser(@CurrentUser User user,
+        @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         userService.updateUser(user, userUpdateRequest);
         return ResponseEntity.ok().build();
     }
