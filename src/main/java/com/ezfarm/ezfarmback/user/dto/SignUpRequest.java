@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.user.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,13 +12,17 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignUpRequest {
+
+    @ApiModelProperty(value = "유저 이름", required = true)
     @NotBlank
     private String name;
 
+    @ApiModelProperty(value = "유저 이메일", required = true)
     @NotBlank
     @Email
     private String email;
 
+    @ApiModelProperty(value = "유저 비밀번호", required = true)
     @NotBlank
     private String password;
 }
