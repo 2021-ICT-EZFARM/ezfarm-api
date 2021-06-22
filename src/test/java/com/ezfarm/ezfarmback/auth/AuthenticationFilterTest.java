@@ -55,6 +55,6 @@ public class AuthenticationFilterTest extends CommonAcceptanceTest {
         UserResponse userResponse = response.body().as(UserResponse.class);
 
         //then
-        assertThat(userResponse).isEqualTo(UserResponse.of(mockUser));
+        assertThat(userResponse).isEqualTo(modelMapper.map(mockUser, UserResponse.class));
     }
 }

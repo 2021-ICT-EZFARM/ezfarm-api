@@ -19,6 +19,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -36,6 +37,9 @@ public abstract class CommonAcceptanceTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    protected ModelMapper modelMapper;
 
     @Autowired
     protected DbCleanUp dbCleanUp;
