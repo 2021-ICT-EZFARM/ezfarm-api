@@ -223,7 +223,7 @@ public class FarmServiceTest {
     @DisplayName("새로운 메인 농장으로 수정한다.")
     @Test
     void updateFarm_success_change_main() {
-        Farm farm2 =  Farm.builder()
+        Farm farm2 = Farm.builder()
             .address("경기")
             .phoneNumber("010-2222-2222")
             .area("100")
@@ -278,5 +278,16 @@ public class FarmServiceTest {
         assertThatThrownBy(() -> farmService.updateFarm(user, 1L, farmRequest2))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("농가 재배 시작 일자가 잘못됬습니다.");
+    }
+
+    @DisplayName("내 농가를 삭제한다.")
+    @Test
+    void deleteFarm() {
+        farm.addOwner(user);
+        when(farmRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(farm));
+        farmService.deleteFarm(user, 1L);
+
+
+        verify(farmRepository).delete(farm);
     }
 }
