@@ -68,9 +68,6 @@ public class FarmService {
 
     public List<FarmResponse> viewAllFarms(User user) {
         List<Farm> farms = farmRepository.findAllByUser(user);
-        if (farms.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<FarmResponse> farmResponses = farms.stream()
             .map(farm -> modelMapper.map(farm, FarmResponse.class))
             .collect(Collectors.toList());
@@ -87,7 +84,7 @@ public class FarmService {
             () -> new CustomException(ErrorCode.INVALID_FARM_ID)
         );
         if (farm.getUser().getId() != user.getId()) {
-            throw new CustomException(ErrorCode.NOT_FARM_OWNER);
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
         return farm;
     }

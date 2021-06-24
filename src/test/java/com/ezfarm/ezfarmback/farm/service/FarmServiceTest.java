@@ -185,7 +185,7 @@ public class FarmServiceTest {
 
         assertThatThrownBy(() -> farmService.viewFarm(user1, 1L))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.NOT_FARM_OWNER.getMessage());
+            .hasMessage(ErrorCode.ACCESS_DENIED.getMessage());
     }
 
     @DisplayName("농장 번호가 맞지않거나 농장이 없으면 예외가 발생한다")
