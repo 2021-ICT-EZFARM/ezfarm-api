@@ -8,6 +8,8 @@ import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -49,9 +51,13 @@ public class FarmService {
     public void updateFarm(User user, Long farmId, FarmRequest farmRequest) {
         Farm farm = checkException(user, farmId);
         checkStartDate(farm, farmRequest);
-        if (canSetMain(farmRequest, farm)) {
-            setMainFarm(user, farm);
+        if (farmRequest.isMain()) {
+            Optional<Farm> previousMain = farmRepository.findByIsMainAndUser(true, user);
+            if (previousMain.isPresent()) {
+                previousMain.get().setMain(false);
+            }
         }
+        farm.setMain(farmRequest.isMain());
         farm.update(farmRequest);
     }
 
@@ -75,30 +81,17 @@ public class FarmService {
 
     private Farm checkException(User user, Long farmId) {
         Farm farm = farmRepository.findById(farmId).orElseThrow(
-            () -> new IllegalArgumentException(farmId + "에 매핑되는 농가가 없습니다.")
+            () -> new CustomException(ErrorCode.INVALID_FARM_ID)
         );
         if (farm.getUser().getId() != user.getId()) {
-            throw new IllegalArgumentException("농가에 접근 권한이 없습니다.");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
         return farm;
     }
 
-    private boolean canSetMain(FarmRequest farmRequest, Farm farm) {
-        //return !farm.get && farmRequest.getIsMain();
-        return true;
-    }
-
-    private void setMainFarm(User user, Farm farm) {
-        farmRepository.findByIsMainAndUser(true, user)
-            .ifPresent(mainFarm -> mainFarm.setMain(false));
-        farm.setMain(true);
-    }
-
     private void checkStartDate(Farm farm, FarmRequest farmRequest) {
-/*
-        if (farmRequest.getStartDate().isBefore(farm.getCreatedDate())) {
-            throw new IllegalArgumentException("농가 재배 시작 일자가 잘못됬습니다.");
+        if (farmRequest.getStartDate().isBefore(farm.getCreatedDate().toLocalDate())) {
+            throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
         }
- */
     }
 }

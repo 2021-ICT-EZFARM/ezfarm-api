@@ -16,7 +16,10 @@ public enum ErrorCode {
     DUPLICATED_EMAIL(400, "C_004", "이미 존재하는 이메일입니다."),
     BAD_LOGIN(400, "C_005", "잘못된 아이디 또는 패스워드입니다."),
     NON_EXISTENT_USER(404, "C_006", "존재하지 않는 사용자 입니다."),
-    INVALID_FARM_START_DATE(400, "C_007", "잘못된 농장 생성일을 입력했습니다.");
+    INVALID_FARM_START_DATE(400, "C_007", "잘못된 농장 생성일을 입력했습니다."),
+    INVALID_FARM_ID(404, "C_008", "잘못된 농장 ID 입니다."),
+
+    ACCESS_DENIED(403, "C_009", "콘텐츠에 접근 권한이 없습니다.");
 
     private final int status;
     private final String code;
