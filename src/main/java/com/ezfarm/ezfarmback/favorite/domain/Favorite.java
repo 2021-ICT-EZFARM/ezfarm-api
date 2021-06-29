@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.favorite.domain;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,4 +27,9 @@ public class Favorite {
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
+    @Builder
+    public Favorite(User user, Farm farm) {
+        this.user = user;
+        this.farm = farm;
+    }
 }
