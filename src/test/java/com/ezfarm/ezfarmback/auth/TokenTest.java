@@ -28,7 +28,7 @@ public class TokenTest extends CommonAcceptanceTest {
     @Test
     void ValidToken() throws JsonProcessingException {
         //given
-        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
         String accessToken = authResponse.getAccessToken();
 
@@ -38,7 +38,7 @@ public class TokenTest extends CommonAcceptanceTest {
 
         //then
         assertThat(isValidToken).isTrue();
-        assertThat(emailFromToken).isEqualTo(mockUser.getEmail());
+        assertThat(emailFromToken).isEqualTo(user1.getEmail());
     }
 
     @DisplayName("기간이 만료된 토큰은 ExpiredJwtException 에러를 발생시킨다.")

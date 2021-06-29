@@ -27,11 +27,11 @@ public class UserService {
         }
 
         User user = User.builder()
-                .email(signUpRequest.getEmail())
-                .name(signUpRequest.getName())
-                .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                .role(Role.ROLE_USER)
-                .build();
+            .email(signUpRequest.getEmail())
+            .name(signUpRequest.getName())
+            .password(passwordEncoder.encode(signUpRequest.getPassword()))
+            .role(Role.ROLE_USER)
+            .build();
 
         User result = userRepository.save(user);
         return result.getId();
@@ -39,7 +39,7 @@ public class UserService {
 
     public void updateUser(User user, UserUpdateRequest userUpdateRequest) {
         User findUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
-                () -> new CustomException(ErrorCode.NON_EXISTENT_USER));
+            () -> new CustomException(ErrorCode.NON_EXISTENT_USER));
         findUser.updateUser(userUpdateRequest);
     }
 }

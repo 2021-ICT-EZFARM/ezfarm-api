@@ -49,7 +49,7 @@ class FarmControllerTest extends CommonApiTest {
     }
 
     @WithMockCustomUser
-    @DisplayName("농가 생성")
+    @DisplayName("농장 생성")
     @Test
     void createFarm() throws Exception {
 

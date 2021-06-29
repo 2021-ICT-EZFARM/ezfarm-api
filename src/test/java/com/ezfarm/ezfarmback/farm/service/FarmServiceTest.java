@@ -281,7 +281,7 @@ public class FarmServiceTest {
             .hasMessage(ErrorCode.INVALID_FARM_START_DATE.getMessage());
     }
 
-    @DisplayName("내 농가를 삭제한다.")
+    @DisplayName("내 농장를 삭제한다.")
     @Test
     void deleteFarm() {
         farm.addOwner(user);

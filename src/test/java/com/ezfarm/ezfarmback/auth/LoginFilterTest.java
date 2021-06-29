@@ -16,7 +16,7 @@ public class LoginFilterTest extends CommonAcceptanceTest {
     @DisplayName("옳바른 로그인 요청을 한다.")
     @Test
     void ValidLoginTest() throws JsonProcessingException {
-        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         ExtractableResponse<Response> response = getLoginResponse(loginRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
@@ -24,7 +24,7 @@ public class LoginFilterTest extends CommonAcceptanceTest {
     @DisplayName("잘못된 아이디로 로그인 요청을 한다.")
     @Test
     void inValidIdLoginTest() throws JsonProcessingException {
-        LoginRequest loginRequest = new LoginRequest("test2@email.com", "비밀번호");
+        LoginRequest loginRequest = new LoginRequest("test3@email.com", "비밀번호");
         ExtractableResponse<Response> response = getLoginResponse(loginRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
@@ -32,7 +32,7 @@ public class LoginFilterTest extends CommonAcceptanceTest {
     @DisplayName("잘못된 비밀번호로 로그인 요청을 한다")
     @Test
     void inValidPasswordLoginTest() throws JsonProcessingException {
-        LoginRequest loginRequest = new LoginRequest("test@email.com", "잘못된 비밀번호");
+        LoginRequest loginRequest = new LoginRequest("test1@email.com", "잘못된 비밀번호");
         ExtractableResponse<Response> response = getLoginResponse(loginRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
