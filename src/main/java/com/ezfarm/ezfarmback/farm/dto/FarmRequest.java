@@ -18,6 +18,9 @@ public class FarmRequest {
     private String address;
 
     @NotBlank
+    private String name;
+
+    @NotBlank
     private String phoneNumber;
 
     @NotBlank

@@ -8,11 +8,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 public class FarmAcceptanceStep {
 
-    public static ExtractableResponse<Response> requestToCreateFarmAndGetLocation(AuthResponse authResponse,
+    public static ExtractableResponse<Response> requestToCreateFarm(
+        AuthResponse authResponse,
         FarmRequest farmRequest, ObjectMapper objectMapper)
         throws JsonProcessingException {
         return given().log().all()
@@ -25,5 +27,11 @@ public class FarmAcceptanceStep {
             .post("/api/farm")
             .then().log().all()
             .extract();
+    }
+
+    public static Long getLocation(ExtractableResponse<Response> response) {
+        String header = response.header(HttpHeaders.LOCATION);
+        String[] split = header.split("/");
+        return Long.parseLong(split[split.length - 1]);
     }
 }

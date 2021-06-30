@@ -32,6 +32,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
         farmRequest = new FarmRequest(
             "경기",
+            "테스트 이름",
             "010-2222-2222",
             "100",
             true,
@@ -46,7 +47,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
     void createFarm() throws JsonProcessingException {
         //when
         ExtractableResponse<Response> response = FarmAcceptanceStep
-            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
 
         //then
         AcceptanceStep.assertThatStatusIsCreated(response);

@@ -39,6 +39,7 @@ class FarmControllerTest extends CommonApiTest {
         super.setUp();
         farmRequest = new FarmRequest(
             "서울",
+            "테스트 이름",
             "010-1111-1111",
             "100",
             false,

@@ -33,6 +33,7 @@ public class UserAcceptanceTest extends CommonAcceptanceTest {
         super.setUp();
         farmRequest = new FarmRequest(
             "경기",
+            "테스트 이름",
             "010-2222-2222",
             "100",
             true,
