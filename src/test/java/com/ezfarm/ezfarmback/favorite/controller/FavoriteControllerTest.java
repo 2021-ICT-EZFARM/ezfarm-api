@@ -2,6 +2,9 @@ package com.ezfarm.ezfarmback.favorite.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-@DisplayName("즐겨찾기 단위 테스트(Controller)")
+@DisplayName("농장 즐겨찾기 단위 테스트(Controller)")
 @WebMvcTest(controllers = FavoriteController.class)
 public class FavoriteControllerTest extends CommonApiTest {
 
@@ -29,6 +32,26 @@ public class FavoriteControllerTest extends CommonApiTest {
 
         mockMvc.perform(post("/api/favorite/{farmId}", 1L))
             .andExpect(status().isOk())
+            .andDo(print());
+    }
+
+    @DisplayName("농장 즐겨찾기를 조회한다.")
+    @WithMockCustomUser
+    @Test
+    void findFavorites() throws Exception {
+        when(favoriteService.findFavorites(any())).thenReturn(any());
+        mockMvc.perform(get("/api/favorite"))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
+
+    @DisplayName("농장 즐겨찾기를 삭제한다.")
+    @WithMockCustomUser
+    @Test
+    void deleteFavorite() throws Exception {
+        doNothing().when(favoriteService).deleteFavorite(any());
+        mockMvc.perform(delete(String.format("/api/favorite?favoriteId=%d", 1L)))
+            .andExpect(status().isNoContent())
             .andDo(print());
     }
 }
