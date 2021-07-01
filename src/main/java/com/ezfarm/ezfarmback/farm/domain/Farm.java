@@ -31,6 +31,8 @@ public class Farm extends BaseTimeEntity {
     @Column(name = "farm_id")
     private Long id;
 
+    private String name;
+
     private String address;
 
     private String phoneNumber;
@@ -52,9 +54,11 @@ public class Farm extends BaseTimeEntity {
     private User user;
 
     @Builder
-    public Farm(String address, String phoneNumber, String area, boolean isMain, FarmType farmType,
-                CropType cropType, LocalDate startDate, User user) {
+    public Farm(String address, String name, String phoneNumber, String area, boolean isMain,
+        FarmType farmType,
+        CropType cropType, LocalDate startDate, User user) {
         this.address = address;
+        this.name = name;
         this.phoneNumber = phoneNumber;
         this.area = area;
         this.isMain = isMain;
@@ -62,6 +66,14 @@ public class Farm extends BaseTimeEntity {
         this.cropType = cropType;
         this.startDate = startDate;
         this.user = user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setMain(boolean isMain) {
+        this.isMain = isMain;
     }
 
     public void addOwner(User user) {
@@ -75,9 +87,5 @@ public class Farm extends BaseTimeEntity {
         this.farmType = farmRequest.getFarmType();
         this.cropType = farmRequest.getCropType();
         this.startDate = farmRequest.getStartDate();
-    }
-
-    public void setMain(boolean isMain) {
-        this.isMain = isMain;
     }
 }

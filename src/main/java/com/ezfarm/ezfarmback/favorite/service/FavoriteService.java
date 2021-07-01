@@ -6,7 +6,10 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
+import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,4 +40,15 @@ public class FavoriteService {
         favoriteRepository.save(favorite);
     }
 
+    @Transactional(readOnly = true)
+    public List<FavoriteResponse> findFavorites(User user) {
+        List<Favorite> favorites = favoriteRepository.findAllByUser(user);
+        return favorites.stream()
+            .map(FavoriteResponse::of)
+            .collect(Collectors.toList());
+    }
+
+    public void deleteFavorite(Long favoriteId) {
+        favoriteRepository.deleteById(favoriteId);
+    }
 }
