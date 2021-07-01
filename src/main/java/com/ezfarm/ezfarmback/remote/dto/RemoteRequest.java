@@ -11,6 +11,4 @@ public class RemoteRequest {
 
   private String values;
 
-  private Boolean successYn;
-
 }

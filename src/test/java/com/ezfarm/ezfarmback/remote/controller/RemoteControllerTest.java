@@ -1,7 +1,10 @@
 package com.ezfarm.ezfarmback.remote.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.stubbing.answers.DoesNothing.doesNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -15,6 +18,7 @@ import com.ezfarm.ezfarmback.remote.service.RemoteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.stubbing.answers.DoesNothing;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -50,6 +54,17 @@ class RemoteControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(content().string(objectMapper.writeValueAsString(remoteResponse)))
+        .andDo(print());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("농장 제어값 수정")
+  @Test
+  void updateRemote() throws Exception {
+    doNothing().when(remoteService).updateRemote(any(), any());
+
+    mockMvc.perform(get("/api/farm/1/remote"))
+        .andExpect(status().isOk())
         .andDo(print());
   }
 }

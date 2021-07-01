@@ -6,9 +6,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.ezfarm.ezfarmback.farm.domain.Farm;
+import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
+import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +32,12 @@ class RemoteServiceTest {
   @Mock
   RemoteRepository remoteRepository;
 
+  @Mock
+  ObjectMapper objectMapper;
+
   RemoteResponse remoteResponse;
+
+  RemoteRequest remoteRequest;
 
   @Mock
   ModelMapper modelMapper;
@@ -37,7 +46,7 @@ class RemoteServiceTest {
 
   @BeforeEach
   void setUp() {
-    remoteService = new RemoteService(remoteRepository, modelMapper);
+    remoteService = new RemoteService(remoteRepository, modelMapper, objectMapper);
 
     jsonString = "{tmp: 30, humidity: 30, illuminance: 30, co2: 30, ph: 30, mos: 30}";
 
@@ -62,5 +71,36 @@ class RemoteServiceTest {
 
     assertThat(response.getValues()).isEqualTo(remote.getValues());
     assertThat(response.getSuccessYn()).isEqualTo(remote.getSuccessYn());
+  }
+
+  @DisplayName("기존 농장 제어 튜플이 없을때 수정 요청")
+  @Test
+  void updateRemote_noRecord() throws Exception {
+    String updateJsonString = "{tmp: 40, humidity: 40, illuminance: 40, co2: 40, ph: 40, mos: 40}";
+    Remote emptyRemote = Remote.builder().build();
+
+    when(remoteRepository.findByFarm(any())).thenReturn(ofNullable(emptyRemote));
+    when(objectMapper.writeValueAsString(any())).thenReturn(updateJsonString);
+
+    remoteRequest = new RemoteRequest(updateJsonString);
+    remoteService.updateRemote(1L, remoteRequest);
+
+    assertThat(emptyRemote.getValues()).isEqualTo(remoteRequest.getValues());
+
+  }
+
+  @DisplayName("기존 농장 제어 튜플이 있을때 수정 요청")
+  @Test
+  void updateRemote_existRecord() throws Exception {
+    String updateJsonString = "{tmp: 40, humidity: 40, illuminance: 40, co2: 40, ph: 40, mos: 40}";
+
+    when(remoteRepository.findByFarm(any())).thenReturn(ofNullable(remote));
+    when(objectMapper.writeValueAsString(any())).thenReturn(updateJsonString);
+
+    remoteRequest = new RemoteRequest(updateJsonString);
+    remoteService.updateRemote(1L, remoteRequest);
+
+    assertThat(remote.getValues()).isEqualTo(remoteRequest.getValues());
+
   }
 }

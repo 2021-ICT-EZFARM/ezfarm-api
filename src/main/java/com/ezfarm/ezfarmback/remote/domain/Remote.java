@@ -31,4 +31,8 @@ public class Remote extends BaseTimeEntity {
         this.successYn = successYn;
     }
 
+    public void updateRemote(String values) {
+        this.values = values;
+    }
+
 }
