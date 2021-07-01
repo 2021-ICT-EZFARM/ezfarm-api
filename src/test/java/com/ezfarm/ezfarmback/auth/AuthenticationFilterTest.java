@@ -20,7 +20,7 @@ public class AuthenticationFilterTest extends CommonAcceptanceTest {
     @Test
     void accessApiWithValidToken() {
         //given
-        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
 
         //when
@@ -47,7 +47,7 @@ public class AuthenticationFilterTest extends CommonAcceptanceTest {
     @Test
     void haveValidCurrentUserInfo() {
         //given
-        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
+        LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
 
         //when
@@ -55,6 +55,6 @@ public class AuthenticationFilterTest extends CommonAcceptanceTest {
         UserResponse userResponse = response.body().as(UserResponse.class);
 
         //then
-        assertThat(userResponse).isEqualTo(modelMapper.map(mockUser, UserResponse.class));
+        assertThat(userResponse).isEqualTo(modelMapper.map(user1, UserResponse.class));
     }
 }

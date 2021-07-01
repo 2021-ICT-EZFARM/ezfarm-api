@@ -43,11 +43,11 @@ public class UserServiceTest {
     void setUp() {
         userService = new UserService(userRepository, passwordEncoder);
         user = User.builder()
-                .name("남상우")
-                .email("a@gmail.com")
-                .password("비밀번호")
-                .role(Role.ROLE_USER)
-                .build();
+            .name("남상우")
+            .email("a@gmail.com")
+            .password("비밀번호")
+            .role(Role.ROLE_USER)
+            .build();
     }
 
     @DisplayName("회원가입을 한다.")
@@ -77,8 +77,8 @@ public class UserServiceTest {
 
         //when, then
         assertThatThrownBy(() -> userService.createUser(signUpRequest))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.DUPLICATED_EMAIL.getMessage());
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.DUPLICATED_EMAIL.getMessage());
     }
 
     @DisplayName("유저 정보를 수정한다.")
@@ -86,20 +86,20 @@ public class UserServiceTest {
     void updateUser() {
         //given
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
-                "user",
-                "010-1234-1234",
-                "address",
-                "image");
+            "user",
+            "010-1234-1234",
+            "address",
+            "image");
 
         //when
         user.updateUser(userUpdateRequest);
 
         //then
         Assertions.assertAll(
-                () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
-                () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber()),
-                () -> assertThat(user.getAddress()).isEqualTo(userUpdateRequest.getAddress()),
-                () -> assertThat(user.getImageUrl()).isEqualTo(userUpdateRequest.getImageUrl())
+            () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
+            () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber()),
+            () -> assertThat(user.getAddress()).isEqualTo(userUpdateRequest.getAddress()),
+            () -> assertThat(user.getImageUrl()).isEqualTo(userUpdateRequest.getImageUrl())
         );
     }
 
@@ -108,16 +108,16 @@ public class UserServiceTest {
     void updateUserWithException() {
         //given
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
-                "user",
-                "010-1234-1234",
-                "address",
-                "image");
+            "user",
+            "010-1234-1234",
+            "address",
+            "image");
 
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
         //when, then
         assertThatThrownBy(() -> userService.updateUser(user, userUpdateRequest))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.NON_EXISTENT_USER.getMessage());
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.NON_EXISTENT_USER.getMessage());
     }
 }

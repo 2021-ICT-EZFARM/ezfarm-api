@@ -39,6 +39,7 @@ class FarmControllerTest extends CommonApiTest {
         super.setUp();
         farmRequest = new FarmRequest(
             "서울",
+            "테스트 이름",
             "010-1111-1111",
             "100",
             false,
@@ -49,7 +50,7 @@ class FarmControllerTest extends CommonApiTest {
     }
 
     @WithMockCustomUser
-    @DisplayName("농가 생성")
+    @DisplayName("농장 생성")
     @Test
     void createFarm() throws Exception {
 

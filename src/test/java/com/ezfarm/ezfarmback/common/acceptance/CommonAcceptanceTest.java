@@ -46,7 +46,9 @@ public abstract class CommonAcceptanceTest {
 
     protected ObjectMapper objectMapper;
 
-    protected User mockUser;
+    protected User user1;
+
+    protected User user2;
 
     @BeforeEach
     public void setUp() {
@@ -57,27 +59,39 @@ public abstract class CommonAcceptanceTest {
         dbCleanUp.afterPropertiesSet();
         dbCleanUp.clearUp();
 
-        mockUser = createMockUser();
+        user1 = createUserOne();
+        user2 = createUserTwo();
 
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    protected User createMockUser() {
-        User mockUser = User.builder()
-            .name("테스트 유저")
-            .email("test@email.com")
+    private User createUserOne() {
+        User user = User.builder()
+            .name("테스트 유저1")
+            .email("test1@email.com")
             .password(passwordEncoder.encode("비밀번호"))
             .role(Role.ROLE_USER)
             .build();
-        userRepository.save(mockUser);
-        return mockUser;
+        userRepository.save(user);
+        return user;
+    }
+
+    private User createUserTwo() {
+        User user = User.builder()
+            .name("테스트 유저2")
+            .email("test2@email.com")
+            .password(passwordEncoder.encode("비밀번호"))
+            .role(Role.ROLE_USER)
+            .build();
+        userRepository.save(user);
+        return user;
     }
 
     protected String getAccessJsonWebToken(String secretKey) {
         return Jwts.builder()
-            .setSubject(mockUser.getEmail())
+            .setSubject(user1.getEmail())
             .setIssuedAt(new Date())
             .setExpiration(new Date())
             .signWith(SignatureAlgorithm.HS512, secretKey)

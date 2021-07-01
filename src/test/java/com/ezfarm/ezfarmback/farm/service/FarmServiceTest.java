@@ -65,6 +65,7 @@ public class FarmServiceTest {
 
         farmRequest = new FarmRequest(
             "경기",
+            "테스트 이름",
             "010-2222-2222",
             "100",
             true,
@@ -75,6 +76,7 @@ public class FarmServiceTest {
 
         farmResponse = new FarmResponse(
             "경기",
+            "농장 이름",
             "010-2222-2222",
             "100",
             true,
@@ -203,6 +205,7 @@ public class FarmServiceTest {
         farm.addOwner(user);
         FarmRequest farmRequest2 = new FarmRequest(
             "부산",
+            "테스트 이름",
             "010-3333-3333",
             "200",
             true,
@@ -241,6 +244,7 @@ public class FarmServiceTest {
 
         FarmRequest farmRequest2 = new FarmRequest(
             "부산",
+            "테스트 이름",
             "010-3333-3333",
             "200",
             true,
@@ -266,6 +270,7 @@ public class FarmServiceTest {
 
         FarmRequest farmRequest2 = new FarmRequest(
             "부산",
+            "테스트 이름",
             "010-3333-3333",
             "200",
             true,
@@ -281,7 +286,7 @@ public class FarmServiceTest {
             .hasMessage(ErrorCode.INVALID_FARM_START_DATE.getMessage());
     }
 
-    @DisplayName("내 농가를 삭제한다.")
+    @DisplayName("내 농장를 삭제한다.")
     @Test
     void deleteFarm() {
         farm.addOwner(user);
