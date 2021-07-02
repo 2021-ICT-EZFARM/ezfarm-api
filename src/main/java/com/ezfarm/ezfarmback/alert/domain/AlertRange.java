@@ -1,16 +1,23 @@
 package com.ezfarm.ezfarmback.alert.domain;
 
+import com.ezfarm.ezfarmback.alert.dto.AlertRangeRequest;
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
-import javax.persistence.GenerationType;
-import lombok.*;
-
+import com.ezfarm.ezfarmback.farm.domain.Farm;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
+@Setter
 @Entity
 public class AlertRange extends BaseTimeEntity {
 
@@ -19,30 +26,48 @@ public class AlertRange extends BaseTimeEntity {
     @Column(name = "alert_range_id")
     private Long id;
 
-    private int tmpMax;
+    @OneToOne
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
 
-    private int tmpMin;
+    private float tmpMax;
 
-    private int humidityMax;
+    private float tmpMin;
 
-    private int humidityMin;
+    private float humidityMax;
 
-    private int imnMax;
+    private float humidityMin;
 
-    private int imnMin;
+    private float imnMax;
+
+    private float imnMin;
 
     @Column(name = "co2_max")
-    private int co2Max;
+    private float co2Max;
 
     @Column(name = "co2_min")
-    private int co2Min;
+    private float co2Min;
 
-    private int phMax;
+    private float phMax;
 
-    private int phMin;
+    private float phMin;
 
-    private int mosMax;
+    private float mosMax;
 
-    private int mosMin;
+    private float mosMin;
 
+    public void updateAlertRange(AlertRangeRequest alertRangeRequest) {
+        this.tmpMax = alertRangeRequest.getTmpMax();
+        this.tmpMin = alertRangeRequest.getTmpMin();
+        this.humidityMax = alertRangeRequest.getHumidityMax();
+        this.humidityMin = alertRangeRequest.getHumidityMin();
+        this.imnMax = alertRangeRequest.getImnMax();
+        this.imnMin = alertRangeRequest.getImnMin();
+        this.co2Max = alertRangeRequest.getCo2Max();
+        this.co2Min = alertRangeRequest.getCo2Min();
+        this.phMax = alertRangeRequest.getPhMax();
+        this.phMin = alertRangeRequest.getPhMin();
+        this.mosMax = alertRangeRequest.getMosMax();
+        this.mosMin = alertRangeRequest.getMosMin();
+    }
 }
