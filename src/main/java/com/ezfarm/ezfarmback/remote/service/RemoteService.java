@@ -2,12 +2,11 @@ package com.ezfarm.ezfarmback.remote.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.farm.domain.Farm;
-import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
+import com.ezfarm.ezfarmback.remote.jsch.JschObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
@@ -41,5 +40,7 @@ public class RemoteService {
       new CustomException(ErrorCode.INVALID_INPUT_VALUE);
     }
 
+    JschObject jschObject = new JschObject("ip", "kms1", "1234");
+    jschObject.connect();
   }
 }
