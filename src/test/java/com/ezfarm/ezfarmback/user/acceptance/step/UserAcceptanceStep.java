@@ -4,7 +4,6 @@ import static io.restassured.RestAssured.given;
 
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -25,7 +24,7 @@ public class UserAcceptanceStep {
 
     public static ExtractableResponse<Response> requestToUpdateUser(AuthResponse authResponse,
         UserUpdateRequest userUpdateRequest, ObjectMapper objectMapper)
-        throws JsonProcessingException {
+        throws Exception {
         return given().log().all()
             .header("Authorization",
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())

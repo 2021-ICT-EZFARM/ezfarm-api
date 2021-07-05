@@ -8,7 +8,6 @@ import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -109,7 +108,7 @@ public abstract class CommonAcceptanceTest {
     }
 
     protected ExtractableResponse<Response> getLoginResponse(LoginRequest loginRequest)
-        throws JsonProcessingException {
+        throws Exception {
         return given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(objectMapper.writeValueAsString(loginRequest))
@@ -132,7 +131,7 @@ public abstract class CommonAcceptanceTest {
     protected AuthResponse getAuthResponse(LoginRequest loginRequest) {
         try {
             return getLoginResponse(loginRequest).as(AuthResponse.class);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

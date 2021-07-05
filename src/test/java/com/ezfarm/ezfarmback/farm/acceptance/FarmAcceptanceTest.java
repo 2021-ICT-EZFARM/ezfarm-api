@@ -8,7 +8,6 @@ import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
@@ -44,7 +43,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("농장을 생성한다.")
     @Test
-    void createFarm() throws JsonProcessingException {
+    void createFarm() throws Exception {
         //when
         ExtractableResponse<Response> response = FarmAcceptanceStep
             .requestToCreateFarm(authResponse, farmRequest, objectMapper);
