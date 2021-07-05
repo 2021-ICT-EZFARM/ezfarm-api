@@ -12,7 +12,6 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.http.MediaType;
 
 public class FavoriteAcceptanceStep {
 
@@ -46,7 +45,6 @@ public class FavoriteAcceptanceStep {
         return given().log().all()
             .header("Authorization",
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
             .post("/api/favorite/{farmId}", farmId)
             .then().log().all()
@@ -57,7 +55,6 @@ public class FavoriteAcceptanceStep {
         return given().log().all()
             .header("Authorization",
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
             .get("/api/favorite")
             .then().log().all()
@@ -69,7 +66,6 @@ public class FavoriteAcceptanceStep {
         return given().log().all()
             .header("Authorization",
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
             .delete(String.format("/api/favorite?favoriteId=%d", favoriteId))
             .then().log().all()

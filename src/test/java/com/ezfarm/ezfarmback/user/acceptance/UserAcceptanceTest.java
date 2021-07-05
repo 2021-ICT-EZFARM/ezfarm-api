@@ -14,7 +14,6 @@ import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
@@ -77,7 +76,7 @@ public class UserAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("유저 정보를 수정한다.")
     @Test
-    void updateUser() throws JsonProcessingException {
+    void updateUser() throws Exception {
         //given
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);

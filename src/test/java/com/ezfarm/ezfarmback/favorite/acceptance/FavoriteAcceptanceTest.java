@@ -10,7 +10,6 @@ import com.ezfarm.ezfarmback.favorite.acceptance.step.FavoriteAcceptanceStep;
 import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
@@ -56,7 +55,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("농장 즐겨찾기를 추가한다.")
     @Test
-    void addFavorite() throws JsonProcessingException {
+    void addFavorite() throws Exception {
         //when
         ExtractableResponse<Response> response = FarmAcceptanceStep
             .requestToCreateFarm(authResponse, farmRequest, objectMapper);
@@ -72,7 +71,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("농장 즐겨찾기를 조회한다.")
     @Test
-    void findFavorites() throws JsonProcessingException {
+    void findFavorites() throws Exception {
         //given
         ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
             .requestToCreateFarm(ownerAuthResponse, farmRequest, objectMapper);
@@ -93,7 +92,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("농장 즐겨찾기를 삭제한다.")
     @Test
-    void deleteFavorite() throws JsonProcessingException {
+    void deleteFavorite() throws Exception {
         //given
         ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
             .requestToCreateFarm(ownerAuthResponse, farmRequest, objectMapper);
