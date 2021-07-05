@@ -13,11 +13,9 @@ import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
 @Entity
 public class AlertRange extends BaseTimeEntity {
 
@@ -55,6 +53,10 @@ public class AlertRange extends BaseTimeEntity {
     private float mosMax;
 
     private float mosMin;
+
+    public AlertRange(Farm farm) {
+        this.farm = farm;
+    }
 
     public void updateAlertRange(AlertRangeRequest alertRangeRequest) {
         this.tmpMax = alertRangeRequest.getTmpMax();

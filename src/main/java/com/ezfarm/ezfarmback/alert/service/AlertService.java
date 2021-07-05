@@ -29,12 +29,14 @@ public class AlertService {
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
         AlertRange alertRange = alertRangeRepository.findByFarm(findFarm)
-            .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+            .orElseGet(() -> {
+                AlertRange savedAlertRange = new AlertRange(findFarm);
+                return alertRangeRepository.save(savedAlertRange);
+            });
         return modelMapper.map(alertRange, AlertRangeResponse.class);
     }
 
     public void updateAlertRange(Long alertRangeId, AlertRangeRequest alertRangeRequest) {
-        //농장 생성 시 알림 범위를 생성해야한다.
         AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
