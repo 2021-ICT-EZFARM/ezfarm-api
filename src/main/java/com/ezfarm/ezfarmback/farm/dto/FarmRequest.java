@@ -21,13 +21,13 @@ public class FarmRequest {
 
     @ApiModelProperty(value = "농가 이름", required = true)
     @NotBlank
-<<<<<<< Updated upstream
-=======
     private String name;
 
     @ApiModelProperty(value = "농가 전화번호", required = true)
     @NotBlank
->>>>>>> Stashed changes
+    private String name;
+
+    @NotBlank
     private String phoneNumber;
 
     @ApiModelProperty(value = "농가 면적", required = true)

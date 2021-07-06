@@ -1,38 +1,39 @@
 package com.ezfarm.ezfarmback.farm.dto;
 
+import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import java.time.LocalDate;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class FarmResponse {
 
-<<<<<<< Updated upstream
   private String address;
-=======
+
     private Long id;
 
     private String address;
->>>>>>> Stashed changes
 
-  private String phoneNumber;
+    private String address;
 
-  private String area;
+    private String name;
 
-  private boolean isMain;
+    private String phoneNumber;
 
-  private FarmType farmType;
+    private String area;
 
-  private CropType cropType;
+    private boolean isMain;
 
-<<<<<<< Updated upstream
-  private LocalDate startDate;
-=======
+    private FarmType farmType;
+
+    private LocalDate startDate;
+
     private CropType cropType;
 
     private LocalDate startDate;
@@ -50,6 +51,5 @@ public class FarmResponse {
             farm.getStartDate()
         );
     }
->>>>>>> Stashed changes
 
 }

@@ -9,12 +9,15 @@ import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+
+import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 public class FarmAcceptanceStep {
@@ -112,5 +115,11 @@ public class FarmAcceptanceStep {
 
     public static void assertThatStatusIsNoContent(ExtractableResponse<Response> response) {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    public static Long getLocation(ExtractableResponse<Response> response) {
+        String header = response.header(HttpHeaders.LOCATION);
+        String[] split = header.split("/");
+        return Long.parseLong(split[split.length - 1]);
     }
 }

@@ -72,7 +72,7 @@ public class GlobalExceptionHandlerTest {
     void handleCustomException() throws Exception {
         mockMvc.perform(post("/test"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("C_004"))
+                .andExpect(jsonPath("$.code").value("AU_003"))
                 .andDo(print());
     }
 }

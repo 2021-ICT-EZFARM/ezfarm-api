@@ -1,50 +1,45 @@
 package com.ezfarm.ezfarmback.farm.acceptance;
 
-<<<<<<< Updated upstream
 
 import static io.restassured.RestAssured.given;
-=======
 import static com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep.assertThatStatusIsOk;
 import static com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep.assertThatFindTwoFarms;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
->>>>>>> Stashed changes
 
 import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
 import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
+import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 
-@DisplayName("농장 통합 테스트")
+@DisplayName("농가 통합 테스트")
 public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
-    String authenticationToken;
-
     FarmRequest farmRequest;
+
+    AuthResponse authResponse;
 
     @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
-        LoginRequest loginRequest = new LoginRequest("test@email.com", "비밀번호");
-
-        AuthResponse authResponse = getAuthResponse(loginRequest);
-        authenticationToken = authResponse.getTokenType() + " " + authResponse.getAccessToken();
+        LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
+        authResponse = getAuthResponse(loginRequest);
 
         farmRequest = new FarmRequest(
             "경기",
+            "테스트 이름",
             "010-2222-2222",
             "100",
             true,
@@ -54,26 +49,17 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         );
     }
 
-    @DisplayName("농장을 생성한다.")
+    @DisplayName("농가을 생성한다.")
     @Test
-    void createFarm() throws JsonProcessingException {
+    void createFarm() throws Exception {
         //when
-        ExtractableResponse<Response> response = given().log().all()
-            .header("Authorization", authenticationToken)
-            .when()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(objectMapper.writeValueAsString(farmRequest))
-            .when()
-            .post("/api/farm")
-            .then().log().all()
-            .extract();
+        ExtractableResponse<Response> response = FarmAcceptanceStep
+            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
 
         //then
         AcceptanceStep.assertThatStatusIsCreated(response);
     }
 
-<<<<<<< Updated upstream
-=======
     @DisplayName("농가를 수정한다.")
     @Test
     void updateFarm() throws Exception {
@@ -139,5 +125,5 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
         FarmAcceptanceStep.assertThatStatussNoContent(response);
     }
->>>>>>> Stashed changes
+
 }
