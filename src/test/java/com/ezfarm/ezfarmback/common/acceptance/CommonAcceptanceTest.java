@@ -8,7 +8,6 @@ import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -46,7 +45,9 @@ public abstract class CommonAcceptanceTest {
 
     protected ObjectMapper objectMapper;
 
-    protected User mockUser;
+    protected User user1;
+
+    protected User user2;
 
     @BeforeEach
     public void setUp() {
@@ -57,27 +58,39 @@ public abstract class CommonAcceptanceTest {
         dbCleanUp.afterPropertiesSet();
         dbCleanUp.clearUp();
 
-        mockUser = createMockUser();
+        user1 = createUserOne();
+        user2 = createUserTwo();
 
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    protected User createMockUser() {
-        User mockUser = User.builder()
-            .name("테스트 유저")
-            .email("test@email.com")
+    private User createUserOne() {
+        User user = User.builder()
+            .name("테스트 유저1")
+            .email("test1@email.com")
             .password(passwordEncoder.encode("비밀번호"))
             .role(Role.ROLE_USER)
             .build();
-        userRepository.save(mockUser);
-        return mockUser;
+        userRepository.save(user);
+        return user;
+    }
+
+    private User createUserTwo() {
+        User user = User.builder()
+            .name("테스트 유저2")
+            .email("test2@email.com")
+            .password(passwordEncoder.encode("비밀번호"))
+            .role(Role.ROLE_USER)
+            .build();
+        userRepository.save(user);
+        return user;
     }
 
     protected String getAccessJsonWebToken(String secretKey) {
         return Jwts.builder()
-            .setSubject(mockUser.getEmail())
+            .setSubject(user1.getEmail())
             .setIssuedAt(new Date())
             .setExpiration(new Date())
             .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -95,7 +108,7 @@ public abstract class CommonAcceptanceTest {
     }
 
     protected ExtractableResponse<Response> getLoginResponse(LoginRequest loginRequest)
-        throws JsonProcessingException {
+        throws Exception {
         return given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(objectMapper.writeValueAsString(loginRequest))
@@ -118,7 +131,7 @@ public abstract class CommonAcceptanceTest {
     protected AuthResponse getAuthResponse(LoginRequest loginRequest) {
         try {
             return getLoginResponse(loginRequest).as(AuthResponse.class);
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

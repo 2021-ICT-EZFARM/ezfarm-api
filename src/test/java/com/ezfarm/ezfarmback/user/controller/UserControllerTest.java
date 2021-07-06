@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("유저 단위 테스트(Controller)")
 @WebMvcTest(controllers = UserController.class)
-public class UserControllerTest extends CommonApiTest{
+public class UserControllerTest extends CommonApiTest {
 
     @MockBean
     UserService userService;
@@ -38,10 +38,10 @@ public class UserControllerTest extends CommonApiTest{
         when(userService.createUser(any())).thenReturn(1L);
 
         mockMvc.perform(post("/api/user/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signUpRequest)))
-                .andExpect(status().isCreated())
-                .andDo(print());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(signUpRequest)))
+            .andExpect(status().isCreated())
+            .andDo(print());
     }
 
     @DisplayName("유저 정보를 조회한다.")
@@ -49,17 +49,17 @@ public class UserControllerTest extends CommonApiTest{
     @Test
     void readUser() throws Exception {
         User user = User.builder()
-                .name("남상우")
-                .email("a@gmail.com")
-                .password("비밀번호")
-                .role(Role.ROLE_USER)
-                .build();
+            .name("남상우")
+            .email("a@gmail.com")
+            .password("비밀번호")
+            .role(Role.ROLE_USER)
+            .build();
 
         when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
 
         mockMvc.perform(get("/api/user"))
-                .andExpect(status().isOk())
-                .andDo(print());
+            .andExpect(status().isOk())
+            .andDo(print());
     }
 
     @DisplayName("유저 정보를 수정한다.")
@@ -68,19 +68,19 @@ public class UserControllerTest extends CommonApiTest{
     void updateUser() throws Exception {
         //given
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
-                "user",
-                "010-1234-1234",
-                "address",
-                "image");
+            "user",
+            "010-1234-1234",
+            "address",
+            "image");
 
         //when, then
         doNothing().when(userService).updateUser(any(), any());
 
         mockMvc.perform(patch("/api/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userUpdateRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(userUpdateRequest)))
+            .andExpect(status().isOk())
+            .andDo(print());
     }
 
     @DisplayName("회원 탈퇴한다.")
@@ -92,7 +92,7 @@ public class UserControllerTest extends CommonApiTest{
 
         //when, then
         mockMvc.perform(delete("/api/user"))
-                .andExpect(status().isNoContent());
+            .andExpect(status().isNoContent());
     }
 }
 

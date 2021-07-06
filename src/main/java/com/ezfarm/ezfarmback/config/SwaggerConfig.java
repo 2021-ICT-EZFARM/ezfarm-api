@@ -57,7 +57,7 @@ public class SwaggerConfig {
             "Swagger로 만든 ezfarm API Docs",
             version,
             "www.test.com",
-            new Contact("test", "www.test.com", "test@email.com"),
+            new Contact("test", "www.test.com", "test1@email.com"),
             "license",
             "licenseUrl",
             new ArrayList<>()

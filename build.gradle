@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:2.4.4'
     implementation 'org.projectlombok:lombok:1.18.18'
     implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+    implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
 
     runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'
