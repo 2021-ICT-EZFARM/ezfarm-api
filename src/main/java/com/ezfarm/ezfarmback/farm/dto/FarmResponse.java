@@ -12,7 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FarmResponse {
 
+<<<<<<< Updated upstream
   private String address;
+=======
+    private Long id;
+
+    private String address;
+>>>>>>> Stashed changes
 
   private String phoneNumber;
 
@@ -24,6 +30,26 @@ public class FarmResponse {
 
   private CropType cropType;
 
+<<<<<<< Updated upstream
   private LocalDate startDate;
+=======
+    private CropType cropType;
+
+    private LocalDate startDate;
+
+    public static FarmResponse of(Farm farm) {
+        return new FarmResponse(
+            farm.getId(),
+            farm.getAddress(),
+            farm.getName(),
+            farm.getPhoneNumber(),
+            farm.getArea(),
+            farm.isMain(),
+            farm.getFarmType(),
+            farm.getCropType(),
+            farm.getStartDate()
+        );
+    }
+>>>>>>> Stashed changes
 
 }

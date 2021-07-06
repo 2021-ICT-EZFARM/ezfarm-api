@@ -74,6 +74,7 @@ public class FarmServiceTest {
         );
 
         farmResponse = new FarmResponse(
+            2L,
             "경기",
             "010-2222-2222",
             "100",
