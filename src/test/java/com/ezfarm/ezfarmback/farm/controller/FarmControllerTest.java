@@ -21,7 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
-@DisplayName("농장 단위 테스트(Controller)")
+@DisplayName("농가 단위 테스트(Controller)")
 @WebMvcTest(controllers = FarmController.class)
 class FarmControllerTest extends CommonApiTest {
 
@@ -50,7 +50,7 @@ class FarmControllerTest extends CommonApiTest {
     }
 
     @WithMockCustomUser
-    @DisplayName("농장 생성")
+    @DisplayName("농가 생성")
     @Test
     void createFarm() throws Exception {
 

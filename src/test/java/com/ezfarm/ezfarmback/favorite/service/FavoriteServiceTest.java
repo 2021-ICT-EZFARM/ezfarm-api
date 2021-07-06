@@ -66,7 +66,7 @@ public class FavoriteServiceTest {
 
         farm = Farm.builder()
             .address("경기")
-            .name("테스트 농장")
+            .name("테스트 농가")
             .phoneNumber("010-2222-2222")
             .area("100")
             .farmType(FarmType.GLASS)
@@ -76,7 +76,7 @@ public class FavoriteServiceTest {
             .build();
     }
 
-    @DisplayName("농장 즐겨찾기를 추가한다.")
+    @DisplayName("농가 즐겨찾기를 추가한다.")
     @Test
     void addFavorite_success() {
         //when
@@ -90,7 +90,7 @@ public class FavoriteServiceTest {
         verify(favoriteRepository).save(any());
     }
 
-    @DisplayName("즐겨찾기를 추가 시 존재하는 농장이 아니면 예외 처리한다.")
+    @DisplayName("즐겨찾기를 추가 시 존재하는 농가이 아니면 예외 처리한다.")
     @Test
     void addFavorite_failure_invalid_farm() {
         when(farmRepository.findById(any())).thenReturn(Optional.empty());
@@ -100,7 +100,7 @@ public class FavoriteServiceTest {
             .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
     }
 
-    @DisplayName("즐겨찾기 추가 시 중복되는 농장이면 예외 처리한다.")
+    @DisplayName("즐겨찾기 추가 시 중복되는 농가이면 예외 처리한다.")
     @Test
     void addFavorite_failure_duplicated_farm() {
 
@@ -112,7 +112,7 @@ public class FavoriteServiceTest {
             .hasMessage(ErrorCode.FAVORITE_DUPLICATED.getMessage());
     }
 
-    @DisplayName("농장 즐겨찾기를 조회한다.")
+    @DisplayName("농가 즐겨찾기를 조회한다.")
     @Test
     void findFavorites_success() {
         //given
@@ -133,12 +133,12 @@ public class FavoriteServiceTest {
             () -> assertThat(favoriteResponses.size()).isEqualTo(1),
             () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())
                 .isEqualTo(farm.getName()),
-            () -> assertThat(favoriteResponses.get(0).getFarmUserResponse().getName())
+            () -> assertThat(favoriteResponses.get(0).getFarmOwnerResponse().getName())
                 .isEqualTo(farmOwner.getName())
         );
     }
 
-    @DisplayName("농장 즐겨찾기를 삭제한다.")
+    @DisplayName("농가 즐겨찾기를 삭제한다.")
     @Test
     void deleteFavorite_success() {
         favoriteService.deleteFavorite(1L);

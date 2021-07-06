@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("농장 즐겨찾기 통합 테스트")
+@DisplayName("농가 즐겨찾기 통합 테스트")
 public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
     FarmRequest farmRequest;
@@ -53,7 +53,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
         ownerAuthResponse = getAuthResponse(ownerLoginRequest);
     }
 
-    @DisplayName("농장 즐겨찾기를 추가한다.")
+    @DisplayName("농가 즐겨찾기를 추가한다.")
     @Test
     void addFavorite() throws Exception {
         //when
@@ -69,7 +69,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(result);
     }
 
-    @DisplayName("농장 즐겨찾기를 조회한다.")
+    @DisplayName("농가 즐겨찾기를 조회한다.")
     @Test
     void findFavorites() throws Exception {
         //given
@@ -90,7 +90,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
             .assertThatFindFavorites(favoriteResponses, ownerLoginRequest, farmRequest);
     }
 
-    @DisplayName("농장 즐겨찾기를 삭제한다.")
+    @DisplayName("농가 즐겨찾기를 삭제한다.")
     @Test
     void deleteFavorite() throws Exception {
         //given

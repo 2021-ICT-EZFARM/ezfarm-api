@@ -19,7 +19,7 @@ public class FavoriteAcceptanceStep {
         LoginRequest ownerLoginRequest, FarmRequest farmRequest) {
         Assertions.assertAll(
             () -> assertThat(favoriteResponses.size()).isEqualTo(1),
-            () -> assertThat(favoriteResponses.get(0).getFarmUserResponse().getEmail())
+            () -> assertThat(favoriteResponses.get(0).getFarmOwnerResponse().getEmail())
                 .isEqualTo(ownerLoginRequest.getEmail()),
             () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())
                 .isEqualTo(farmRequest.getName())

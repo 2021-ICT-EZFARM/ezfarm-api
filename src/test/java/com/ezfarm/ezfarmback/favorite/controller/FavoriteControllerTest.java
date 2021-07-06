@@ -17,14 +17,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-@DisplayName("농장 즐겨찾기 단위 테스트(Controller)")
+@DisplayName("농가 즐겨찾기 단위 테스트(Controller)")
 @WebMvcTest(controllers = FavoriteController.class)
 public class FavoriteControllerTest extends CommonApiTest {
 
     @MockBean
     FavoriteService favoriteService;
 
-    @DisplayName("농장 즐겨찾기를 추가한다.")
+    @DisplayName("농가 즐겨찾기를 추가한다.")
     @WithMockCustomUser
     @Test
     void addFavorite() throws Exception {
@@ -35,7 +35,7 @@ public class FavoriteControllerTest extends CommonApiTest {
             .andDo(print());
     }
 
-    @DisplayName("농장 즐겨찾기를 조회한다.")
+    @DisplayName("농가 즐겨찾기를 조회한다.")
     @WithMockCustomUser
     @Test
     void findFavorites() throws Exception {
@@ -45,7 +45,7 @@ public class FavoriteControllerTest extends CommonApiTest {
             .andDo(print());
     }
 
-    @DisplayName("농장 즐겨찾기를 삭제한다.")
+    @DisplayName("농가 즐겨찾기를 삭제한다.")
     @WithMockCustomUser
     @Test
     void deleteFavorite() throws Exception {

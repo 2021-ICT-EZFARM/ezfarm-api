@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("농장 통합 테스트")
+@DisplayName("농가 통합 테스트")
 public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
     FarmRequest farmRequest;
@@ -41,7 +41,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         );
     }
 
-    @DisplayName("농장을 생성한다.")
+    @DisplayName("농가을 생성한다.")
     @Test
     void createFarm() throws Exception {
         //when
