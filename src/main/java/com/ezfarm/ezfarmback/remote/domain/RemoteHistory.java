@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.control.domain;
+package com.ezfarm.ezfarmback.remote.domain;
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class FacilityControlHistory extends BaseTimeEntity {
+public class RemoteHistory extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fc_ctr_hstr_id")
@@ -21,9 +21,7 @@ public class FacilityControlHistory extends BaseTimeEntity {
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
-    private FacilityType facilityType;
-
-    private String ctrVal;
+    private String values;
 
     private Boolean successYn;
 }

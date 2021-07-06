@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.control.domain;
+package com.ezfarm.ezfarmback.remote.domain;
 
 public enum FacilityType {
     TMP,
