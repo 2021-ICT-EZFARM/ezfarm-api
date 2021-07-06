@@ -48,7 +48,7 @@ public class AlertServiceTest {
         alertService = new AlertService(alertRangeRepository, farmRepository, modelMapper);
 
         farm = Farm.builder()
-            .name("테스트 농장")
+            .name("테스트 농가")
             .build();
 
         alertRange = new AlertRange(farm);
@@ -89,7 +89,7 @@ public class AlertServiceTest {
         );
     }
 
-    @DisplayName("알림 범위 조회 시 농장이 존재하지 않으면 에러가 발생한다.")
+    @DisplayName("알림 범위 조회 시 농가이 존재하지 않으면 에러가 발생한다.")
     @Test
     void findAlertRange_invalid_farm_failure() {
         when(farmRepository.findById(any())).thenReturn(Optional.empty());

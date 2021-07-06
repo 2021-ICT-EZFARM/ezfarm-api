@@ -15,20 +15,20 @@ public class FavoriteResponse {
 
     private Long id;
     private FarmResponse farmResponse;
-    private FarmUserResponse farmUserResponse;
+    private FarmOwnerResponse farmOwnerResponse;
 
     public static FavoriteResponse of(Favorite favorite) {
         return new FavoriteResponse(
             favorite.getId(),
             FarmResponse.of(favorite.getFarm()),
-            FarmUserResponse.of(favorite.getFarm().getUser())
+            FarmOwnerResponse.of(favorite.getFarm().getUser())
         );
     }
 
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @AllArgsConstructor(access = AccessLevel.PUBLIC)
-    public static class FarmUserResponse {
+    public static class FarmOwnerResponse {
 
         private String email;
         private String name;
@@ -36,8 +36,8 @@ public class FavoriteResponse {
         private String address;
         private String imageUrl;
 
-        public static FarmUserResponse of(User user) {
-            return new FarmUserResponse(
+        public static FarmOwnerResponse of(User user) {
+            return new FarmOwnerResponse(
                 user.getEmail(),
                 user.getName(),
                 user.getPhoneNumber(),
