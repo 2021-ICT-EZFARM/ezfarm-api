@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class FarmResponse {
 
+    private Long id;
+
     private String address;
 
     private String name;
@@ -32,6 +34,7 @@ public class FarmResponse {
 
     public static FarmResponse of(Farm farm) {
         return new FarmResponse(
+            farm.getId(),
             farm.getAddress(),
             farm.getName(),
             farm.getPhoneNumber(),
