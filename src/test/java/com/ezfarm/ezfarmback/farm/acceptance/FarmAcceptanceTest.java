@@ -1,5 +1,8 @@
 package com.ezfarm.ezfarmback.farm.acceptance;
 
+
+import static com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep.assertThatStatusIsOk;
+
 import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
 import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
@@ -51,4 +54,72 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         //then
         AcceptanceStep.assertThatStatusIsCreated(response);
     }
+
+    @DisplayName("농가를 수정한다.")
+    @Test
+    void updateFarm() throws Exception {
+        FarmRequest updateRequest = new FarmRequest(
+            "서울",
+            "테스트 이름",
+            "010-3333-3333",
+            "200",
+            false,
+            FarmType.VINYL,
+            CropType.PAPRIKA,
+            LocalDate.now().plusDays(1)
+        );
+
+        String url = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+        ExtractableResponse<Response> response = FarmAcceptanceStep
+            .requestToUpdateFarm(url, authResponse, updateRequest, objectMapper);
+
+        assertThatStatusIsOk(response);
+    }
+
+    @DisplayName("모든 농가를 조회한다.")
+    @Test
+    void viewAllFarm() throws Exception {
+        FarmRequest updateRequest = new FarmRequest(
+            "서울",
+            "테스트 이름",
+            "010-3333-3333",
+            "200",
+            false,
+            FarmType.VINYL,
+            CropType.PAPRIKA,
+            LocalDate.now().plusDays(1)
+        );
+
+        FarmAcceptanceStep.requestToCreateFarm(authResponse, farmRequest, objectMapper);
+        FarmAcceptanceStep.requestToCreateFarm(authResponse, updateRequest, objectMapper);
+        ExtractableResponse<Response> response = FarmAcceptanceStep
+            .requestToFindFarms(authResponse);
+
+        assertThatStatusIsOk(response);
+        FarmAcceptanceStep.assertThatFindTwoFarms(response);
+    }
+
+    @DisplayName("농가를 조회한다.")
+    @Test
+    void viweFarm() throws Exception {
+        String url = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+        ExtractableResponse<Response> response = FarmAcceptanceStep
+            .requestToFindFarm(url, authResponse);
+
+        FarmAcceptanceStep.assertThatFindFarm(response);
+    }
+
+    @DisplayName("농가를 삭제한다.")
+    @Test
+    void deleteFarm() throws Exception {
+        String url = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+        ExtractableResponse<Response> response = FarmAcceptanceStep.requestToDeleteFarm(url, authResponse);
+
+        FarmAcceptanceStep.assertThatStatusIsNoContent(response);
+    }
+
+
 }
