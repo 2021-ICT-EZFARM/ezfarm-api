@@ -1,7 +1,5 @@
 package com.ezfarm.ezfarmback.farm.controller;
 
-import com.ezfarm.ezfarmback.farm.domain.Farm;
-import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.service.FarmService;
@@ -34,42 +32,38 @@ public class FarmController {
     private final FarmService farmService;
 
     @ApiOperation(value = "나의 모든 농가 조회")
-    @GetMapping
-    public ResponseEntity<List<FarmResponse>> allFarm(@CurrentUser User user) {
-        List<FarmResponse> farmResponses = farmService.findAllFarms(user);
+    @GetMapping("/me")
+    public ResponseEntity<List<FarmResponse>> findMyFarms(@CurrentUser User user) {
+        List<FarmResponse> farmResponses = farmService.findMyFarms(user);
         return ResponseEntity.ok(farmResponses);
     }
 
     @ApiOperation(value = "나의 농가 조회")
-    @ApiResponses(value = {
-        @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
-        @ApiResponse(code = 403, message = "콘텐츠에 접근 권한이 없습니다.")
-    })
-    @GetMapping("/{farmId}")
-    public ResponseEntity<FarmResponse> findFarm(@CurrentUser User user, @PathVariable Long farmId) {
-        FarmResponse farmResponse = farmService.findFarm(user, farmId);
+    @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
+    @GetMapping("/me/{farmId}")
+    public ResponseEntity<FarmResponse> findFarm(@PathVariable Long farmId) {
+        FarmResponse farmResponse = farmService.findMyFarm(farmId);
         return ResponseEntity.ok(farmResponse);
     }
 
     @ApiOperation(value = "나의 농가 생성")
     @ApiResponse(code = 400, message = "잘못된 농가 생성일을 입력했습니다.")
-    @PostMapping
+    @PostMapping("/me")
     public ResponseEntity<Void> createFarm(@CurrentUser User user,
         @Valid @RequestBody FarmRequest farmRequest) {
         Long farmId = farmService.createFarm(user, farmRequest);
         return ResponseEntity.created(URI.create("/api/farm/" + farmId)).build();
     }
 
-    @ApiOperation(value = "나의 농가 생성")
+    @ApiOperation(value = "나의 농가 수정")
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
-        @ApiResponse(code = 403, message = "콘텐츠에 접근 권한이 없습니다."),
         @ApiResponse(code = 400, message = "잘못된 농가 생성일을 입력했습니다.")
     })
-    @PatchMapping("/{farmId}")
-    public ResponseEntity<Void> updateFarm(@CurrentUser User user, @PathVariable Long farmId,
+    @PatchMapping("/me/{farmId}")
+    public ResponseEntity<Void> updateMyFarm(@CurrentUser User user, @PathVariable Long farmId,
         @Valid @RequestBody FarmRequest farmRequest) {
-        farmService.updateFarm(user, farmId, farmRequest);
+        farmService.updateMyFarm(user, farmId, farmRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -78,9 +72,9 @@ public class FarmController {
         @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
         @ApiResponse(code = 403, message = "콘텐츠에 접근 권한이 없습니다.")
     })
-    @DeleteMapping("/{farmId}")
-    public ResponseEntity<Void> deleteFarm(@CurrentUser User user, @PathVariable Long farmId) {
-        farmService.deleteFarm(user, farmId);
+    @DeleteMapping("/me/{farmId}")
+    public ResponseEntity<Void> deleteMyFarm(@CurrentUser User user, @PathVariable Long farmId) {
+        farmService.deleteMyFarm(user, farmId);
         return ResponseEntity.noContent().build();
     }
 }

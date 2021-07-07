@@ -8,16 +8,12 @@ import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional
@@ -29,14 +25,12 @@ public class FarmService {
     private final ModelMapper modelMapper;
 
     public Long createFarm(User user, FarmRequest farmRequest) {
-
         confirmFarmStartDate(farmRequest);
 
         Farm farm = modelMapper.map(farmRequest, Farm.class);
         farm.addOwner(user);
 
-        Farm saveFarm = farmRepository.save(farm);
-        return saveFarm.getId();
+        return farmRepository.save(farm).getId();
     }
 
     private void confirmFarmStartDate(FarmRequest farmRequest) {
@@ -48,8 +42,25 @@ public class FarmService {
         }
     }
 
-    public void updateFarm(User user, Long farmId, FarmRequest farmRequest) {
-        Farm farm = checkException(user, farmId);
+    @Transactional(readOnly = true)
+    public List<FarmResponse> findMyFarms(User user) {
+        List<Farm> farms = farmRepository.findAllByUser(user);
+        return farms.stream()
+            .map(farm -> modelMapper.map(farm, FarmResponse.class))
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public FarmResponse findMyFarm(Long farmId) {
+        Farm farm = farmRepository.findById(farmId).orElseThrow(
+            () -> new CustomException(ErrorCode.INVALID_FARM_ID)
+        );
+        return modelMapper.map(farm, FarmResponse.class);
+    }
+
+    public void updateMyFarm(User user, Long farmId, FarmRequest farmRequest) {
+        /*
+        Farm farm = confirmAuthorityToFarm(user, farmId);
         checkStartDate(farm, farmRequest);
         if (farmRequest.isMain()) {
             Optional<Farm> previousMain = farmRepository.findByIsMainAndUser(true, user);
@@ -59,39 +70,27 @@ public class FarmService {
         }
         farm.setMain(farmRequest.isMain());
         farm.update(farmRequest);
-    }
-
-    public void deleteFarm(User user, Long farmId) {
-        Farm farm = checkException(user, farmId);
-        farmRepository.delete(farm);
-    }
-
-    public List<FarmResponse> findAllFarms(User user) {
-        List<Farm> farms = farmRepository.findAllByUser(user);
-        List<FarmResponse> farmResponses = farms.stream()
-            .map(farm -> modelMapper.map(farm, FarmResponse.class))
-            .collect(Collectors.toList());
-        return farmResponses;
-    }
-
-    public FarmResponse findFarm(User user, Long farmId) {
-        Farm farm = checkException(user, farmId);
-        return modelMapper.map(farm, FarmResponse.class);
-    }
-
-    private Farm checkException(User user, Long farmId) {
-        Farm farm = farmRepository.findById(farmId).orElseThrow(
-            () -> new CustomException(ErrorCode.INVALID_FARM_ID)
-        );
-        if (farm.getUser().getId() != user.getId()) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
-        }
-        return farm;
+        */
     }
 
     private void checkStartDate(Farm farm, FarmRequest farmRequest) {
         if (farmRequest.getStartDate().isBefore(farm.getCreatedDate().toLocalDate())) {
             throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
         }
+    }
+
+    public void deleteMyFarm(User user, Long farmId) {
+        Farm farm = confirmAuthorityToAccessFarm(user, farmId);
+        farmRepository.delete(farm);
+    }
+
+    private Farm confirmAuthorityToAccessFarm(User user, Long farmId) {
+        Farm farm = farmRepository.findById(farmId).orElseThrow(
+            () -> new CustomException(ErrorCode.INVALID_FARM_ID)
+        );
+        if (!farm.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        }
+        return farm;
     }
 }
