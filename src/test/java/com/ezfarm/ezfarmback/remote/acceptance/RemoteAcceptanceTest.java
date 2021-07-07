@@ -1,15 +1,14 @@
 package com.ezfarm.ezfarmback.remote.acceptance;
 
-import static com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep.assertThatStatusIsOk;
-
-import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
 import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.remote.acceptance.step.RemoteAcceptanceStep;
+import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
+import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import io.restassured.response.ExtractableResponse;
@@ -22,11 +21,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("제어 통합 테스트")
 public class RemoteAcceptanceTest extends CommonAcceptanceTest {
 
-    RemoteRequest remoteRequest;
-
     AuthResponse authResponse;
-
-    String jsonString;
 
     FarmRequest farmRequest;
 
@@ -36,10 +31,6 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
         super.setUp();
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         authResponse = getAuthResponse(loginRequest);
-
-        jsonString = "{tmp: 30, humidity: 30, illuminance: 30, co2: 30, ph: 30, mos: 30}";
-        remoteRequest = new RemoteRequest(jsonString);
-
         farmRequest = new FarmRequest(
             "경기",
             "테스트 이름",
@@ -54,24 +45,39 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("제어 값을 조회한다.")
     @Test
-    void createRemote() {
-        String url = FarmAcceptanceStep
-            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
-        ExtractableResponse<Response> response = RemoteAcceptanceStep
-            .requestToViewRemote(url, authResponse);
+    void createRemote() throws Exception {
+        ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
+            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
+        Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
 
-        RemoteAcceptanceStep.assertThatFindRemote(response);
+        ExtractableResponse<Response> response = RemoteAcceptanceStep
+            .requestToFindRemote(authResponse, farmId);
+        RemoteResponse remoteResponse = response.jsonPath()
+            .getObject(".", RemoteResponse.class);
+
+        RemoteAcceptanceStep.assertThatFindRemote(remoteResponse);
     }
 
     @DisplayName("제어 값을 수정한다.")
     @Test
-    void updateRemote() {
-        String updateJsonString = "{tmp: 40, humidity: 40, illuminance: 40, co2: 40, ph: 40, mos: 40}";
-        String url = FarmAcceptanceStep
-            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
-        ExtractableResponse<Response> response = RemoteAcceptanceStep
-            .requestToUpdateRemote(url, authResponse, updateJsonString);
+    void updateRemote() throws Exception {
+        ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
+            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
+        Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
 
-        assertThatStatusIsOk(response);
+        ExtractableResponse<Response> remoteResponse = RemoteAcceptanceStep
+            .requestToFindRemote(authResponse, farmId);
+        Long remoteId = remoteResponse.jsonPath()
+            .getObject(".", RemoteResponse.class).getId();
+
+        RemoteRequest remoteRequest = new RemoteRequest(remoteId, OnOff.ON, 37.5f, OnOff.OFF,
+            OnOff.ON);
+        RemoteAcceptanceStep.requestToUpdateRemote(authResponse, remoteRequest, objectMapper);
+
+        RemoteResponse response = RemoteAcceptanceStep
+            .requestToFindRemote(authResponse, farmId).jsonPath()
+            .getObject(".", RemoteResponse.class);
+
+        RemoteAcceptanceStep.assertThatUpdateRemote(response, remoteRequest);
     }
 }
