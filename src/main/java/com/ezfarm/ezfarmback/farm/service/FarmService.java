@@ -66,7 +66,7 @@ public class FarmService {
         farmRepository.delete(farm);
     }
 
-    public List<FarmResponse> viewAllFarms(User user) {
+    public List<FarmResponse> findAllFarms(User user) {
         List<Farm> farms = farmRepository.findAllByUser(user);
         List<FarmResponse> farmResponses = farms.stream()
             .map(farm -> modelMapper.map(farm, FarmResponse.class))
@@ -74,7 +74,7 @@ public class FarmService {
         return farmResponses;
     }
 
-    public FarmResponse viewFarm(User user, Long farmId) {
+    public FarmResponse findFarm(User user, Long farmId) {
         Farm farm = checkException(user, farmId);
         return modelMapper.map(farm, FarmResponse.class);
     }

@@ -90,7 +90,7 @@ public class FavoriteServiceTest {
         verify(favoriteRepository).save(any());
     }
 
-    @DisplayName("즐겨찾기를 추가 시 존재하는 농가이 아니면 예외 처리한다.")
+    @DisplayName("즐겨찾기를 추가 시 존재하는 농가가 아니면 예외 처리한다.")
     @Test
     void addFavorite_failure_invalid_farm() {
         when(farmRepository.findById(any())).thenReturn(Optional.empty());

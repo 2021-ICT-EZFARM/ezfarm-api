@@ -5,13 +5,10 @@ spring:
     console:
       enabled: true
   datasource:
-    hikari:
-      jdbc-url: jdbc:h2:mem:ezfarmdb
-      driver-class-name: org.h2.Driver
-      username: sa
-      password:
-      maximum-pool-size: 20
-
+    url: jdbc:h2:mem:ezfarmdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,5 +17,5 @@ spring:
       format_sql: true
 app:
   auth:
-    tokenSecret: secretKey
-    tokenExpirationMsec: 999999
+    token-secret: secretKey
+    token-expiration-msec: 999999

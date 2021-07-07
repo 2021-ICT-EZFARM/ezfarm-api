@@ -143,34 +143,34 @@ public class FarmServiceTest {
 
     @DisplayName("나의 모든 농가을 조회한다.")
     @Test
-    void viewAllFarms_success() {
+    void findAllFarms_success() {
         farm.addOwner(user);
         when(farmRepository.findAllByUser(any())).thenReturn(Arrays.asList(farm));
         when(modelMapper.map(any(), any())).thenReturn(farmResponse);
 
-        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+        List<FarmResponse> farmResponses = farmService.findAllFarms(user);
 
         assertThat(farmResponses).extracting("address").containsExactly(farm.getAddress());
     }
 
     @DisplayName("나의 농가이 없을 때 모두 조회하면 빈 리스트가 반환된다.")
     @Test
-    void viewAllFarms_is_null_success() {
+    void findAllFarms_is_null_success() {
         when(farmRepository.findAllByUser(any())).thenReturn(Arrays.asList());
 
-        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+        List<FarmResponse> farmResponses = farmService.findAllFarms(user);
 
         assertThat(farmResponses).isEmpty();
     }
 
     @DisplayName("나의 농가을 조회한다")
     @Test
-    void viewFarm_success() {
+    void findFarm_success() {
         farm.addOwner(user);
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
         when(modelMapper.map(any(), any())).thenReturn(farmResponse);
 
-        FarmResponse actualResponse = farmService.viewFarm(user, 1L);
+        FarmResponse actualResponse = farmService.findFarm(user, 1L);
 
         Assertions.assertAll(
             () -> assertThat(actualResponse.getAddress()).isEqualTo(farm.getAddress()),
@@ -180,23 +180,23 @@ public class FarmServiceTest {
 
     @DisplayName("나의 농가이 아닌경우 예외가 발생한다")
     @Test
-    void viewFarm_failure_is_not_owner(@Mock User user1, @Mock User user2) {
+    void findFarm_failure_is_not_owner(@Mock User user1, @Mock User user2) {
         when(user1.getId()).thenReturn(1L);
         when(user2.getId()).thenReturn(2L);
         farm.addOwner(user2);
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
 
-        assertThatThrownBy(() -> farmService.viewFarm(user1, 1L))
+        assertThatThrownBy(() -> farmService.findFarm(user1, 1L))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.ACCESS_DENIED.getMessage());
     }
 
     @DisplayName("농가 번호가 맞지않거나 농가이 없으면 예외가 발생한다")
     @Test
-    void viewFarm_failure_invalid_id() {
+    void findFarm_failure_invalid_id() {
         when(farmRepository.findById(any())).thenThrow(CustomException.class);
 
-        assertThatThrownBy(() -> farmService.viewFarm(user, 2L))
+        assertThatThrownBy(() -> farmService.findFarm(user, 2L))
             .isInstanceOf(CustomException.class);
     }
 
