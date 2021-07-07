@@ -36,7 +36,7 @@ public class FarmController {
     @ApiOperation(value = "나의 모든 농가 조회")
     @GetMapping
     public ResponseEntity<List<FarmResponse>> allFarm(@CurrentUser User user) {
-        List<FarmResponse> farmResponses = farmService.viewAllFarms(user);
+        List<FarmResponse> farmResponses = farmService.findAllFarms(user);
         return ResponseEntity.ok(farmResponses);
     }
 
@@ -46,8 +46,8 @@ public class FarmController {
         @ApiResponse(code = 403, message = "콘텐츠에 접근 권한이 없습니다.")
     })
     @GetMapping("/{farmId}")
-    public ResponseEntity<FarmResponse> viewFarm(@CurrentUser User user, @PathVariable Long farmId) {
-        FarmResponse farmResponse = farmService.viewFarm(user, farmId);
+    public ResponseEntity<FarmResponse> findFarm(@CurrentUser User user, @PathVariable Long farmId) {
+        FarmResponse farmResponse = farmService.findFarm(user, farmId);
         return ResponseEntity.ok(farmResponse);
     }
 

@@ -79,7 +79,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
     @DisplayName("모든 농가를 조회한다.")
     @Test
-    void viewAllFarm() throws Exception {
+    void findAllFarm() throws Exception {
         FarmRequest updateRequest = new FarmRequest(
             "서울",
             "테스트 이름",
