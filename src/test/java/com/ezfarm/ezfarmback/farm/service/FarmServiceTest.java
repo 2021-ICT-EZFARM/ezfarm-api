@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.farm.service;
 
-import static java.util.Optional.*;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,8 +21,9 @@ import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +58,7 @@ public class FarmServiceTest {
         farmService = new FarmService(farmRepository, modelMapper);
 
         user = User.builder()
+            .id(1L)
             .name("남상우")
             .email("a@gmail.com")
             .password("비밀번호")
@@ -98,7 +100,7 @@ public class FarmServiceTest {
         farm.setCreatedDate(LocalDateTime.now());
     }
 
-    @DisplayName("농가 시작일이 없는 농가을 생성한다.")
+    @DisplayName("농가 시작일이 없는 농가를 생성한다.")
     @Test
     void createFarm_startDate_null_success() {
         //given
@@ -110,10 +112,10 @@ public class FarmServiceTest {
 
         //then
         assertThat(farm.getUser()).isEqualTo(user);
-        verify(modelMapper).map(any(), any());
+        verify(farmRepository).save(any());
     }
 
-    @DisplayName("농가 시작일이 농가 생성일 이후인 농가을 생성한다.")
+    @DisplayName("농가 시작일이 농가 생성일 이후인 농가를 생성한다.")
     @Test
     void createFarm_startDate_notNull_success() {
         //given
@@ -141,69 +143,45 @@ public class FarmServiceTest {
             .hasMessage(ErrorCode.INVALID_FARM_START_DATE.getMessage());
     }
 
-    @DisplayName("나의 모든 농가을 조회한다.")
+    @DisplayName("나의 모든 농가를 조회한다.")
     @Test
-    void findAllFarms_success() {
+    void findMyFarms_success() {
         farm.addOwner(user);
-        when(farmRepository.findAllByUser(any())).thenReturn(Arrays.asList(farm));
+        when(farmRepository.findAllByUser(any())).thenReturn(Collections.singletonList(farm));
         when(modelMapper.map(any(), any())).thenReturn(farmResponse);
 
-        List<FarmResponse> farmResponses = farmService.findAllFarms(user);
+        List<FarmResponse> farmResponses = farmService.findMyFarms(user);
 
-        assertThat(farmResponses).extracting("address").containsExactly(farm.getAddress());
+        assertThat(farmResponses.size()).isEqualTo(1);
     }
 
-    @DisplayName("나의 농가이 없을 때 모두 조회하면 빈 리스트가 반환된다.")
-    @Test
-    void findAllFarms_is_null_success() {
-        when(farmRepository.findAllByUser(any())).thenReturn(Arrays.asList());
-
-        List<FarmResponse> farmResponses = farmService.findAllFarms(user);
-
-        assertThat(farmResponses).isEmpty();
-    }
-
-    @DisplayName("나의 농가을 조회한다")
+    @DisplayName("나의 농가를 조회한다")
     @Test
     void findFarm_success() {
-        farm.addOwner(user);
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
         when(modelMapper.map(any(), any())).thenReturn(farmResponse);
 
-        FarmResponse actualResponse = farmService.findFarm(user, 1L);
+        FarmResponse response = farmService.findMyFarm(1L);
 
         Assertions.assertAll(
-            () -> assertThat(actualResponse.getAddress()).isEqualTo(farm.getAddress()),
-            () -> assertThat(actualResponse.getPhoneNumber()).isEqualTo(farm.getPhoneNumber())
+            () -> assertThat(response.getAddress()).isEqualTo(farm.getAddress()),
+            () -> assertThat(response.getPhoneNumber()).isEqualTo(farm.getPhoneNumber())
         );
     }
 
-    @DisplayName("나의 농가이 아닌경우 예외가 발생한다")
+    @DisplayName("존재하지 않는 농가일 경우 예외가 발생한다")
     @Test
-    void findFarm_failure_is_not_owner(@Mock User user1, @Mock User user2) {
-        when(user1.getId()).thenReturn(1L);
-        when(user2.getId()).thenReturn(2L);
-        farm.addOwner(user2);
-        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+    void findFarm_is_not_owner_failure() {
+        when(farmRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> farmService.findFarm(user1, 1L))
+        assertThatThrownBy(() -> farmService.findMyFarm(1L))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.ACCESS_DENIED.getMessage());
+            .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
     }
 
-    @DisplayName("농가 번호가 맞지않거나 농가이 없으면 예외가 발생한다")
-    @Test
-    void findFarm_failure_invalid_id() {
-        when(farmRepository.findById(any())).thenThrow(CustomException.class);
-
-        assertThatThrownBy(() -> farmService.findFarm(user, 2L))
-            .isInstanceOf(CustomException.class);
-    }
-
-    @DisplayName("나의 농가을 수정한다.")
+    @DisplayName("나의 농가를 수정한다.")
     @Test
     void updateFarm_success() {
-        farm.addOwner(user);
         FarmRequest farmRequest2 = new FarmRequest(
             "부산",
             "테스트 이름",
@@ -216,7 +194,7 @@ public class FarmServiceTest {
         );
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
 
-        farmService.updateFarm(user, 1L, farmRequest2);
+        farmService.updateMyFarm(user, 1L, farmRequest2);
 
         Assertions.assertAll(
             () -> assertThat(farm.getAddress()).isEqualTo(farmRequest2.getAddress()),
@@ -256,7 +234,7 @@ public class FarmServiceTest {
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
         when(farmRepository.findByIsMainAndUser(anyBoolean(), any())).thenReturn(of(farm2));
 
-        farmService.updateFarm(user, 1L, farmRequest2);
+        farmService.updateMyFarm(user, 1L, farmRequest2);
 
         Assertions.assertAll(
             () -> assertThat(farm.isMain()).isEqualTo(farmRequest2.isMain()),
@@ -282,18 +260,29 @@ public class FarmServiceTest {
 
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
 
-        assertThatThrownBy(() -> farmService.updateFarm(user, 1L, farmRequest2))
+        assertThatThrownBy(() -> farmService.updateMyFarm(user, 1L, farmRequest2))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INVALID_FARM_START_DATE.getMessage());
     }
 
-    @DisplayName("내 농가를 삭제한다.")
+    @DisplayName("나의 농가를 삭제한다.")
     @Test
-    void deleteFarm() {
+    void deleteFarm_success() {
         farm.addOwner(user);
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-        farmService.deleteFarm(user, 1L);
+        farmService.deleteMyFarm(user, 1L);
 
         verify(farmRepository).delete(farm);
+    }
+
+    @DisplayName("자신의 농가가 아닌 농가를 삭제하면 예외가 발생한다.")
+    @Test
+    void deleteFarm_access_denied_failure() {
+        farm.addOwner(User.builder().id(2L).build());
+        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+
+        assertThatThrownBy(() -> farmService.deleteMyFarm(user, 1L))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.ACCESS_DENIED.getMessage());
     }
 }
