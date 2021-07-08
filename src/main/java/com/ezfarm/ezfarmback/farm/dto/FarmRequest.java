@@ -5,18 +5,16 @@ import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
 import javax.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class FarmRequest {
 
-    @ApiModelProperty(value = "농가 주소", required = true)
-    @NotBlank
+    @ApiModelProperty(value = "농가 주소")
     private String address;
 
     @ApiModelProperty(value = "농가 이름", required = true)
@@ -24,14 +22,12 @@ public class FarmRequest {
     private String name;
 
     @ApiModelProperty(value = "농가 전화번호", required = true)
-    @NotBlank
     private String phoneNumber;
 
-    @ApiModelProperty(value = "농가 면적", required = true)
-    @NotBlank
+    @ApiModelProperty(value = "농가 면적")
     private String area;
 
-    @ApiModelProperty(value = "메인 농가 여부")
+    @ApiModelProperty(value = "메인 농가 여부", required = true)
     private boolean isMain;
 
     @ApiModelProperty(value = "농가 타입")
@@ -44,4 +40,16 @@ public class FarmRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
+    @Builder
+    public FarmRequest(String address, String name, String phoneNumber, String area, boolean isMain,
+        FarmType farmType, CropType cropType, LocalDate startDate) {
+        this.address = address;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.area = area;
+        this.isMain = isMain;
+        this.farmType = farmType;
+        this.cropType = cropType;
+        this.startDate = startDate;
+    }
 }

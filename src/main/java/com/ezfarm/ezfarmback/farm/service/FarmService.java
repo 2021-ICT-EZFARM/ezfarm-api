@@ -9,6 +9,7 @@ import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,15 +26,15 @@ public class FarmService {
     private final ModelMapper modelMapper;
 
     public Long createFarm(User user, FarmRequest farmRequest) {
-        confirmFarmStartDate(farmRequest);
+        confirmStartDateToCreateFarm(farmRequest);
 
         Farm farm = modelMapper.map(farmRequest, Farm.class);
-        farm.addOwner(user);
+        farm.setUser(user);
 
         return farmRepository.save(farm).getId();
     }
 
-    private void confirmFarmStartDate(FarmRequest farmRequest) {
+    private void confirmStartDateToCreateFarm(FarmRequest farmRequest) {
         LocalDate farmStartDate = farmRequest.getStartDate();
         if (farmStartDate != null) {
             if (farmStartDate.isBefore(LocalDate.now())) {
@@ -59,23 +60,20 @@ public class FarmService {
     }
 
     public void updateMyFarm(User user, Long farmId, FarmRequest farmRequest) {
-        /*
-        Farm farm = confirmAuthorityToFarm(user, farmId);
-        checkStartDate(farm, farmRequest);
+        Farm farm = confirmAuthorityToAccessFarm(user, farmId);
+        confirmStartDateToUpdateFarm(farm, farmRequest);
         if (farmRequest.isMain()) {
-            Optional<Farm> previousMain = farmRepository.findByIsMainAndUser(true, user);
-            if (previousMain.isPresent()) {
-                previousMain.get().setMain(false);
-            }
+            Optional<Farm> prevMainFarm = farmRepository.findByIsMainAndUser(true, user);
+            prevMainFarm.ifPresent(value -> value.setMain(false));
         }
-        farm.setMain(farmRequest.isMain());
         farm.update(farmRequest);
-        */
     }
 
-    private void checkStartDate(Farm farm, FarmRequest farmRequest) {
-        if (farmRequest.getStartDate().isBefore(farm.getCreatedDate().toLocalDate())) {
-            throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
+    private void confirmStartDateToUpdateFarm(Farm farm, FarmRequest farmRequest) {
+        if (farmRequest.getStartDate() != null) {
+            if (farmRequest.getStartDate().isBefore(farm.getCreatedDate().toLocalDate())) {
+                throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
+            }
         }
     }
 

@@ -77,14 +77,12 @@ public class Farm extends BaseTimeEntity {
         this.isMain = isMain;
     }
 
-    public void addOwner(User user) {
-        this.user = user;
-    }
-
     public void update(FarmRequest farmRequest) {
         this.address = farmRequest.getAddress();
+        this.name = farmRequest.getName();
         this.phoneNumber = farmRequest.getPhoneNumber();
         this.area = farmRequest.getArea();
+        this.isMain = farmRequest.isMain();
         this.farmType = farmRequest.getFarmType();
         this.cropType = farmRequest.getCropType();
         this.startDate = farmRequest.getStartDate();
