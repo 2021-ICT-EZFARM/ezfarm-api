@@ -1,10 +1,10 @@
 package com.ezfarm.ezfarmback.favorite.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
 import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
-import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
-import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.favorite.acceptance.step.FavoriteAcceptanceStep;
 import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
@@ -12,8 +12,8 @@ import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,16 +35,12 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
     @Override
     public void setUp() {
         super.setUp();
-        farmRequest = new FarmRequest(
-            "경기",
-            "테스트 이름",
-            "010-2222-2222",
-            "100",
-            true,
-            FarmType.GLASS,
-            CropType.PAPRIKA,
-            LocalDate.now()
-        );
+        farmRequest = FarmRequest.builder()
+            .name("테스트 농장 이름1")
+            .address("서울")
+            .phoneNumber("010-1234-1234")
+            .isMain(false)
+            .build();
 
         loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         authResponse = getAuthResponse(loginRequest);
@@ -56,35 +52,27 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
     @DisplayName("농가 즐겨찾기를 추가한다.")
     @Test
     void addFavorite() throws Exception {
-        //when
-        ExtractableResponse<Response> response = FarmAcceptanceStep
-            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
-
-        Long farmLocation = FarmAcceptanceStep.getLocation(response);
+        Long farmId = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
 
         ExtractableResponse<Response> result = FavoriteAcceptanceStep
-            .requestToAddFavorite(ownerAuthResponse, farmLocation);
+            .requestToAddFavorite(ownerAuthResponse, farmId);
 
-        //then
         AcceptanceStep.assertThatStatusIsOk(result);
     }
 
     @DisplayName("농가 즐겨찾기를 조회한다.")
     @Test
     void findFavorites() throws Exception {
-        //given
-        ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-            .requestToCreateFarm(ownerAuthResponse, farmRequest, objectMapper);
-        FavoriteAcceptanceStep
-            .requestToAddFavorite(authResponse, FarmAcceptanceStep.getLocation(farmResponse));
+        Long farmId = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(ownerAuthResponse, farmRequest, objectMapper);
+        FavoriteAcceptanceStep.requestToAddFavorite(authResponse, farmId);
 
-        //when
         ExtractableResponse<Response> response = FavoriteAcceptanceStep
             .requestToFindFavorite(authResponse);
         List<FavoriteResponse> favoriteResponses = response.jsonPath()
             .getList(".", FavoriteResponse.class);
 
-        //then
         AcceptanceStep.assertThatStatusIsOk(response);
         FavoriteAcceptanceStep
             .assertThatFindFavorites(favoriteResponses, ownerLoginRequest, farmRequest);
@@ -93,23 +81,24 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
     @DisplayName("농가 즐겨찾기를 삭제한다.")
     @Test
     void deleteFavorite() throws Exception {
-        //given
-        ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-            .requestToCreateFarm(ownerAuthResponse, farmRequest, objectMapper);
-
-        FavoriteAcceptanceStep
-            .requestToAddFavorite(authResponse, FarmAcceptanceStep.getLocation(farmResponse));
+        Long farmId = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+        FavoriteAcceptanceStep.requestToAddFavorite(authResponse, farmId);
 
         ExtractableResponse<Response> favoriteResponse = FavoriteAcceptanceStep
             .requestToFindFavorite(authResponse);
         List<FavoriteResponse> favoriteResponses = favoriteResponse.jsonPath()
             .getList(".", FavoriteResponse.class);
 
-        //when
-        ExtractableResponse<Response> response = FavoriteAcceptanceStep
+        ExtractableResponse<Response> deleteResponse = FavoriteAcceptanceStep
             .requestToDeleteFavorite(authResponse, favoriteResponses.get(0).getId());
 
-        //then
-        FavoriteAcceptanceStep.assertThatDeleteFavorite(authResponse, response);
+        List<FavoriteResponse> response = FavoriteAcceptanceStep
+            .requestToFindFavorite(authResponse).jsonPath().getList(".", FavoriteResponse.class);
+
+        Assertions.assertAll(
+            () -> AcceptanceStep.assertThatStatusIsNoContent(deleteResponse),
+            () -> assertThat(response.size()).isEqualTo(0)
+        );
     }
 }

@@ -3,7 +3,6 @@ package com.ezfarm.ezfarmback.favorite.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
@@ -23,20 +22,6 @@ public class FavoriteAcceptanceStep {
                 .isEqualTo(ownerLoginRequest.getEmail()),
             () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())
                 .isEqualTo(farmRequest.getName())
-        );
-    }
-
-    public static void assertThatDeleteFavorite(AuthResponse authResponse,
-        ExtractableResponse<Response> response) {
-        ExtractableResponse<Response> favoriteResponse = FavoriteAcceptanceStep
-            .requestToFindFavorite(authResponse);
-
-        List<FavoriteResponse> result = favoriteResponse.jsonPath()
-            .getList(".", FavoriteResponse.class);
-
-        Assertions.assertAll(
-            () -> AcceptanceStep.assertThatStatusIsNoContent(response),
-            () -> assertThat(result.size()).isEqualTo(0)
         );
     }
 
