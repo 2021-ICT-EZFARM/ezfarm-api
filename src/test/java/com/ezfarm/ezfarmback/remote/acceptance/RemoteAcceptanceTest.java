@@ -1,9 +1,8 @@
 package com.ezfarm.ezfarmback.remote.acceptance;
 
+import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
 import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
-import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
-import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.remote.acceptance.step.RemoteAcceptanceStep;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
@@ -13,7 +12,6 @@ import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,24 +29,19 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
         super.setUp();
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         authResponse = getAuthResponse(loginRequest);
-        farmRequest = new FarmRequest(
-            "경기",
-            "테스트 이름",
-            "010-2222-2222",
-            "100",
-            true,
-            FarmType.GLASS,
-            CropType.PAPRIKA,
-            LocalDate.now()
-        );
+        farmRequest = FarmRequest.builder()
+            .name("테스트 농장 이름1")
+            .address("서울")
+            .phoneNumber("010-1234-1234")
+            .isMain(false)
+            .build();
     }
 
     @DisplayName("제어 값을 조회한다.")
     @Test
     void createRemote() throws Exception {
-        ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
-        Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
+        Long farmId = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
 
         ExtractableResponse<Response> response = RemoteAcceptanceStep
             .requestToFindRemote(authResponse, farmId);
@@ -61,23 +54,19 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
     @DisplayName("제어 값을 수정한다.")
     @Test
     void updateRemote() throws Exception {
-        ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
-        Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
-
-        ExtractableResponse<Response> remoteResponse = RemoteAcceptanceStep
-            .requestToFindRemote(authResponse, farmId);
-        Long remoteId = remoteResponse.jsonPath()
+        Long farmId = FarmAcceptanceStep
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+        Long remoteId = RemoteAcceptanceStep.requestToFindRemote(authResponse, farmId).jsonPath()
             .getObject(".", RemoteResponse.class).getId();
 
         RemoteRequest remoteRequest = new RemoteRequest(remoteId, OnOff.ON, 37.5f, OnOff.OFF,
             OnOff.ON);
-        RemoteAcceptanceStep.requestToUpdateRemote(authResponse, remoteRequest, objectMapper);
+        ExtractableResponse<Response> updateResponse = RemoteAcceptanceStep
+            .requestToUpdateRemote(authResponse, remoteRequest, objectMapper);
+        RemoteResponse response = RemoteAcceptanceStep.requestToFindRemote(authResponse, farmId)
+            .jsonPath().getObject(".", RemoteResponse.class);
 
-        RemoteResponse response = RemoteAcceptanceStep
-            .requestToFindRemote(authResponse, farmId).jsonPath()
-            .getObject(".", RemoteResponse.class);
-
+        AcceptanceStep.assertThatStatusIsOk(updateResponse);
         RemoteAcceptanceStep.assertThatUpdateRemote(response, remoteRequest);
     }
 }

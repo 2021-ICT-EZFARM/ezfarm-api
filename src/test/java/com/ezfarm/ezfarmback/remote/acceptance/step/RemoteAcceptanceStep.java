@@ -50,9 +50,9 @@ public class RemoteAcceptanceStep {
             .extract();
     }
 
-    public static void requestToUpdateRemote(AuthResponse authResponse,
+    public static ExtractableResponse<Response> requestToUpdateRemote(AuthResponse authResponse,
         RemoteRequest remoteRequest, ObjectMapper objectMapper) throws Exception {
-        given().log().all()
+        return given().log().all()
             .header("Authorization",
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())
             .when()

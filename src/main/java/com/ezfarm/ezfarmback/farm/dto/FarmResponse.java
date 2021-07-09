@@ -4,14 +4,12 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import java.time.LocalDate;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
 public class FarmResponse {
 
     private Long id;
@@ -31,6 +29,20 @@ public class FarmResponse {
     private CropType cropType;
 
     private LocalDate startDate;
+
+    @Builder
+    public FarmResponse(Long id, String address, String name, String phoneNumber, String area,
+        boolean isMain, FarmType farmType, CropType cropType, LocalDate startDate) {
+        this.id = id;
+        this.address = address;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.area = area;
+        this.isMain = isMain;
+        this.farmType = farmType;
+        this.cropType = cropType;
+        this.startDate = startDate;
+    }
 
     public static FarmResponse of(Farm farm) {
         return new FarmResponse(
