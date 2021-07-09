@@ -220,6 +220,6 @@ public class FarmServiceTest {
 
         assertThatThrownBy(() -> farmService.deleteMyFarm(user, 1L))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.ACCESS_DENIED.getMessage());
+            .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
     }
 }
