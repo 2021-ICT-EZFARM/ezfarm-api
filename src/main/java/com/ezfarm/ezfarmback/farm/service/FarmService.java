@@ -87,7 +87,7 @@ public class FarmService {
             () -> new CustomException(ErrorCode.INVALID_FARM_ID)
         );
         if (!farm.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
         return farm;
     }

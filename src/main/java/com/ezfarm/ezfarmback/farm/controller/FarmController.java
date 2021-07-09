@@ -58,7 +58,8 @@ public class FarmController {
     @ApiOperation(value = "나의 농가 수정")
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
-        @ApiResponse(code = 400, message = "잘못된 농가 생성일을 입력했습니다.")
+        @ApiResponse(code = 400, message = "잘못된 농가 생성일을 입력했습니다."),
+        @ApiResponse(code = 403, message = "해당 농장에 권한이 없습니다.")
     })
     @PatchMapping("/me/{farmId}")
     public ResponseEntity<Void> updateMyFarm(@CurrentUser User user, @PathVariable Long farmId,
@@ -70,7 +71,7 @@ public class FarmController {
     @ApiOperation(value = "나의 농가 삭제")
     @ApiResponses(value = {
         @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
-        @ApiResponse(code = 403, message = "콘텐츠에 접근 권한이 없습니다.")
+        @ApiResponse(code = 403, message = "해당 농장에 권한이 없습니다.")
     })
     @DeleteMapping("/me/{farmId}")
     public ResponseEntity<Void> deleteMyFarm(@CurrentUser User user, @PathVariable Long farmId) {

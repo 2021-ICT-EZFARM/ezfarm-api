@@ -4,10 +4,6 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
-
-    /*
-    기본적인 에러
-    */
     INTERNAL_SERVER_ERROR(500, "S_001", "서버에 문제가 생겼습니다."),
 
     INVALID_INPUT_VALUE(400, "C_001", "적절하지 않은 요청 값입니다."),
@@ -21,9 +17,9 @@ public enum ErrorCode {
 
     FAVORITE_DUPLICATED(400, "FA_001", "이미 즐겨찾기에 등록된 농가입니다."),
 
-    ACCESS_DENIED(403, "AU_001", "콘텐츠에 접근 권한이 없습니다."),
-    BAD_LOGIN(400, "AU_002", "잘못된 아이디 또는 패스워드입니다."),
-    DUPLICATED_EMAIL(400, "AU_003", "이미 존재하는 이메일입니다.");
+    BAD_LOGIN(400, "AU_001", "잘못된 아이디 또는 패스워드입니다."),
+    DUPLICATED_EMAIL(400, "AU_002", "이미 존재하는 이메일입니다."),
+    FARM_ACCESS_DENIED(403, "AU_003", "해당 농장에 권한이 없습니다.");
 
     private final int status;
     private final String code;
