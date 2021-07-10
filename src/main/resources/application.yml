@@ -1,21 +1,10 @@
 spring:
   profiles:
     active: dev
-  h2:
-    console:
-      enabled: true
-  datasource:
-    url: jdbc:h2:mem:ezfarmdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    include: auth,db
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       show_sql: true
       format_sql: true
-app:
-  auth:
-    token-secret: secretKey
-    token-expiration-msec: 999999
