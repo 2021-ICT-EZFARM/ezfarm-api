@@ -27,6 +27,10 @@ public class FavoriteService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
+        if (findFarm.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.MY_FARM_NOT_ALLOWED);
+        }
+
         boolean isExist = favoriteRepository.existsByUserAndFarm(user, findFarm);
         if (isExist) {
             throw new CustomException(ErrorCode.FAVORITE_DUPLICATED);
