@@ -1,30 +1,4 @@
---database test sql--
-use
-ezfarm;
-
-show
-variables like 'c%';
-
-ALTER
-DATABASE ezfarm
-CHARACTER SET = 'utf8mb4'
-COLLATE = 'utf8mb4_general_ci';
-
-select @@time_zone, now();
-set
-time_zone='Asia/Seoul';
-
-CREATE TABLE test
-(
-    id      bigint(20) NOT NULL AUTO_INCREMENT,
-    content varchar(255) DEFAULT NULL,
-    PRIMARY KEY (id)
-)ENGINE=InnoDB;
-INSERT INTO test(content) value ('테스트');
-SELECT *
-FROM test;
-
---table sql--
+--table--
 create table user
 (
     user_id      bigint(20) NOT NULL AUTO_INCREMENT,
@@ -51,7 +25,7 @@ create table farm
     area         varchar(50)  DEFAULT NULL,
     crop_type    enum('TOMATO', 'STRAWBERRY', 'PAPRIKA') DEFAULT NULL,
     farm_type    enum('VINYL', 'GLASS') DEFAULT NULL,
-    start_date   date,
+    start_date   date         DEFAULT NULL,
     created_date timestamp,
     updated_date timestamp,
     primary key (farm_id)
@@ -99,38 +73,29 @@ create table alert_range
     primary key (alert_range_id)
 )
 
---fk sql--
-
+--fk--
 alter table alert_range
-    (
-    add constraint 'alert_range_farm_id_fkey'
-    foreign key (farm_id)
-    references farm
-    )
+    add constraint alert_range_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
 
-alter table farm(
-    add constraint 'farm_user_id_fkey'
-    foreign key (user_id)
-    references user
-    )
+alter table farm
+    add constraint farm_user_id_fkey
+        foreign key (user_id)
+            references user (user_id);
+
 
 alter table favorite
-    (
-    add constraint 'favorite_farm_id_fkey'
-    foreign key (farm_id)
-    references farm
-    )
+    add constraint favorite_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
 
 alter table favorite
-    (
-    add constraint 'alert_user_id_fkey'
-    foreign key (user_id)
-    references user
-    )
+    add constraint alert_user_id_fkey
+        foreign key (user_id)
+            references user (user_id);
 
 alter table remote
-    (
-    add constraint 'remote_farm_id_fkey'
-    foreign key (farm_id)
-    references farm
-    )
+    add constraint remote_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
