@@ -71,7 +71,7 @@ public class AlertServiceTest {
         when(alertRangeRepository.findByFarm(any())).thenReturn(ofNullable(alertRange));
         when(modelMapper.map(any(), any())).thenReturn(alertRangeResponse);
 
-        AlertRangeResponse result = alertService.findAlertRange(1L);
+        AlertRangeResponse result = alertService.findAlertRange(user, 1L);
 
         Assertions.assertAll(
             () -> assertThat(result.getTmpMax()).isEqualTo(alertRange.getTmpMax()),
@@ -88,7 +88,7 @@ public class AlertServiceTest {
         when(alertRangeRepository.findByFarm(any())).thenReturn(Optional.empty());
         when(modelMapper.map(any(), any())).thenReturn(alertRangeResponse);
 
-        AlertRangeResponse result = alertService.findAlertRange(1L);
+        AlertRangeResponse result = alertService.findAlertRange(user, 1L);
 
         Assertions.assertAll(
             () -> assertThat(result.getTmpMax()).isEqualTo(alertRange.getTmpMax()),
@@ -97,11 +97,21 @@ public class AlertServiceTest {
         );
     }
 
+    @DisplayName("권한이 없는 농가의 알림 범위 조회 시 에러를 발생한다.")
+    @Test
+    void findAlertRange_access_denied_failure() {
+        User deniedUser = User.builder().id(2L).build();
+        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+        assertThatThrownBy(() -> alertService.findAlertRange(deniedUser, 1L))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
+    }
+
     @DisplayName("알림 범위 조회 시 농가이 존재하지 않으면 에러가 발생한다.")
     @Test
     void findAlertRange_invalid_farm_failure() {
         when(farmRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> alertService.findAlertRange(1L))
+        assertThatThrownBy(() -> alertService.findAlertRange(user, 1L))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
     }

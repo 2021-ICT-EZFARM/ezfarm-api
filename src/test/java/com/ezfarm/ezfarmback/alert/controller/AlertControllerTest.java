@@ -31,7 +31,7 @@ public class AlertControllerTest extends CommonApiTest {
     @Test
     void findAlertRange() throws Exception {
         AlertRangeResponse alertRangeResponse = new AlertRangeResponse();
-        when(alertService.findAlertRange(any())).thenReturn(alertRangeResponse);
+        when(alertService.findAlertRange(any(), any())).thenReturn(alertRangeResponse);
 
         mockMvc.perform(get(String.format("/api/alert/alert-range?farmId=%d", 1L)))
             .andExpect(status().isOk())
