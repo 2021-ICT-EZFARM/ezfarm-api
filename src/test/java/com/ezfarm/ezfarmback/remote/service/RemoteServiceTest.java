@@ -68,7 +68,9 @@ class RemoteServiceTest {
             .password("1234")
             .role(Role.ROLE_USER)
             .build();
-        farm = Farm.builder().build();
+        farm = Farm.builder()
+            .user(user)
+            .build();
         defaultRemote = Remote.builder()
             .id(1L)
             .farm(farm)
@@ -93,7 +95,7 @@ class RemoteServiceTest {
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
         when(remoteRepository.findByFarm(any())).thenReturn(ofNullable(remote));
 
-        RemoteResponse remoteResponse = remoteService.findRemote(1L);
+        RemoteResponse remoteResponse = remoteService.findRemote(user, 1L);
 
         Assertions.assertAll(
             () -> assertThat(remoteResponse.getTemperature()).isEqualTo(remote.getTemperature()),
@@ -110,7 +112,7 @@ class RemoteServiceTest {
         when(remoteRepository.findByFarm(any())).thenReturn(Optional.empty());
         when(remoteRepository.save(any())).thenReturn(defaultRemote);
 
-        RemoteResponse response = remoteService.findRemote(1L);
+        RemoteResponse response = remoteService.findRemote(user, 1L);
 
         Assertions.assertAll(
             () -> assertThat(response.getTemperature()).isEqualTo(defaultRemote.getTemperature()),
@@ -124,15 +126,26 @@ class RemoteServiceTest {
     @Test
     void findRemote_failure() {
         when(farmRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> remoteService.findRemote(1L))
+        assertThatThrownBy(() -> remoteService.findRemote(user, 1L))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
+    }
+
+    @DisplayName("접근 권한이 없는 농가의 제어값을 조회 시 예외가 발생한다.")
+    @Test
+    void findRemote_failure_access_denied() {
+        User deniedUser = User.builder()
+            .id(2L)
+            .build();
+        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+        assertThatThrownBy(() -> remoteService.findRemote(deniedUser, 1L))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
     }
 
     @DisplayName("농가 제어를 요청한다.")
     @Test
     void updateRemote() {
-        farm.setUser(user);
         when(remoteRepository.findById(any())).thenReturn(ofNullable(remote));
         remoteService.updateRemote(user, remoteRequest);
         Assertions.assertAll(
@@ -150,7 +163,6 @@ class RemoteServiceTest {
         User deniedUser = User.builder()
             .id(2L)
             .build();
-        farm.setUser(user);
         when(remoteRepository.findById(any())).thenReturn(ofNullable(remote));
         assertThatThrownBy(() -> remoteService.updateRemote(deniedUser, remoteRequest))
             .isInstanceOf(CustomException.class)

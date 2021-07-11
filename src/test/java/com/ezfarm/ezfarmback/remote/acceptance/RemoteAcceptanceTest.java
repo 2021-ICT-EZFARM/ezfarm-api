@@ -30,7 +30,7 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         authResponse = getAuthResponse(loginRequest);
         farmRequest = FarmRequest.builder()
-            .name("테스트 농장 이름1")
+            .name("테스트 농가 이름1")
             .address("서울")
             .phoneNumber("010-1234-1234")
             .isMain(false)
