@@ -5,6 +5,9 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,16 +28,19 @@ public class Remote extends BaseTimeEntity {
     @Column(name = "remote_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
+    @Enumerated(EnumType.STRING)
     private OnOff water;
 
     private float temperature;
 
+    @Enumerated(EnumType.STRING)
     private OnOff illuminance;
 
+    @Enumerated(EnumType.STRING)
     private OnOff co2;
 
     @Builder

@@ -51,6 +51,7 @@ public class FavoriteServiceTest {
     void setUp() {
         favoriteService = new FavoriteService(farmRepository, favoriteRepository);
         loginUser = User.builder()
+            .id(1L)
             .name("남상우")
             .email("a@gmail.com")
             .password("비밀번호")
@@ -58,6 +59,7 @@ public class FavoriteServiceTest {
             .build();
 
         farmOwner = User.builder()
+            .id(2L)
             .name("홍길동")
             .email("b@gmail.com")
             .password("비밀번호")
@@ -65,6 +67,7 @@ public class FavoriteServiceTest {
             .build();
 
         farm = Farm.builder()
+            .user(farmOwner)
             .address("경기")
             .name("테스트 농가")
             .phoneNumber("010-2222-2222")
@@ -98,6 +101,17 @@ public class FavoriteServiceTest {
         assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, 1L))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
+    }
+
+    @DisplayName("즐겨찾기 추가 시 자신의 농가면 예외 처리한다.")
+    @Test
+    void addFavorite_failure_my_farm() {
+        Farm myFarm = Farm.builder().user(loginUser).build();
+        when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(myFarm));
+
+        assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, 1L))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.MY_FARM_NOT_ALLOWED.getMessage());
     }
 
     @DisplayName("즐겨찾기 추가 시 중복되는 농가이면 예외 처리한다.")

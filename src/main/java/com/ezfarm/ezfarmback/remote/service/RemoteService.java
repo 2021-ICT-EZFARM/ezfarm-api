@@ -9,6 +9,7 @@ import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
+import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,13 @@ public class RemoteService {
     private final RemoteRepository remoteRepository;
 
     @Transactional(readOnly = true)
-    public RemoteResponse findRemote(Long farmId) {
+    public RemoteResponse findRemote(User user, Long farmId) {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+
+        if (findFarm.isNotPossibleToAccessFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
 
         Remote remote = remoteRepository.findByFarm(findFarm)
             .orElseGet(() -> createRemote(findFarm));
@@ -45,9 +50,14 @@ public class RemoteService {
         );
     }
 
-    public void updateRemote(RemoteRequest remoteRequest) {
+    public void updateRemote(User user, RemoteRequest remoteRequest) {
         Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+        if (findRemote.getFarm().isNotPossibleToAccessFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
+
         findRemote.updateRemote(remoteRequest);
     }
 }

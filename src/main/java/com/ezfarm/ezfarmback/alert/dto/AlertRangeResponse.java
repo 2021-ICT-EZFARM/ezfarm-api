@@ -1,6 +1,7 @@
 package com.ezfarm.ezfarmback.alert.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,5 +28,7 @@ public class AlertRangeResponse {
     private float mosMax;
     @ApiModelProperty(value = "최소 토양 수분")
     private float mosMin;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 
 }

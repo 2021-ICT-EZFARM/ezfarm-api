@@ -21,7 +21,7 @@ public class FarmRequest {
     @NotBlank
     private String name;
 
-    @ApiModelProperty(value = "농가 전화번호", required = true)
+    @ApiModelProperty(value = "농가 전화번호")
     private String phoneNumber;
 
     @ApiModelProperty(value = "농가 면적")

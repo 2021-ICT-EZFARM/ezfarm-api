@@ -1,6 +1,7 @@
 package com.ezfarm.ezfarmback.user.dto;
 
 import com.ezfarm.ezfarmback.user.domain.Role;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -13,5 +14,7 @@ public class UserResponse {
     private String address;
     private String imageUrl;
     private Role role;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 
 }

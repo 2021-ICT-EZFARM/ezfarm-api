@@ -47,7 +47,7 @@ class RemoteControllerTest extends CommonApiTest {
     @DisplayName("농가 제어값 조회")
     @Test
     void findRemote() throws Exception {
-        when(remoteService.findRemote(any())).thenReturn(remoteResponse);
+        when(remoteService.findRemote(any(), any())).thenReturn(remoteResponse);
 
         mockMvc.perform(get(String.format("/api/remote?farmId=%d", 1L)))
             .andExpect(status().isOk())
@@ -59,7 +59,7 @@ class RemoteControllerTest extends CommonApiTest {
     @DisplayName("농가 제어값 수정")
     @Test
     void updateRemote() throws Exception {
-        doNothing().when(remoteService).updateRemote(any());
+        doNothing().when(remoteService).updateRemote(any(), any());
 
         mockMvc.perform(patch("/api/remote")
             .contentType(MediaType.APPLICATION_JSON_VALUE)

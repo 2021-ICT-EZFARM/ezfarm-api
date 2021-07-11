@@ -31,7 +31,7 @@ public class AlertControllerTest extends CommonApiTest {
     @Test
     void findAlertRange() throws Exception {
         AlertRangeResponse alertRangeResponse = new AlertRangeResponse();
-        when(alertService.findAlertRange(any())).thenReturn(alertRangeResponse);
+        when(alertService.findAlertRange(any(), any())).thenReturn(alertRangeResponse);
 
         mockMvc.perform(get(String.format("/api/alert/alert-range?farmId=%d", 1L)))
             .andExpect(status().isOk())
@@ -47,7 +47,7 @@ public class AlertControllerTest extends CommonApiTest {
         alertRangeRequest.setTmpMax((float) 10.1);
         alertRangeRequest.setTmpMin((float) 5.7);
 
-        doNothing().when(alertService).updateAlertRange(any(), any());
+        doNothing().when(alertService).updateAlertRange(any(), any(), any());
 
         mockMvc.perform(patch(String.format("/api/alert/alert-range?alertRangeId=%d", 1L))
             .contentType(MediaType.APPLICATION_JSON)
