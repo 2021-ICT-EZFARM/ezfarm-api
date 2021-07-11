@@ -4,6 +4,7 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,9 +31,14 @@ public class FarmResponse {
 
     private LocalDate startDate;
 
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updatedDate;
+
     @Builder
     public FarmResponse(Long id, String address, String name, String phoneNumber, String area,
-        boolean isMain, FarmType farmType, CropType cropType, LocalDate startDate) {
+        boolean isMain, FarmType farmType, CropType cropType, LocalDate startDate,
+        LocalDateTime createdDate, LocalDateTime updatedDate) {
         this.id = id;
         this.address = address;
         this.name = name;
@@ -42,20 +48,23 @@ public class FarmResponse {
         this.farmType = farmType;
         this.cropType = cropType;
         this.startDate = startDate;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
     }
 
     public static FarmResponse of(Farm farm) {
-        return new FarmResponse(
-            farm.getId(),
-            farm.getAddress(),
-            farm.getName(),
-            farm.getPhoneNumber(),
-            farm.getArea(),
-            farm.isMain(),
-            farm.getFarmType(),
-            farm.getCropType(),
-            farm.getStartDate()
-        );
+        return FarmResponse.builder()
+            .id(farm.getId())
+            .name(farm.getName())
+            .address(farm.getAddress())
+            .phoneNumber(farm.getPhoneNumber())
+            .area(farm.getArea())
+            .startDate(farm.getStartDate())
+            .farmType(farm.getFarmType())
+            .cropType(farm.getCropType())
+            .createdDate(farm.getCreatedDate())
+            .updatedDate(farm.getUpdatedDate())
+            .build();
     }
 
 }
