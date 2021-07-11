@@ -2,9 +2,9 @@ spring:
   profiles:
     active: dev
     include: auth,db
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      show_sql: true
-      format_sql: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace

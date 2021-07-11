@@ -64,20 +64,20 @@ public class FarmServiceTest {
             .build();
 
         farm = Farm.builder()
-            .name("테스트 농장 이름1")
+            .name("테스트 농가 이름1")
             .address("서울")
             .isMain(false)
             .startDate(LocalDate.now())
             .build();
 
         farmRequest = FarmRequest.builder()
-            .name("테스트 농장 이름2")
+            .name("테스트 농가 이름2")
             .address("경기")
             .build();
 
         farmResponse = FarmResponse.builder()
             .id(1L)
-            .name("테스트 농장 이름1")
+            .name("테스트 농가 이름1")
             .address("서울")
             .build();
     }

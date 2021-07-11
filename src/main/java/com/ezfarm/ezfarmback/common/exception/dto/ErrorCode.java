@@ -16,10 +16,13 @@ public enum ErrorCode {
     INVALID_FARM_START_DATE(400, "FA_002", "잘못된 농가 생성일을 입력했습니다."),
 
     FAVORITE_DUPLICATED(400, "FA_001", "이미 즐겨찾기에 등록된 농가입니다."),
+    MY_FARM_NOT_ALLOWED(400, "FA_002", "나의 농가는 즐겨찾기에 등록할 수 없습니다."),
 
     BAD_LOGIN(400, "AU_001", "잘못된 아이디 또는 패스워드입니다."),
+
     DUPLICATED_EMAIL(400, "AU_002", "이미 존재하는 이메일입니다."),
-    FARM_ACCESS_DENIED(403, "AU_003", "해당 농장에 권한이 없습니다.");
+
+    FARM_ACCESS_DENIED(403, "AU_003", "해당 농가에 권한이 없습니다.");
 
     private final int status;
     private final String code;
