@@ -27,6 +27,7 @@ public class FarmService {
 
     public Long createFarm(User user, FarmRequest farmRequest) {
         confirmStartDateToCreateFarm(farmRequest);
+        confirmIsMain(user, farmRequest);
 
         Farm farm = modelMapper.map(farmRequest, Farm.class);
         farm.setUser(user);
@@ -62,11 +63,15 @@ public class FarmService {
     public void updateMyFarm(User user, Long farmId, FarmRequest farmRequest) {
         Farm farm = confirmAuthorityToAccessFarm(user, farmId);
         confirmStartDateToUpdateFarm(farm, farmRequest);
+        confirmIsMain(user, farmRequest);
+        farm.update(farmRequest);
+    }
+
+    private void confirmIsMain(User user, FarmRequest farmRequest) {
         if (farmRequest.isMain()) {
             Optional<Farm> prevMainFarm = farmRepository.findByIsMainAndUser(true, user);
             prevMainFarm.ifPresent(value -> value.setMain(false));
         }
-        farm.update(farmRequest);
     }
 
     private void confirmStartDateToUpdateFarm(Farm farm, FarmRequest farmRequest) {
@@ -86,7 +91,8 @@ public class FarmService {
         Farm farm = farmRepository.findById(farmId).orElseThrow(
             () -> new CustomException(ErrorCode.INVALID_FARM_ID)
         );
-        if (!farm.getUser().getId().equals(user.getId())) {
+
+        if (farm.isNotPossibleToAccessFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
         return farm;
