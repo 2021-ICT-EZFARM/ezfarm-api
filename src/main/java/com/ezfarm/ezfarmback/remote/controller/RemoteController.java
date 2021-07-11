@@ -3,6 +3,8 @@ package com.ezfarm.ezfarmback.remote.controller;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.remote.service.RemoteService;
+import com.ezfarm.ezfarmback.security.CurrentUser;
+import com.ezfarm.ezfarmback.user.domain.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -33,9 +35,11 @@ public class RemoteController {
     }
 
     @ApiOperation(value = "농가 제어 값 수정")
+    @ApiResponse(code = 403, message = "해당 농가에 권한이 없습니다.")
     @PatchMapping
-    public ResponseEntity<Void> updateRemote(@Valid @RequestBody RemoteRequest remoteRequest) {
-        remoteService.updateRemote(remoteRequest);
+    public ResponseEntity<Void> updateRemote(@CurrentUser User user,
+        @Valid @RequestBody RemoteRequest remoteRequest) {
+        remoteService.updateRemote(user, remoteRequest);
         return ResponseEntity.ok().build();
     }
 }

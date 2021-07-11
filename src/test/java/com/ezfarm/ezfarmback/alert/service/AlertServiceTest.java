@@ -14,6 +14,7 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.user.domain.User;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +44,18 @@ public class AlertServiceTest {
 
     AlertRange alertRange;
 
+    User user;
+
     @BeforeEach
     void setUp() {
         alertService = new AlertService(alertRangeRepository, farmRepository, modelMapper);
 
+        user = User.builder()
+            .id(1L)
+            .build();
+
         farm = Farm.builder()
+            .user(user)
             .name("테스트 농가")
             .build();
 
@@ -106,7 +114,7 @@ public class AlertServiceTest {
         alertRangeRequest.setTmpMin((float) 5.7);
 
         when(alertRangeRepository.findById(any())).thenReturn(ofNullable(alertRange));
-        alertService.updateAlertRange(1L, alertRangeRequest);
+        alertService.updateAlertRange(user, 1L, alertRangeRequest);
 
         Assertions.assertAll(
             () -> assertThat(alertRange.getTmpMax()).isEqualTo(alertRangeRequest.getTmpMax()),
@@ -115,12 +123,23 @@ public class AlertServiceTest {
         );
     }
 
+    @DisplayName("권한이 없는 농가의 알림 범위 수정 시 에러를 발생한다.")
+    @Test
+    void updateAlertRange_access_denied_failure() {
+        User deniedUser = User.builder().id(2L).build();
+        AlertRangeRequest alertRangeRequest = new AlertRangeRequest();
+        when(alertRangeRepository.findById(any())).thenReturn(ofNullable(alertRange));
+        assertThatThrownBy(() -> alertService.updateAlertRange(deniedUser, 1L, alertRangeRequest))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
+    }
+
     @DisplayName("알림 범위 수정 시 엔티티가 없으면 에러를 발생한다.")
     @Test
     void updateAlertRange_notFound_alertRange_failure() {
         AlertRangeRequest alertRangeRequest = new AlertRangeRequest();
         when(alertRangeRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> alertService.updateAlertRange(1L, alertRangeRequest))
+        assertThatThrownBy(() -> alertService.updateAlertRange(user, 1L, alertRangeRequest))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
     }

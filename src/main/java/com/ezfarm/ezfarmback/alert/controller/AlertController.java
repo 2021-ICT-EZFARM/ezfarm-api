@@ -3,6 +3,8 @@ package com.ezfarm.ezfarmback.alert.controller;
 import com.ezfarm.ezfarmback.alert.dto.AlertRangeRequest;
 import com.ezfarm.ezfarmback.alert.dto.AlertRangeResponse;
 import com.ezfarm.ezfarmback.alert.service.AlertService;
+import com.ezfarm.ezfarmback.security.CurrentUser;
+import com.ezfarm.ezfarmback.user.domain.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -33,9 +35,10 @@ public class AlertController {
 
     @ApiOperation(value = "알림 범위 수정")
     @PatchMapping("/alert-range")
-    public ResponseEntity<Void> updateAlertRange(@RequestParam Long alertRangeId,
+    public ResponseEntity<Void> updateAlertRange(@CurrentUser User user,
+        @RequestParam Long alertRangeId,
         @RequestBody AlertRangeRequest alertRangeRequest) {
-        alertService.updateAlertRange(alertRangeId, alertRangeRequest);
+        alertService.updateAlertRange(user, alertRangeId, alertRangeRequest);
         return ResponseEntity.ok().build();
     }
 

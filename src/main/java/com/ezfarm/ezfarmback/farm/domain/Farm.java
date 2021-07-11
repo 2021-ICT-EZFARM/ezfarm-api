@@ -87,4 +87,8 @@ public class Farm extends BaseTimeEntity {
         this.cropType = farmRequest.getCropType();
         this.startDate = farmRequest.getStartDate();
     }
+
+    public boolean isNotPossibleToAccessFarm(Long userId) {
+        return !this.getUser().getId().equals(userId);
+    }
 }

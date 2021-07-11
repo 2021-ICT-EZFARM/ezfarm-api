@@ -15,6 +15,8 @@ import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
+import com.ezfarm.ezfarmback.user.domain.Role;
+import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.assertj.core.api.AssertionsForClassTypes;
@@ -35,6 +37,8 @@ class RemoteServiceTest {
 
     @Mock
     RemoteRepository remoteRepository;
+
+    User user;
 
     Remote defaultRemote;
 
@@ -57,6 +61,13 @@ class RemoteServiceTest {
 
         remoteRequest = new RemoteRequest(1L, OnOff.ON, 37.5f, OnOff.OFF, OnOff.ON);
 
+        user = User.builder()
+            .id(1L)
+            .email("test@email.com")
+            .name("테스트 유저")
+            .password("1234")
+            .role(Role.ROLE_USER)
+            .build();
         farm = Farm.builder().build();
         defaultRemote = Remote.builder()
             .id(1L)
@@ -121,8 +132,9 @@ class RemoteServiceTest {
     @DisplayName("농가 제어를 요청한다.")
     @Test
     void updateRemote() {
+        farm.setUser(user);
         when(remoteRepository.findById(any())).thenReturn(ofNullable(remote));
-        remoteService.updateRemote(remoteRequest);
+        remoteService.updateRemote(user, remoteRequest);
         Assertions.assertAll(
             () -> AssertionsForClassTypes.assertThat(remote.getTemperature())
                 .isEqualTo(remoteRequest.getTemperature()),
@@ -132,11 +144,24 @@ class RemoteServiceTest {
         );
     }
 
+    @DisplayName("접근 권한이 없는 농가 제어 요청 시 예외가 발생한다.")
+    @Test
+    void updateRemote_failure_access_denied() {
+        User deniedUser = User.builder()
+            .id(2L)
+            .build();
+        farm.setUser(user);
+        when(remoteRepository.findById(any())).thenReturn(ofNullable(remote));
+        assertThatThrownBy(() -> remoteService.updateRemote(deniedUser, remoteRequest))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
+    }
+
     @DisplayName("농가 제어 엔티티가 존재하지 않을 시 예외가 발생한다.")
     @Test
     void updateRemote_failure() {
         when(remoteRepository.findById(any())).thenReturn(Optional.empty());
-        assertThatThrownBy(() -> remoteService.updateRemote(remoteRequest))
+        assertThatThrownBy(() -> remoteService.updateRemote(user, remoteRequest))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
     }

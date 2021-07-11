@@ -47,7 +47,7 @@ public class AlertControllerTest extends CommonApiTest {
         alertRangeRequest.setTmpMax((float) 10.1);
         alertRangeRequest.setTmpMin((float) 5.7);
 
-        doNothing().when(alertService).updateAlertRange(any(), any());
+        doNothing().when(alertService).updateAlertRange(any(), any(), any());
 
         mockMvc.perform(patch(String.format("/api/alert/alert-range?alertRangeId=%d", 1L))
             .contentType(MediaType.APPLICATION_JSON)

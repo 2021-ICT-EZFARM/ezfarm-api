@@ -8,6 +8,7 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,13 @@ public class AlertService {
         return modelMapper.map(alertRange, AlertRangeResponse.class);
     }
 
-    public void updateAlertRange(Long alertRangeId, AlertRangeRequest alertRangeRequest) {
+    public void updateAlertRange(User user, Long alertRangeId, AlertRangeRequest alertRangeRequest) {
         AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+        if (alertRange.getFarm().isNotPossibleToAccessFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
 
         alertRange.updateAlertRange(alertRangeRequest);
     }
