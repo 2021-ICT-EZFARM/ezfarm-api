@@ -7,6 +7,7 @@ import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,11 @@ public class AuthenticationFilterTest extends CommonAcceptanceTest {
         UserResponse userResponse = response.body().as(UserResponse.class);
 
         //then
-        assertThat(userResponse).isEqualTo(modelMapper.map(user1, UserResponse.class));
+        Assertions.assertAll(
+            () -> assertThat(userResponse.getAddress()).isEqualTo(user1.getAddress()),
+            () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(user1.getPhoneNumber()),
+            () -> assertThat(userResponse.getEmail()).isEqualTo(user1.getEmail()),
+            () -> assertThat(userResponse.getName()).isEqualTo(user1.getName())
+        );
     }
 }

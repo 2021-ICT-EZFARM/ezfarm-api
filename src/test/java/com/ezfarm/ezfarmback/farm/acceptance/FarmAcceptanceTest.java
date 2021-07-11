@@ -35,14 +35,14 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         authResponse = getAuthResponse(loginRequest);
 
         farmRequest1 = FarmRequest.builder()
-            .name("테스트 농장 이름1")
+            .name("테스트 농가 이름1")
             .address("서울")
             .phoneNumber("010-1234-1234")
             .isMain(false)
             .build();
 
         farmRequest2 = FarmRequest.builder()
-            .name("테스트 농장 이름2")
+            .name("테스트 농가 이름2")
             .address("경기")
             .phoneNumber("010-1234-1234")
             .isMain(false)
@@ -68,7 +68,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
     @Test
     void updateFarm() throws Exception {
         FarmRequest updateRequest = FarmRequest.builder()
-            .name("테스트 농장 이름3")
+            .name("테스트 농가 이름3")
             .address("경기")
             .isMain(true)
             .build();
