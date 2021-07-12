@@ -2,8 +2,8 @@
 pipeline {
   agent any
   environment {
-    CONTAINER_NAME = 'ezfarm'
-    IMAGE_NAME = 'ezfarm:latest'
+    CONTAINER_NAME = 'ezfarm-con'
+    IMAGE_NAME = 'ezfarm-img'
   }
 
   stages {
@@ -52,7 +52,7 @@ pipeline {
         docker rm ${CONTAINER_NAME}
         docker rmi ${IMAGE_NAME}
         docker build -t ${IMAGE_NAME} .
-        docker run -d --name ${CONTAINER_NAME} -p 9090:9090 -v /home/jenkins:/var/jenkins_home ${IMAGE_NAME}
+        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 -v /home/jenkins:/var/jenkins_home ${IMAGE_NAME}
         """
       }
       post {

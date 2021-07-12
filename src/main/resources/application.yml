@@ -4,7 +4,3 @@ spring:
     include: security
   jackson:
     property-naming-strategy: SNAKE_CASE
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: trace
