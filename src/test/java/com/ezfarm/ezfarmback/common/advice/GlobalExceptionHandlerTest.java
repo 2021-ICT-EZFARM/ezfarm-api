@@ -37,19 +37,6 @@ public class GlobalExceptionHandlerTest {
         objectMapper = new ObjectMapper();
     }
 
-    @DisplayName("적절하지 않은 요청 값이 왔을 때 예외 처리를 한다.")
-    @Test
-    void handleMethodArgumentNotValidException() throws Exception {
-        TestDto testDto = new TestDto(null, 1);
-
-        mockMvc.perform(get("/test")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(testDto)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value("C_001"))
-            .andDo(print());
-    }
-
     @DisplayName("잘못된 타입의 요청 값이 왔을 때 예외 처리를 한다.")
     @Test
     void methodArgumentTypeMismatchException() throws Exception {
