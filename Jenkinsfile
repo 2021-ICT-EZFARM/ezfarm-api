@@ -38,7 +38,7 @@ pipeline {
         }
         failure {
           error 'Build Failure -> Stop'
-          mail to: 'highright96@gmail.com'
+          mail to: 'highright96@gmail.com',
                subject: "Jenkins Failure Build",
                body: "Build Failed."
         }
@@ -58,13 +58,13 @@ pipeline {
       }
       post {
         success {
-          mail to: 'highright96@gmail.com'
+          mail to: 'highright96@gmail.com',
                subject: "Jenkins Success Deploy",
                body: "Deploy Success"
         }
         failure {
           error 'Deploy Failure -> Stop'
-          mail to: 'highright96@gmail.com'
+          mail to: 'highright96@gmail.com',
                subject: "Jenkins Failure Deploy",
                body: "Deploy Failed."
         }
