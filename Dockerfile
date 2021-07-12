@@ -4,7 +4,7 @@ MAINTAINER SANGWOO NAM <highright96@gmail.com>
 
 VOLUME /tmp
 
-EXPOSE 8080
+EXPOSE 9090
 
 ARG JAR_FILE=build/libs/ezfarm-back-0.0.1-SNAPSHOT.jar
 

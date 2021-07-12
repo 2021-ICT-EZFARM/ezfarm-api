@@ -7,18 +7,20 @@ pipeline {
   }
 
   stages {
-    stage('git clone'){
+    stage('git pull'){
       steps {
-        echo 'Clone Repository Start'
-        git url: 'https://github.com/2021-ict-hanium/ezfarm-back.git',
-          branch: 'release'
+        echo 'Git Pull - Start'
+        sh """
+        git fetch
+        git pull origin master
+        """
       }
       post {
         success {
-          echo 'Cloned Repository Success'
+          echo 'Git Pull - Success'
         }
         failure {
-          error 'Build Failure -> Stop'
+          error 'Git Pull - Failure'
         }
       }
     }
@@ -27,7 +29,6 @@ pipeline {
       steps {
         echo 'Build Start'
         sh """
-        chmod 755 ./gradlew
         ./gradlew clean build
         """
       }
@@ -38,6 +39,7 @@ pipeline {
         failure {
           error 'Build Failure -> Stop'
           mail to: 'highright96@gmail.com',
+               recipientProviders : 'ezfarm@email.com'
                subject: "Jenkins Failure Build",
                body: "Build Failed."
         }
@@ -52,18 +54,20 @@ pipeline {
         docker rm ${CONTAINER_NAME}
         docker rmi ${IMAGE_NAME}
         docker build -t ${IMAGE_NAME} .
-        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 -v /home/jenkins:/var/jenkins_home ${IMAGE_NAME}
+        docker run -d --name ${CONTAINER_NAME} -p 9090:9090 -v /home/jenkins:/var/jenkins_home ${IMAGE_NAME}
         """
       }
       post {
         success {
           mail to: 'highright96@gmail.com',
+               recipientProviders : 'ezfarm@email.com'
                subject: "Jenkins Success Deploy",
                body: "Deploy Success"
         }
         failure {
           error 'Deploy Failure -> Stop'
           mail to: 'highright96@gmail.com',
+               recipientProviders : 'ezfarm@email.com'
                subject: "Jenkins Failure Deploy",
                body: "Deploy Failed."
         }
