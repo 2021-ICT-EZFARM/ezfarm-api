@@ -29,6 +29,7 @@ pipeline {
       steps {
         echo 'Build Start'
         sh """
+        chmod 755 ./gradlew
         ./gradlew clean build
         """
       }
