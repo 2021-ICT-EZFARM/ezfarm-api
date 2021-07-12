@@ -118,4 +118,4 @@ gradle-app.setting
 # Yml file
 /src/main/resources/application-auth.yml
 /src/main/resources/application-db.yml
-/src/main/resources/database/
+/src/main/resources/database/**
