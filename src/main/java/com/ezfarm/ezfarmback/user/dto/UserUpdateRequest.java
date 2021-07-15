@@ -1,19 +1,16 @@
 package com.ezfarm.ezfarmback.user.dto;
 
-import javax.validation.constraints.NotBlank;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserUpdateRequest {
 
-    @NotBlank
-    private String name;
     private String phoneNumber;
     private String address;
-    private String imageUrl;
+    //private MultipartFile image;
 }
