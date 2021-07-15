@@ -9,6 +9,7 @@ import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateResponse;
 import com.ezfarm.ezfarmback.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -70,10 +71,10 @@ public class UserController {
     @ApiOperation(value = "내 정보 수정")
     @ApiResponse(code = 404, message = "존재하지 않는 사용자 입니다.")
     @PatchMapping
-    public ResponseEntity<Void> updateUser(@CurrentUser User user,
-        @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
-        userService.updateUser(user, userUpdateRequest);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserUpdateResponse> updateUser(@CurrentUser User user,
+        @RequestBody UserUpdateRequest userUpdateRequest) {
+        UserUpdateResponse userUpdateResponse = userService.updateUser(user, userUpdateRequest);
+        return ResponseEntity.ok(userUpdateResponse);
     }
 
     @ApiOperation(value = "유저 회원탈퇴")

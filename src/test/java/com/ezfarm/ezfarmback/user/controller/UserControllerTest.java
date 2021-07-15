@@ -1,25 +1,30 @@
 package com.ezfarm.ezfarmback.user.controller;
 
-import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
+import static java.util.Optional.ofNullable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.ezfarm.ezfarmback.common.WithMockCustomUser;
+import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateResponse;
 import com.ezfarm.ezfarmback.user.service.UserService;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
-import static java.util.Optional.ofNullable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("유저 단위 테스트(Controller)")
 @WebMvcTest(controllers = UserController.class)
@@ -67,14 +72,10 @@ public class UserControllerTest extends CommonApiTest {
     @Test
     void updateUser() throws Exception {
         //given
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
-            "user",
-            "010-1234-1234",
-            "address",
-            "image");
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("010-1234-1234", "address");
 
         //when, then
-        doNothing().when(userService).updateUser(any(), any());
+        when(userService.updateUser(any(), any())).thenReturn(new UserUpdateResponse());
 
         mockMvc.perform(patch("/api/user")
             .contentType(MediaType.APPLICATION_JSON)

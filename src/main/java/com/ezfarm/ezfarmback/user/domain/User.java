@@ -1,18 +1,18 @@
 package com.ezfarm.ezfarmback.user.domain;
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
-import com.ezfarm.ezfarmback.common.exception.CustomException;
-import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.farm.domain.Farm;
-import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import lombok.*;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Entity
@@ -60,10 +60,8 @@ public class User extends BaseTimeEntity {
     }
 
     public void updateUser(UserUpdateRequest userUpdateRequest) {
-        this.name = userUpdateRequest.getName();
         this.phoneNumber = userUpdateRequest.getPhoneNumber();
         this.address = userUpdateRequest.getAddress();
-        this.imageUrl = userUpdateRequest.getImageUrl();
     }
 
 }

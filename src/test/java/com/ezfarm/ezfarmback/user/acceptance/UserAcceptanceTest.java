@@ -81,8 +81,7 @@ public class UserAcceptanceTest extends CommonAcceptanceTest {
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
 
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("update", "010-1234-1234",
-            "address", "image");
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("010-1234-1234", "address");
 
         //when
         ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdateUser(

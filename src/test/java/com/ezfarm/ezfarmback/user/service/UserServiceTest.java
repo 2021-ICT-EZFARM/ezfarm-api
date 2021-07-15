@@ -1,13 +1,21 @@
 package com.ezfarm.ezfarmback.user.service;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
+import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
-import com.ezfarm.ezfarmback.user.domain.UserRepository;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,15 +23,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("유저 단위 테스트(Service)")
@@ -85,21 +87,15 @@ public class UserServiceTest {
     @Test
     void updateUser() {
         //given
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
-            "user",
-            "010-1234-1234",
-            "address",
-            "image");
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("010-1234-1234", "address");
 
         //when
         user.updateUser(userUpdateRequest);
 
         //then
         Assertions.assertAll(
-            () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
             () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber()),
-            () -> assertThat(user.getAddress()).isEqualTo(userUpdateRequest.getAddress()),
-            () -> assertThat(user.getImageUrl()).isEqualTo(userUpdateRequest.getImageUrl())
+            () -> assertThat(user.getAddress()).isEqualTo(userUpdateRequest.getAddress())
         );
     }
 
@@ -107,11 +103,7 @@ public class UserServiceTest {
     @Test
     void updateUserWithException() {
         //given
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest(
-            "user",
-            "010-1234-1234",
-            "address",
-            "image");
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("010-1234-1234", "address");
 
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
