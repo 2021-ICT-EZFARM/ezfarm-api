@@ -2,5 +2,3 @@ spring:
   profiles:
     active: dev
     include: security
-  jackson:
-    property-naming-strategy: SNAKE_CASE
