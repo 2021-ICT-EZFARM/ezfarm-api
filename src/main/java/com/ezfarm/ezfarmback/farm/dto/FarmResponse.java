@@ -33,12 +33,10 @@ public class FarmResponse {
 
     private LocalDateTime createdDate;
 
-    private LocalDateTime updatedDate;
-
     @Builder
     public FarmResponse(Long id, String address, String name, String phoneNumber, String area,
         boolean isMain, FarmType farmType, CropType cropType, LocalDate startDate,
-        LocalDateTime createdDate, LocalDateTime updatedDate) {
+        LocalDateTime createdDate) {
         this.id = id;
         this.address = address;
         this.name = name;
@@ -49,7 +47,6 @@ public class FarmResponse {
         this.cropType = cropType;
         this.startDate = startDate;
         this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
     }
 
     public static FarmResponse of(Farm farm) {
@@ -63,7 +60,6 @@ public class FarmResponse {
             .farmType(farm.getFarmType())
             .cropType(farm.getCropType())
             .createdDate(farm.getCreatedDate())
-            .updatedDate(farm.getUpdatedDate())
             .build();
     }
 

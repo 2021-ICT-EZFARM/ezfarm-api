@@ -2,7 +2,6 @@ package com.ezfarm.ezfarmback.remote.dto;
 
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
