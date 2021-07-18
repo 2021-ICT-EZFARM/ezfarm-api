@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.user.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.utils.upload.FileStoreService;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final FileStoreService fileStoreService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -41,7 +44,10 @@ public class UserService {
     public UserUpdateResponse updateUser(User user, UserUpdateRequest userUpdateRequest) {
         User findUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
             () -> new CustomException(ErrorCode.NON_EXISTENT_USER));
-        findUser.updateUser(userUpdateRequest);
+
+        String storeFileName = fileStoreService.storeFileToS3(userUpdateRequest.getImage());
+
+        findUser.updateUser(userUpdateRequest, storeFileName);
         return UserUpdateResponse.of(findUser);
     }
 }

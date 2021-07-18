@@ -2,8 +2,8 @@ package com.ezfarm.ezfarmback.favorite.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
-import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
+import com.ezfarm.ezfarmback.common.db.AcceptanceStep;
+import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.favorite.acceptance.step.FavoriteAcceptanceStep;

@@ -1,10 +1,7 @@
 package com.ezfarm.ezfarmback.user.acceptance;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
-import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
+import com.ezfarm.ezfarmback.common.db.AcceptanceStep;
+import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
@@ -13,7 +10,6 @@ import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
-import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
@@ -54,55 +50,43 @@ public class UserAcceptanceTest extends CommonAcceptanceTest {
     @DisplayName("유저 정보를 조회한다.")
     @Test
     void readUser() {
-        //given
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
 
-        //when
         ExtractableResponse<Response> response = UserAcceptanceStep.requestToReadUser(
             authResponse);
+        UserResponse userResponse = response.jsonPath()
+            .getObject(".", UserResponse.class);
 
-        UserResponse userResponse = response.as(UserResponse.class);
-
-        //then
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertAll(
-            () -> assertThat(userResponse.getEmail()).isEqualTo(user1.getEmail()),
-            () -> assertThat(userResponse.getId()).isNotNull(),
-            () -> assertThat(userResponse.getRole()).isEqualTo(user1.getRole()),
-            () -> assertThat(userResponse.getName()).isEqualTo(user1.getName())
-        );
+        UserAcceptanceStep.assertThatFindUser(userResponse, user1);
     }
 
     @DisplayName("유저 정보를 수정한다.")
     @Test
     void updateUser() throws Exception {
-        //given
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
 
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("010-1234-1234", "address");
+        ExtractableResponse<Response> updateResponse = UserAcceptanceStep
+            .requestToUpdateUser(authResponse);
 
-        //when
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdateUser(
-            authResponse, userUpdateRequest, objectMapper);
+        UserResponse findUserResponse = UserAcceptanceStep.requestToReadUser(
+            authResponse).jsonPath().getObject(".", UserResponse.class);
 
-        //then
-        AcceptanceStep.assertThatStatusIsOk(response);
+        AcceptanceStep.assertThatStatusIsOk(updateResponse);
+        UserAcceptanceStep.assertThatUpdateUser(findUserResponse);
     }
 
     @DisplayName("회원 탈퇴를 한다.")
     @Test
     void deleteUser() {
-        //given
         LoginRequest loginRequest = new LoginRequest("test1@email.com", "비밀번호");
         AuthResponse authResponse = getAuthResponse(loginRequest);
 
-        //when
         ExtractableResponse<Response> response = UserAcceptanceStep.requestToDeleteUser(
             authResponse);
 
-        //then
         AcceptanceStep.assertThatStatusIsNoContent(response);
     }
 }

@@ -19,7 +19,6 @@ import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateResponse;
 import com.ezfarm.ezfarmback.user.service.UserService;
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -72,7 +71,7 @@ public class UserControllerTest extends CommonApiTest {
     @Test
     void updateUser() throws Exception {
         //given
-        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("010-1234-1234", "address");
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder().build();
 
         //when, then
         when(userService.updateUser(any(), any())).thenReturn(new UserUpdateResponse());

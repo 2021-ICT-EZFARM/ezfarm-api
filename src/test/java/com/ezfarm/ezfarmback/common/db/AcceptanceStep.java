@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.acceptance;
+package com.ezfarm.ezfarmback.common.db;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

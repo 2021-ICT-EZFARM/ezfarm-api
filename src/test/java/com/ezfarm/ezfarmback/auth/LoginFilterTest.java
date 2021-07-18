@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
+import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

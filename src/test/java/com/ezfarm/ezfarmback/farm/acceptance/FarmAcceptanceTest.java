@@ -1,11 +1,11 @@
 package com.ezfarm.ezfarmback.farm.acceptance;
 
 
-import static com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep.assertThatStatusIsOk;
+import static com.ezfarm.ezfarmback.common.db.AcceptanceStep.assertThatStatusIsOk;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import com.ezfarm.ezfarmback.common.acceptance.AcceptanceStep;
-import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
+import com.ezfarm.ezfarmback.common.db.AcceptanceStep;
+import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;

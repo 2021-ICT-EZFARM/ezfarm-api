@@ -1,7 +1,6 @@
 package com.ezfarm.ezfarmback.facility.domain;
 
 
-import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import lombok.AccessLevel;
 import lombok.Getter;

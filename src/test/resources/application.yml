@@ -1,5 +1,6 @@
 spring:
   profiles:
+    include: security
     active: test
   h2:
     console:
@@ -19,8 +20,3 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
-
-app:
-  auth:
-    token-secret: secretKey
-    token-expiration-msec: 999999

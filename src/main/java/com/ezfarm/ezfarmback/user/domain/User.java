@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.user.domain;
 
-import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,9 +59,10 @@ public class User extends BaseTimeEntity {
         return role.name();
     }
 
-    public void updateUser(UserUpdateRequest userUpdateRequest) {
+    public void updateUser(UserUpdateRequest userUpdateRequest, String storeFileName) {
         this.phoneNumber = userUpdateRequest.getPhoneNumber();
         this.address = userUpdateRequest.getAddress();
+        this.imageUrl = storeFileName;
     }
 
 }

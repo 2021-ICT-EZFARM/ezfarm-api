@@ -3,7 +3,7 @@ package com.ezfarm.ezfarmback.auth;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.ezfarm.ezfarmback.common.acceptance.CommonAcceptanceTest;
+import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.config.security.AppProperties;
 import com.ezfarm.ezfarmback.security.local.TokenProvider;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;

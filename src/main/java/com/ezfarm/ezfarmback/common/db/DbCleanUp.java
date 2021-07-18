@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.acceptance;
+package com.ezfarm.ezfarmback.common.db;
 
 import com.google.common.base.CaseFormat;
 import java.util.List;

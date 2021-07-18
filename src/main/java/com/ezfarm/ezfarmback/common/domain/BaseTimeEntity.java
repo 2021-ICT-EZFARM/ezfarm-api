@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common;
+package com.ezfarm.ezfarmback.common.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.EntityListeners;
