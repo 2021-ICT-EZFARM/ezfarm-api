@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.acceptance;
+package com.ezfarm.ezfarmback.common.db;
 
 import static io.restassured.RestAssured.given;
 

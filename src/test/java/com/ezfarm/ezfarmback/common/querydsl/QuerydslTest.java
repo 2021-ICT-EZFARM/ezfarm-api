@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.common.querydsl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ezfarm.ezfarmback.common.acceptance.DbCleanUp;
+import com.ezfarm.ezfarmback.common.db.DbCleanUp;
 import com.ezfarm.ezfarmback.user.domain.QUser;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
