@@ -7,6 +7,8 @@ import static org.springframework.http.HttpHeaders.LOCATION;
 
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.ExtractableResponse;
@@ -40,6 +42,17 @@ public class FarmAcceptanceStep {
             () -> assertThat(farmResponse.getArea()).isEqualTo(farmRequest.getArea()),
             () -> assertThat(farmResponse.getFarmType()).isEqualTo(farmRequest.getFarmType()),
             () -> assertThat(farmResponse.getCropType()).isEqualTo(farmRequest.getCropType())
+        );
+    }
+
+    public static void assertThatFindOtherFarms(List<FarmSearchResponse> farmSearchResponse,
+        FarmRequest farmRequest) {
+        assertAll(
+            () -> assertThat(farmSearchResponse.size()).isEqualTo(1),
+            () -> assertThat(farmSearchResponse).extracting("address")
+                .contains(farmRequest.getAddress()),
+            () -> assertThat(farmSearchResponse).extracting("name")
+                .contains(farmRequest.getName())
         );
     }
 
@@ -115,6 +128,19 @@ public class FarmAcceptanceStep {
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())
             .when()
             .delete("/api/farm/me/{farmId}", farmId)
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> requestToFindOtherFarms(AuthResponse authResponse,
+        FarmSearchCond farmSearchCond, ObjectMapper objectMapper) throws Exception {
+        return given().log().all()
+            .header("Authorization",
+                authResponse.getTokenType() + " " + authResponse.getAccessToken())
+            .when()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(objectMapper.writeValueAsString(farmSearchCond))
+            .post(String.format("/api/farm/other?page=%d&size=%d", 0, 10))
             .then().log().all()
             .extract();
     }

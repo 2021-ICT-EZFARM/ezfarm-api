@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.farm.service;
 
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -10,17 +11,19 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ezfarm.ezfarmback.common.dto.Pagination;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("농가 단위 테스트(Service)")
@@ -121,7 +126,7 @@ public class FarmServiceTest {
     @Test
     void findMyFarms_success() {
         farm.setUser(user);
-        when(farmRepository.findAllByUser(any())).thenReturn(Collections.singletonList(farm));
+        when(farmRepository.findAllByUser(any())).thenReturn(singletonList(farm));
         when(modelMapper.map(any(), any())).thenReturn(farmResponse);
 
         List<FarmResponse> farmResponses = farmService.findMyFarms(user);
@@ -221,5 +226,20 @@ public class FarmServiceTest {
         assertThatThrownBy(() -> farmService.deleteMyFarm(user, 1L))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
+    }
+
+    @DisplayName("타 농가를 조회한다.")
+    @Test
+    void findOtherFarms_success() {
+        FarmSearchCond farmSearchCond = new FarmSearchCond();
+        FarmSearchResponse farmSearchResponse = new FarmSearchResponse();
+
+        when(farmRepository.findByNotUserAndFarmSearchCond(any(), any(), any()))
+            .thenReturn(new PageImpl<>(singletonList(farmSearchResponse)));
+
+        farmService.findOtherFarms(user, farmSearchCond, new Pagination(0, 10));
+
+        verify(farmRepository)
+            .findByNotUserAndFarmSearchCond(user, farmSearchCond, PageRequest.of(0, 10));
     }
 }

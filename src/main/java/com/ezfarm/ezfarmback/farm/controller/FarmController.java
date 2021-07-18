@@ -1,7 +1,10 @@
 package com.ezfarm.ezfarmback.farm.controller;
 
+import com.ezfarm.ezfarmback.common.dto.Pagination;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.farm.service.FarmService;
 import com.ezfarm.ezfarmback.security.CurrentUser;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -13,6 +16,7 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(tags = "내 농가 API")
+@Api(tags = "농가 API")
 @RequiredArgsConstructor
 @RequestMapping("/api/farm")
 @RestController()
@@ -77,5 +81,14 @@ public class FarmController {
     public ResponseEntity<Void> deleteMyFarm(@CurrentUser User user, @PathVariable Long farmId) {
         farmService.deleteMyFarm(user, farmId);
         return ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "타 농가 조회")
+    @PostMapping("/other")
+    public ResponseEntity<Page<FarmSearchResponse>> findOtherFarms(@CurrentUser User user,
+        @RequestBody FarmSearchCond farmSearchCond, Pagination pagination) {
+        Page<FarmSearchResponse> otherFarms = farmService
+            .findOtherFarms(user, farmSearchCond, pagination);
+        return ResponseEntity.ok(otherFarms);
     }
 }
