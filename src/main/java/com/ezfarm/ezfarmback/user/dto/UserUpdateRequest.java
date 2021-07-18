@@ -1,16 +1,23 @@
 package com.ezfarm.ezfarmback.user.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserUpdateRequest {
 
     private String phoneNumber;
     private String address;
-    //private MultipartFile image;
+    private MultipartFile image;
+
+    @Builder
+    public UserUpdateRequest(String phoneNumber, String address,
+        MultipartFile image) {
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.image = image;
+    }
 }

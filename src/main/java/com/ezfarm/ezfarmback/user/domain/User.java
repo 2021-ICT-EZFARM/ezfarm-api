@@ -59,9 +59,10 @@ public class User extends BaseTimeEntity {
         return role.name();
     }
 
-    public void updateUser(UserUpdateRequest userUpdateRequest) {
+    public void updateUser(UserUpdateRequest userUpdateRequest, String storeFileName) {
         this.phoneNumber = userUpdateRequest.getPhoneNumber();
         this.address = userUpdateRequest.getAddress();
+        this.imageUrl = storeFileName;
     }
 
 }

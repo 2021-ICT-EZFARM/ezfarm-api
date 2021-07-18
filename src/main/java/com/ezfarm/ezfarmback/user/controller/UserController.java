@@ -21,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,7 +73,7 @@ public class UserController {
     @ApiResponse(code = 404, message = "존재하지 않는 사용자 입니다.")
     @PatchMapping
     public ResponseEntity<UserUpdateResponse> updateUser(@CurrentUser User user,
-        @RequestBody UserUpdateRequest userUpdateRequest) {
+        @ModelAttribute UserUpdateRequest userUpdateRequest) {
         UserUpdateResponse userUpdateResponse = userService.updateUser(user, userUpdateRequest);
         return ResponseEntity.ok(userUpdateResponse);
     }
