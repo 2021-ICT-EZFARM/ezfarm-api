@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.facility.domain;
 
-import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
 
 import javax.persistence.Embeddable;
 
