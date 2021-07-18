@@ -18,6 +18,7 @@ import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.service.FarmService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 
 @DisplayName("농가 단위 테스트(Controller)")
@@ -112,6 +114,20 @@ class FarmControllerTest extends CommonApiTest {
         mockMvc.perform(delete("/api/farm/me/{farmId}", 1L)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent())
+            .andDo(print());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("타 농가를 조회한다.")
+    @Test
+    void findOtherFarms() throws Exception {
+        FarmSearchCond farmSearchCond = new FarmSearchCond(FarmType.GLASS, CropType.PAPRIKA);
+        when(farmService.findOtherFarms(any(), any(), any())).thenReturn(Page.empty());
+
+        mockMvc.perform(get("/api/farm/other")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(farmSearchCond)))
+            .andExpect(status().isOk())
             .andDo(print());
     }
 }
