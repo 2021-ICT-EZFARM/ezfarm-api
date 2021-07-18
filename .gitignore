@@ -115,7 +115,8 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
-# Yml file
-/src/main/resources/application-auth.yml
-/src/main/resources/application-db.yml
-/src/main/resources/database/
+# query
+database\
+
+# yml
+application-security.yml
