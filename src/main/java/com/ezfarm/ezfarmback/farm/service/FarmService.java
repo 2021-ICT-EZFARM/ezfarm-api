@@ -6,6 +6,8 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,5 +100,12 @@ public class FarmService {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
         return farm;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<FarmSearchResponse> findOtherFarms(User user, FarmSearchCond farmSearchCond,
+        Pageable pageable) {
+        return farmRepository
+            .findByNotUserAndFarmSearchCond(user, farmSearchCond, pageable);
     }
 }
