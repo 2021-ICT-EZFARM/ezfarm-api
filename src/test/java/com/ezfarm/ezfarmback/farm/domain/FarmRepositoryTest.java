@@ -95,7 +95,6 @@ public class FarmRepositoryTest {
             Arrays.asList(loginUserStrawberryVinyl, otherUserPaprikaGlass, otherUserPaprikaVinyl));
 
         FarmSearchCond farmSearchCond = new FarmSearchCond(FarmType.VINYL, null);
-
         Page<FarmSearchResponse> result = farmRepository
             .findByNotUserAndFarmSearchCond(savedLoginUser, farmSearchCond, PageRequest.of(0, 10));
 

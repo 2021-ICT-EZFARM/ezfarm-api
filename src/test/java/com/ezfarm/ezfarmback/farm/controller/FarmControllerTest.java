@@ -124,7 +124,7 @@ class FarmControllerTest extends CommonApiTest {
         FarmSearchCond farmSearchCond = new FarmSearchCond(FarmType.GLASS, CropType.PAPRIKA);
         when(farmService.findOtherFarms(any(), any(), any())).thenReturn(Page.empty());
 
-        mockMvc.perform(get("/api/farm/other")
+        mockMvc.perform(post("/api/farm/other")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(farmSearchCond)))
             .andExpect(status().isOk())

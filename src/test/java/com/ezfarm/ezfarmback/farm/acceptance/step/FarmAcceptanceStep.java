@@ -140,7 +140,7 @@ public class FarmAcceptanceStep {
             .when()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(objectMapper.writeValueAsString(farmSearchCond))
-            .get("/api/farm/other")
+            .post(String.format("/api/farm/other?page=%d&size=%d", 0, 10))
             .then().log().all()
             .extract();
     }

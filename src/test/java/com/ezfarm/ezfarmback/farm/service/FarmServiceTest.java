@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.ezfarm.ezfarmback.common.dto.Pagination;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -33,7 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("농가 단위 테스트(Service)")
@@ -236,9 +237,9 @@ public class FarmServiceTest {
         when(farmRepository.findByNotUserAndFarmSearchCond(any(), any(), any()))
             .thenReturn(new PageImpl<>(singletonList(farmSearchResponse)));
 
-        farmService.findOtherFarms(user, farmSearchCond, Pageable.unpaged());
+        farmService.findOtherFarms(user, farmSearchCond, new Pagination(0, 10));
 
         verify(farmRepository)
-            .findByNotUserAndFarmSearchCond(user, farmSearchCond, Pageable.unpaged());
+            .findByNotUserAndFarmSearchCond(user, farmSearchCond, PageRequest.of(0, 10));
     }
 }
