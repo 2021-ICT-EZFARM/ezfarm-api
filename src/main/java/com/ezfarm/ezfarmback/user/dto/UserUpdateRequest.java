@@ -12,12 +12,14 @@ public class UserUpdateRequest {
     private String phoneNumber;
     private String address;
     private MultipartFile image;
+    private boolean isDefaultImage;
 
     @Builder
     public UserUpdateRequest(String phoneNumber, String address,
-        MultipartFile image) {
+        MultipartFile image, boolean isDefaultImage) {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.image = image;
+        this.isDefaultImage = isDefaultImage;
     }
 }

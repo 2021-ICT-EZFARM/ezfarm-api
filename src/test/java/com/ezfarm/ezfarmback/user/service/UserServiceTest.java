@@ -5,17 +5,19 @@ import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.utils.upload.FileStoreService;
+import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreService;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +53,7 @@ public class UserServiceTest {
             .name("남상우")
             .email("a@gmail.com")
             .password("비밀번호")
+            .imageUrl("image")
             .role(Role.ROLE_USER)
             .build();
     }
@@ -80,22 +84,22 @@ public class UserServiceTest {
             .hasMessage(ErrorCode.DUPLICATED_EMAIL.getMessage());
     }
 
-    @DisplayName("유저 정보를 수정한다.")
+    @DisplayName("유저 정보를 수정한다. 프로필은 변경하지 않는다.")
     @Test
     void updateUser() {
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
             .phoneNumber("010-0000-0000")
             .address("수정된 주소")
+            .isDefaultImage(false)
             .build();
 
         when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
-        when(fileStoreService.storeFileToS3(any())).thenReturn("imageUrl");
         userService.updateUser(user, userUpdateRequest);
 
         Assertions.assertAll(
             () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber()),
             () -> assertThat(user.getAddress()).isEqualTo(userUpdateRequest.getAddress()),
-            () -> assertThat(user.getImageUrl()).isEqualTo("imageUrl")
+            () -> assertThat(user.getImageUrl()).isEqualTo(user.getImageUrl())
         );
     }
 
@@ -109,5 +113,40 @@ public class UserServiceTest {
         assertThatThrownBy(() -> userService.updateUser(user, userUpdateRequest))
             .isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.NON_EXISTENT_USER.getMessage());
+    }
+
+    @DisplayName("유저 정보를 수정 시 프로필을 기본 이미지로 변경한다.")
+    @Test
+    void updateUserProfile_defaultImage() {
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .isDefaultImage(true)
+            .build();
+
+        when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
+        doNothing().when(fileStoreService).deleteFile(any());
+
+        userService.updateUser(user, userUpdateRequest);
+
+        assertThat(user.getImageUrl()).isNull();
+    }
+
+    @DisplayName("유저 정보를 수정 시 프로필을 새로운 이미지로 변경한다.")
+    @Test
+    void updateUserProfile_newImage() {
+        String content = "content";
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .image(new MockMultipartFile("test", content.getBytes(StandardCharsets.UTF_8)))
+            .isDefaultImage(false)
+            .build();
+
+        when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
+        doNothing().when(fileStoreService).deleteFile(any());
+        when(fileStoreService.storeFile(any())).thenReturn("new-image");
+
+        userService.updateUser(user, userUpdateRequest);
+
+        Assertions.assertAll(
+            () -> assertThat(user.getImageUrl()).isEqualTo("new-image")
+        );
     }
 }
