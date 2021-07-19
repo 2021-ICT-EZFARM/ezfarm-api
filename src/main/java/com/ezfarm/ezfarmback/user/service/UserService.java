@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.user.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.utils.upload.FileStoreService;
+import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreService;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +46,46 @@ public class UserService {
         User findUser = userRepository.findByEmail(user.getEmail()).orElseThrow(
             () -> new CustomException(ErrorCode.NON_EXISTENT_USER));
 
-        String storeFileName = fileStoreService.storeFileToS3(userUpdateRequest.getImage());
+        String imageUrl = getStoreImageUrl(findUser, userUpdateRequest.getImage(),
+            userUpdateRequest.isDefaultImage());
 
-        findUser.updateUser(userUpdateRequest, storeFileName);
+        findUser.updateUser(userUpdateRequest, imageUrl);
         return UserUpdateResponse.of(findUser);
+    }
+
+    private String getStoreImageUrl(User user, MultipartFile imageFile, boolean isDefaultImage) {
+        if (isNotUpdateImage(imageFile, isDefaultImage)) {
+            return user.getImageUrl();
+        }
+        if (isUpdateImage(imageFile, isDefaultImage)) {
+            return getUpdatedImageUrl(user, imageFile);
+        }
+        if (isUpdateDefaultImage(imageFile, isDefaultImage)) {
+            deleteOriginImage(user);
+        }
+        return null;
+    }
+
+    private boolean isNotUpdateImage(MultipartFile newImageFile, boolean isDefaultImage) {
+        return newImageFile == null && !isDefaultImage;
+    }
+
+    private boolean isUpdateImage(MultipartFile newImageFile, boolean isDefaultImage) {
+        return newImageFile != null && !isDefaultImage;
+    }
+
+    private boolean isUpdateDefaultImage(MultipartFile newImageFile, boolean isDefaultImage) {
+        return newImageFile == null && isDefaultImage;
+    }
+
+    private String getUpdatedImageUrl(User user, MultipartFile newImageFile) {
+        deleteOriginImage(user);
+        return fileStoreService.storeFile(newImageFile);
+    }
+
+    private void deleteOriginImage(User user) {
+        if (user.hasImage()) {
+            fileStoreService.deleteFile(user.getImageUrl());
+        }
     }
 }

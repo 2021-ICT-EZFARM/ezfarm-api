@@ -20,7 +20,6 @@ public class UserAcceptanceStep {
         assertAll(
             () -> assertThat(userResponse.getEmail()).isEqualTo(user.getEmail()),
             () -> assertThat(userResponse.getId()).isNotNull(),
-            () -> assertThat(userResponse.getRole()).isEqualTo(user.getRole()),
             () -> assertThat(userResponse.getName()).isEqualTo(user.getName())
         );
     }
@@ -57,6 +56,9 @@ public class UserAcceptanceStep {
             .multiPart(new MultiPartSpecBuilder("수정")
                 .charset(StandardCharsets.UTF_8)
                 .controlName("address")
+                .build())
+            .multiPart(new MultiPartSpecBuilder(false)
+                .controlName("isDefaultImage")
                 .build())
             .multiPart(new MultiPartSpecBuilder(
                 new FileInputStream("src/test/resources/images/ezfarm-logo.PNG"))
