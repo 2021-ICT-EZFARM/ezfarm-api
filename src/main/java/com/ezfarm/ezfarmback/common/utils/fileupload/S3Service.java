@@ -1,9 +1,10 @@
-package com.ezfarm.ezfarmback.common.utils.upload;
+package com.ezfarm.ezfarmback.common.utils.fileupload;
 
 import static java.lang.String.valueOf;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.InputStream;
@@ -25,6 +26,10 @@ public class S3Service {
         amazonS3.putObject(new PutObjectRequest(bucket, storeFileName,
             inputStream, objectMetadata).withCannedAcl(
             CannedAccessControlList.PublicRead));
+    }
+
+    public void deleteStoreFile(String currentImagePath) {
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, currentImagePath));
     }
 
     public String getStoreFileUrl(String storeFileName) {

@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.utils.upload;
+package com.ezfarm.ezfarmback.common.utils.fileupload;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.io.IOException;
@@ -13,11 +13,7 @@ public class FileStoreService {
 
     private final S3Service s3Service;
 
-    public String storeFileToS3(MultipartFile multipartFile) {
-        if (multipartFile.isEmpty()) {
-            return null;
-        }
-
+    public String storeFile(MultipartFile multipartFile) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
 
@@ -30,9 +26,19 @@ public class FileStoreService {
         return s3Service.getStoreFileUrl(storeFileName);
     }
 
-    private static String createStoreFileName(String uploadFileName) {
+    public void deleteFile(String storeFileUrl) {
+        String storeFileName = extractStoreFileName(storeFileUrl);
+        s3Service.deleteStoreFile(storeFileName);
+    }
+
+    public static String extractStoreFileName(String storeFileUrl) {
+        int pos = storeFileUrl.lastIndexOf("/");
+        return storeFileUrl.substring(pos + 1);
+    }
+
+    private static String createStoreFileName(String originalFilename) {
         String uuid = UUID.randomUUID().toString();
-        String ext = extractExt(uploadFileName);
+        String ext = extractExt(originalFilename);
         return uuid + "." + ext;
     }
 
