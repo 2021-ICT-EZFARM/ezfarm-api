@@ -46,9 +46,4 @@ public class InitDb {
             }
         }
     }
-
-    public void insert() {
-
-    }
-
 }
