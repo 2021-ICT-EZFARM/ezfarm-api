@@ -1,17 +1,23 @@
 package com.ezfarm.ezfarmback.facility.domain;
 
-import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Entity
-public class Facility extends BaseTimeEntity {
+public class Facility {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facility_id")
@@ -32,4 +38,6 @@ public class Facility extends BaseTimeEntity {
     private float ph;
 
     private float mos;
+
+    private LocalDateTime measureDate;
 }

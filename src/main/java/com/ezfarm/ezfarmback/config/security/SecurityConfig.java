@@ -19,12 +19,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String USER = "USER";
@@ -41,48 +41,50 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder)
+        throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder());
+            .userDetailsService(customUserDetailsService)
+            .passwordEncoder(passwordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
 
-                .headers().frameOptions().disable().and()
-                .csrf().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
+            .headers().frameOptions().disable().and()
+            .csrf().disable()
+            .formLogin().disable()
+            .httpBasic().disable()
 
-                .addFilter(corsFilter)
-                .addFilter(loginFilter())
-                .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProvider, customUserDetailsService))
+            .addFilter(corsFilter)
+            .addFilter(loginFilter())
+            .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProvider,
+                customUserDetailsService))
 
-                .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                .and()
+            .exceptionHandling()
+            .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+            .and()
 
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
 
-                .authorizeRequests()
-                .antMatchers(
-                        "/",
-                        "/swagger-ui/",
-                        "/api/user/signup")
-                .permitAll()
-                .antMatchers("/api/**").hasRole(USER);
+            .authorizeRequests()
+            .antMatchers(
+                "/",
+                "/swagger-ui/",
+                "/api/user/signup")
+            .permitAll()
+            .antMatchers("/api/**").hasRole(USER);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .requestMatchers(
-                        PathRequest.toStaticResources().atCommonLocations()
-                );
+            .requestMatchers(
+                PathRequest.toStaticResources().atCommonLocations()
+            );
     }
 
     private LoginFilter loginFilter() throws Exception {

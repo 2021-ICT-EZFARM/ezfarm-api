@@ -16,6 +16,7 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
@@ -96,6 +97,7 @@ public class FarmServiceTest {
         farmService.createFarm(user, farmRequest);
 
         assertThat(farm.getUser()).isEqualTo(user);
+        assertThat(farm.getFarmGroup()).isEqualTo(FarmGroup.NORMAL);
         verify(farmRepository).save(any());
     }
 

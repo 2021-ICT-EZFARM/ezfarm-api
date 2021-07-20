@@ -20,6 +20,7 @@ create table farm
     user_id      bigint(20)  NOT NULL,
     name         varchar(50) NOT NULL,
     is_main      boolean     NOT NULL,
+    farm_group   varchar(20) NOT NULL,
     phone_number varchar(50)                              DEFAULT NULL,
     address      varchar(100)                             DEFAULT NULL,
     area         varchar(50)                              DEFAULT NULL,
@@ -83,8 +84,49 @@ create table facility
     illuminance  FLOAT DEFAULT NULL,
     mos          FLOAT DEFAULT NULL,
     ph           FLOAT DEFAULT NULL,
-    created_date TIMESTAMP  NOT NULL,
-    updated_date TIMESTAMP,
+    measure_date TIMESTAMP  NOT NULL,
+    primary key (facility_id)
+);
+
+create table facility_day_avg
+(
+    facility_id     BIGINT(20)   NOT NULL AUTO_INCREMENT,
+    farm_id         BIGINT(20)   NOT NULL,
+    avg_co2         FLOAT DEFAULT NULL,
+    avg_humidity    FLOAT DEFAULT NULL,
+    avg_illuminance FLOAT DEFAULT NULL,
+    avg_mos         FLOAT DEFAULT NULL,
+    avg_ph          FLOAT DEFAULT NULL,
+    avg_tmp         FLOAT DEFAULT NULL,
+    measure_date    varchar(255) NOT NULL,
+    primary key (facility_id)
+);
+
+create table facility_month_avg
+(
+    facility_id     BIGINT(20)   NOT NULL AUTO_INCREMENT,
+    farm_id         BIGINT(20)   NOT NULL,
+    avg_co2         FLOAT DEFAULT NULL,
+    avg_humidity    FLOAT DEFAULT NULL,
+    avg_illuminance FLOAT DEFAULT NULL,
+    avg_mos         FLOAT DEFAULT NULL,
+    avg_ph          FLOAT DEFAULT NULL,
+    avg_tmp         FLOAT DEFAULT NULL,
+    measure_date    varchar(255) NOT NULL,
+    primary key (facility_id)
+);
+
+create table facility_week_avg
+(
+    facility_id     BIGINT(20)   NOT NULL AUTO_INCREMENT,
+    farm_id         BIGINT(20)   NOT NULL,
+    avg_co2         FLOAT DEFAULT NULL,
+    avg_humidity    FLOAT DEFAULT NULL,
+    avg_illuminance FLOAT DEFAULT NULL,
+    avg_mos         FLOAT DEFAULT NULL,
+    avg_ph          FLOAT DEFAULT NULL,
+    avg_tmp         FLOAT DEFAULT NULL,
+    measure_date    varchar(255) NOT NULL,
     primary key (facility_id)
 );
 
@@ -116,5 +158,21 @@ alter table remote
 
 alter table facility
     add constraint facility_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
+
+alter table facility_week_avg
+    add constraint facility_week_avg_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
+
+
+alter table facility_month_avg
+    add constraint facility_month_avg_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
+
+alter table facility_day_avg
+    add constraint facility_day_avg_farm_id_fkey
         foreign key (farm_id)
             references farm (farm_id);
