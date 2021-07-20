@@ -21,6 +21,8 @@ public class FacilityMonthAvg {
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
+    private String measureDate;
+
     @Embedded
     private FacilityAvg facilityAvg;
 }

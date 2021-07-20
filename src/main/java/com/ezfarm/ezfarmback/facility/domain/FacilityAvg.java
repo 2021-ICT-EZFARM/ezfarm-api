@@ -1,11 +1,9 @@
 package com.ezfarm.ezfarmback.facility.domain;
 
-import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
-
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class FacilityAvg  extends BaseTimeEntity {
+public class FacilityAvg {
 
     private float avg_tmp;
 
