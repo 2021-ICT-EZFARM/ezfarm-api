@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.farm.domain;
 
 import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -54,10 +55,12 @@ public class Farm extends BaseTimeEntity {
 
     private LocalDate startDate;
 
+    private FarmGroup farmGroup;
+
     @Builder
     public Farm(String address, String name, String phoneNumber, String area, boolean isMain,
         FarmType farmType,
-        CropType cropType, LocalDate startDate, User user) {
+        CropType cropType, LocalDate startDate, User user, FarmGroup farmGroup) {
         this.address = address;
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -67,10 +70,15 @@ public class Farm extends BaseTimeEntity {
         this.cropType = cropType;
         this.startDate = startDate;
         this.user = user;
+        this.farmGroup = farmGroup;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setFarmGroup(FarmGroup farmGroup) {
+        this.farmGroup = farmGroup;
     }
 
     public void setMain(boolean isMain) {
