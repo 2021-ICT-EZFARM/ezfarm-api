@@ -17,6 +17,7 @@ import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest.IsDefaultImage;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -90,7 +91,7 @@ public class UserServiceTest {
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
             .phoneNumber("010-0000-0000")
             .address("수정된 주소")
-            .isDefaultImage(false)
+            .isDefaultImage(IsDefaultImage.N)
             .build();
 
         when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
@@ -119,7 +120,7 @@ public class UserServiceTest {
     @Test
     void updateUserProfile_defaultImage() {
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-            .isDefaultImage(true)
+            .isDefaultImage(IsDefaultImage.Y)
             .build();
 
         when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
@@ -136,7 +137,7 @@ public class UserServiceTest {
         String content = "content";
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
             .image(new MockMultipartFile("test", content.getBytes(StandardCharsets.UTF_8)))
-            .isDefaultImage(false)
+            .isDefaultImage(IsDefaultImage.N)
             .build();
 
         when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));

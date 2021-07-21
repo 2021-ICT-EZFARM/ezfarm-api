@@ -8,6 +8,7 @@ import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest.IsDefaultImage;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,13 +48,14 @@ public class UserService {
             () -> new CustomException(ErrorCode.NON_EXISTENT_USER));
 
         String imageUrl = getStoreImageUrl(findUser, userUpdateRequest.getImage(),
-            userUpdateRequest.isDefaultImage());
+            userUpdateRequest.getIsDefaultImage());
 
         findUser.updateUser(userUpdateRequest, imageUrl);
         return UserUpdateResponse.of(findUser);
     }
 
-    private String getStoreImageUrl(User user, MultipartFile imageFile, boolean isDefaultImage) {
+    private String getStoreImageUrl(User user, MultipartFile imageFile,
+        IsDefaultImage isDefaultImage) {
         if (isNotUpdateImage(imageFile, isDefaultImage)) {
             return user.getImageUrl();
         }
@@ -66,16 +68,17 @@ public class UserService {
         return null;
     }
 
-    private boolean isNotUpdateImage(MultipartFile newImageFile, boolean isDefaultImage) {
-        return newImageFile == null && !isDefaultImage;
+    private boolean isNotUpdateImage(MultipartFile newImageFile, IsDefaultImage isDefaultImage) {
+        return newImageFile == null && isDefaultImage == IsDefaultImage.N;
     }
 
-    private boolean isUpdateImage(MultipartFile newImageFile, boolean isDefaultImage) {
-        return newImageFile != null && !isDefaultImage;
+    private boolean isUpdateImage(MultipartFile newImageFile, IsDefaultImage isDefaultImage) {
+        return newImageFile != null && isDefaultImage == IsDefaultImage.N;
     }
 
-    private boolean isUpdateDefaultImage(MultipartFile newImageFile, boolean isDefaultImage) {
-        return newImageFile == null && isDefaultImage;
+    private boolean isUpdateDefaultImage(MultipartFile newImageFile,
+        IsDefaultImage isDefaultImage) {
+        return newImageFile == null && isDefaultImage == IsDefaultImage.Y;
     }
 
     private String getUpdatedImageUrl(User user, MultipartFile newImageFile) {

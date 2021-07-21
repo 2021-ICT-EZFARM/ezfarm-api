@@ -12,14 +12,18 @@ public class UserUpdateRequest {
     private String phoneNumber;
     private String address;
     private MultipartFile image;
-    private boolean isDefaultImage;
+    private IsDefaultImage isDefaultImage;
 
     @Builder
     public UserUpdateRequest(String phoneNumber, String address,
-        MultipartFile image, boolean isDefaultImage) {
+        MultipartFile image, IsDefaultImage isDefaultImage) {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.image = image;
         this.isDefaultImage = isDefaultImage;
+    }
+
+    public enum IsDefaultImage {
+        Y, N
     }
 }

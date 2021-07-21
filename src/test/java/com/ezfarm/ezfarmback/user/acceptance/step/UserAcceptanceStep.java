@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.UserResponse;
+import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest.IsDefaultImage;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -57,7 +58,7 @@ public class UserAcceptanceStep {
                 .charset(StandardCharsets.UTF_8)
                 .controlName("address")
                 .build())
-            .multiPart(new MultiPartSpecBuilder(false)
+            .multiPart(new MultiPartSpecBuilder(IsDefaultImage.N)
                 .controlName("isDefaultImage")
                 .build())
             .multiPart(new MultiPartSpecBuilder(
