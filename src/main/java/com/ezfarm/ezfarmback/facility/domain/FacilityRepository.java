@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.facility.repository;
+package com.ezfarm.ezfarmback.facility.domain;
 
 import com.ezfarm.ezfarmback.facility.domain.Facility;
 import org.springframework.data.jpa.repository.JpaRepository;
