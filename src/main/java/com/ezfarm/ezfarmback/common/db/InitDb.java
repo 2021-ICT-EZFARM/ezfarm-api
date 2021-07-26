@@ -30,7 +30,7 @@ public class InitDb {
 
     private final PasswordEncoder passwordEncoder;
 
-    @PostConstruct
+    //@PostConstruct
     @Transactional
     public void init() throws Exception {
 
