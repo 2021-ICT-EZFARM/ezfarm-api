@@ -7,13 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Profile("test")
 public class DbCleanUp implements InitializingBean {
 
     private final EntityManager em;
@@ -30,6 +28,7 @@ public class DbCleanUp implements InitializingBean {
 
     @Transactional
     public void clearUp() {
+        em.flush();
         em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         for (String table : tables) {
             em.createNativeQuery("TRUNCATE TABLE " + table).executeUpdate();

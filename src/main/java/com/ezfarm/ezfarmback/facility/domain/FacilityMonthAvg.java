@@ -4,18 +4,24 @@ package com.ezfarm.ezfarmback.facility.domain;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
-
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Entity
 public class FacilityMonthAvg {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facility_id")
@@ -29,8 +35,6 @@ public class FacilityMonthAvg {
 
     @Embedded
     private FacilityAvg facilityAvg;
-
-    private String measureDate;
 
     @Builder
     public FacilityMonthAvg(Farm farm, FacilityAvg facilityAvg, LocalDateTime measureDate) {
