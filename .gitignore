@@ -121,3 +121,6 @@ database\
 # yml
 application-security.yml
 .idea\
+
+#csv
+farm\
