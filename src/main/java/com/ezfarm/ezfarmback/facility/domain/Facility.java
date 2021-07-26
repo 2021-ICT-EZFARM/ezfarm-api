@@ -40,4 +40,5 @@ public class Facility {
     private float mos;
 
     private LocalDateTime measureDate;
+
 }

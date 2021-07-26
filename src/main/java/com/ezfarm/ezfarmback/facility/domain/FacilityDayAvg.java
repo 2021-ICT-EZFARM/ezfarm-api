@@ -9,7 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,8 +30,17 @@ public class FacilityDayAvg {
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
-    private String measureDate;
-
     @Embedded
     private FacilityAvg facilityAvg;
+
+    private String measureDate;
+
+    @Builder
+    public FacilityDayAvg(Farm farm, FacilityAvg facilityAvg, LocalDateTime measureDate) {
+        this.farm = farm;
+        this.facilityAvg = facilityAvg;
+        this.measureDate = measureDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+    }
+
 }
