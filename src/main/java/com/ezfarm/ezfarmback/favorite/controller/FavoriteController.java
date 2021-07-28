@@ -30,6 +30,7 @@ public class FavoriteController {
     @ApiOperation(value = "즐겨찾기 추가")
     @ApiResponses({
         @ApiResponse(code = 400, message = "이미 즐겨찾기에 등록된 농가입니다."),
+        @ApiResponse(code = 400, message = "즐겨찾기는 최대 5개만 등록할 수 있습니다."),
         @ApiResponse(code = 400, message = "나의 농가는 즐겨찾기에 등록할 수 없습니다."),
         @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
     })

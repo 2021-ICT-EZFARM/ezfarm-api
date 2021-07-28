@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     FAVORITE_DUPLICATED(400, "FA_001", "이미 즐겨찾기에 등록된 농가입니다."),
     MY_FARM_NOT_ALLOWED(400, "FA_002", "나의 농가는 즐겨찾기에 등록할 수 없습니다."),
+    EXCEED_FAVORITE_SIZE(400, "FA_003", "즐겨찾기는 최대 5개만 등록할 수 있습니다."),
 
     BAD_LOGIN(400, "AU_001", "잘못된 아이디 또는 패스워드입니다."),
 
