@@ -150,11 +150,14 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         FarmAcceptanceStep
             .requestToCreateFarm(ownerAuthResponse, vinylPaprikaFarmRequest, objectMapper);
 
-        FarmSearchCond farmSearchCond = new FarmSearchCond(FarmType.VINYL, CropType.PAPRIKA);
+        FarmSearchCond farmSearchCond = FarmSearchCond.builder()
+            .farmType(FarmType.VINYL)
+            .cropType(CropType.PAPRIKA)
+            .build();
         ExtractableResponse<Response> response = FarmAcceptanceStep
             .requestToFindOtherFarms(authResponse, farmSearchCond, objectMapper);
         List<FarmSearchResponse> farmSearchResponse = response.jsonPath()
-            .getList("content", FarmSearchResponse.class);
+            .getList(".", FarmSearchResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
         FarmAcceptanceStep.assertThatFindOtherFarms(farmSearchResponse, vinylPaprikaFarmRequest);
