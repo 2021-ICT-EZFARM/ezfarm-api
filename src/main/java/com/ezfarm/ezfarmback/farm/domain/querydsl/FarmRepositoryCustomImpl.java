@@ -1,8 +1,10 @@
 package com.ezfarm.ezfarmback.farm.domain.querydsl;
 
 import static com.ezfarm.ezfarmback.common.query.QueryCondition.cropTypeEq;
+import static com.ezfarm.ezfarmback.common.query.QueryCondition.farmGroupEq;
 import static com.ezfarm.ezfarmback.common.query.QueryCondition.farmTypeEq;
 import static com.ezfarm.ezfarmback.farm.domain.QFarm.farm;
+import static com.ezfarm.ezfarmback.favorite.domain.QFavorite.favorite;
 
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
@@ -21,7 +23,7 @@ public class FarmRepositoryCustomImpl implements FarmRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<FarmSearchResponse> findByNotUserAndFarmSearchCond(User user,
+    public Page<FarmSearchResponse> findByNotUserAndNotFavoritesAndFarmSearchCond(User user,
         FarmSearchCond farmSearchCond,
         Pageable pageable) {
         QueryResults<FarmSearchResponse> results = queryFactory
@@ -30,14 +32,16 @@ public class FarmRepositoryCustomImpl implements FarmRepositoryCustom {
                 farm.name,
                 farm.address,
                 farm.area,
-                farm.phoneNumber,
                 farm.farmType,
-                farm.cropType,
-                farm.startDate
+                farm.cropType
             ))
             .from(farm)
+            .leftJoin(favorite)
+            .on(farm.eq(favorite.farm), favorite.user.eq(user))
             .where(
+                favorite.isNull(),
                 farm.user.ne(user),
+                farmGroupEq(farmSearchCond.getFarmGroup()),
                 farmTypeEq(farmSearchCond.getFarmType()),
                 cropTypeEq(farmSearchCond.getCropType())
             )

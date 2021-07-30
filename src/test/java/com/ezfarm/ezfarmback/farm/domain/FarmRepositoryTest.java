@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ezfarm.ezfarmback.config.AppConfig;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
+import com.ezfarm.ezfarmback.favorite.domain.Favorite;
+import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
@@ -32,17 +35,22 @@ public class FarmRepositoryTest {
     private FarmRepository farmRepository;
 
     @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     private User loginUser;
 
     private User otherUser;
 
-    private Farm loginUserStrawberryVinyl;
+    private Farm loginUserFarm;
 
-    private Farm otherUserPaprikaGlass;
+    private Farm otherUserBestPaprikaGlass;
 
-    private Farm otherUserPaprikaVinyl;
+    private Farm otherUserNormalPaprikaVinyl;
+
+    private Farm otherUserBestPaprikaVinyl;
 
     @BeforeEach
     void setUp() {
@@ -60,23 +68,33 @@ public class FarmRepositoryTest {
             .role(Role.ROLE_USER)
             .build();
 
-        loginUserStrawberryVinyl = Farm.builder()
+        loginUserFarm = Farm.builder()
             .name("농가1")
             .isMain(false)
             .farmType(FarmType.VINYL)
             .cropType(CropType.STRAWBERRY)
             .build();
 
-        otherUserPaprikaGlass = Farm.builder()
+        otherUserBestPaprikaGlass = Farm.builder()
             .name("농가2")
             .isMain(false)
+            .farmGroup(FarmGroup.BEST)
             .farmType(FarmType.GLASS)
             .cropType(CropType.PAPRIKA)
             .build();
 
-        otherUserPaprikaVinyl = Farm.builder()
+        otherUserNormalPaprikaVinyl = Farm.builder()
             .name("농가3")
             .isMain(false)
+            .farmGroup(FarmGroup.NORMAL)
+            .farmType(FarmType.VINYL)
+            .cropType(CropType.PAPRIKA)
+            .build();
+
+        otherUserBestPaprikaVinyl = Farm.builder()
+            .name("농가4")
+            .isMain(false)
+            .farmGroup(FarmGroup.BEST)
             .farmType(FarmType.VINYL)
             .cropType(CropType.PAPRIKA)
             .build();
@@ -87,22 +105,29 @@ public class FarmRepositoryTest {
     void findOtherFarms_farmType_vinyl() {
         User savedLoginUser = userRepository.save(loginUser);
         User savedOtherUser = userRepository.save(otherUser);
-        loginUserStrawberryVinyl.setUser(savedLoginUser);
-        otherUserPaprikaGlass.setUser(savedOtherUser);
-        otherUserPaprikaVinyl.setUser(savedOtherUser);
+        loginUserFarm.setUser(savedLoginUser);
+        otherUserBestPaprikaGlass.setUser(savedOtherUser);
+        otherUserNormalPaprikaVinyl.setUser(savedOtherUser);
+        otherUserBestPaprikaVinyl.setUser(savedOtherUser);
 
         farmRepository.saveAll(
-            Arrays.asList(loginUserStrawberryVinyl, otherUserPaprikaGlass, otherUserPaprikaVinyl));
+            Arrays.asList(loginUserFarm, otherUserBestPaprikaGlass,
+                otherUserNormalPaprikaVinyl, otherUserBestPaprikaVinyl));
 
-        FarmSearchCond farmSearchCond = new FarmSearchCond(FarmType.VINYL, null);
+        FarmSearchCond farmSearchCond = FarmSearchCond.builder()
+            .farmGroup(FarmGroup.NORMAL)
+            .farmType(FarmType.VINYL)
+            .build();
+
         Page<FarmSearchResponse> result = farmRepository
-            .findByNotUserAndFarmSearchCond(savedLoginUser, farmSearchCond, PageRequest.of(0, 10));
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(savedLoginUser, farmSearchCond,
+                PageRequest.of(0, 10));
 
         Assertions.assertAll(
             () -> assertThat(result.getTotalElements()).isEqualTo(1),
             () -> assertThat(result.getTotalPages()).isEqualTo(1),
             () -> assertThat(result.getContent()).extracting("name")
-                .contains(otherUserPaprikaVinyl.getName())
+                .contains(otherUserNormalPaprikaVinyl.getName())
         );
     }
 
@@ -111,23 +136,64 @@ public class FarmRepositoryTest {
     void findOtherFarms_cropType_paprika() {
         User savedLoginUser = userRepository.save(loginUser);
         User savedOtherUser = userRepository.save(otherUser);
-        loginUserStrawberryVinyl.setUser(savedLoginUser);
-        otherUserPaprikaGlass.setUser(savedOtherUser);
-        otherUserPaprikaVinyl.setUser(savedOtherUser);
+        loginUserFarm.setUser(savedLoginUser);
+        otherUserBestPaprikaGlass.setUser(savedOtherUser);
+        otherUserNormalPaprikaVinyl.setUser(savedOtherUser);
+        otherUserBestPaprikaVinyl.setUser(savedOtherUser);
 
         farmRepository.saveAll(
-            Arrays.asList(loginUserStrawberryVinyl, otherUserPaprikaGlass, otherUserPaprikaVinyl));
+            Arrays.asList(loginUserFarm, otherUserBestPaprikaGlass,
+                otherUserNormalPaprikaVinyl, otherUserBestPaprikaVinyl));
 
-        FarmSearchCond farmSearchCond = new FarmSearchCond(null, CropType.PAPRIKA);
+        FarmSearchCond farmSearchCond = FarmSearchCond.builder()
+            .farmGroup(FarmGroup.BEST)
+            .cropType(CropType.PAPRIKA)
+            .build();
 
         Page<FarmSearchResponse> result = farmRepository
-            .findByNotUserAndFarmSearchCond(savedLoginUser, farmSearchCond, PageRequest.of(0, 10));
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(savedLoginUser, farmSearchCond,
+                PageRequest.of(0, 10));
 
         Assertions.assertAll(
             () -> assertThat(result.getTotalElements()).isEqualTo(2),
             () -> assertThat(result.getTotalPages()).isEqualTo(1),
             () -> assertThat(result.getContent()).extracting("name")
-                .contains(otherUserPaprikaVinyl.getName(), otherUserPaprikaVinyl.getName())
+                .contains(otherUserBestPaprikaGlass.getName(), otherUserBestPaprikaVinyl.getName())
+        );
+    }
+
+    @DisplayName("타 농가를 조회 시 즐겨찾기에 등록된 농가는 조회하지 않는다.")
+    @Test
+    void findOtherFarms_not_find_favoriteFarms() {
+        User savedLoginUser = userRepository.save(loginUser);
+        User savedOtherUser = userRepository.save(otherUser);
+        loginUserFarm.setUser(savedLoginUser);
+        otherUserBestPaprikaGlass.setUser(savedOtherUser);
+        otherUserBestPaprikaVinyl.setUser(savedOtherUser);
+
+        farmRepository.saveAll(
+            Arrays.asList(loginUserFarm, otherUserBestPaprikaGlass,
+                otherUserNormalPaprikaVinyl, otherUserBestPaprikaVinyl));
+
+        Favorite favorite = Favorite.builder()
+            .user(loginUser)
+            .farm(otherUserBestPaprikaGlass)
+            .build();
+        favoriteRepository.save(favorite);
+
+        FarmSearchCond farmSearchCond = FarmSearchCond.builder()
+            .farmGroup(FarmGroup.BEST)
+            .cropType(CropType.PAPRIKA)
+            .build();
+
+        Page<FarmSearchResponse> result = farmRepository
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(savedLoginUser, farmSearchCond,
+                PageRequest.of(0, 10));
+
+        Assertions.assertAll(
+            () -> assertThat(result.getTotalElements()).isEqualTo(1),
+            () -> assertThat(result.getContent().get(0).getName())
+                .isEqualTo(otherUserBestPaprikaVinyl.getName())
         );
     }
 }

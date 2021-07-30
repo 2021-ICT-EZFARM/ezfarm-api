@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    boolean existsByUserAndFarm(User user, Farm farm);
+    List<Favorite> findAllByUserAndFarm(User user, Farm farm);
 
     List<Favorite> findAllByUser(User user);
 

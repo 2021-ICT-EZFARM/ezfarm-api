@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.farm.controller;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -26,7 +27,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 
 @DisplayName("농가 단위 테스트(Controller)")
@@ -121,8 +121,12 @@ class FarmControllerTest extends CommonApiTest {
     @DisplayName("타 농가를 조회한다.")
     @Test
     void findOtherFarms() throws Exception {
-        FarmSearchCond farmSearchCond = new FarmSearchCond(FarmType.GLASS, CropType.PAPRIKA);
-        when(farmService.findOtherFarms(any(), any(), any())).thenReturn(Page.empty());
+        FarmSearchCond farmSearchCond = FarmSearchCond.builder()
+            .farmType(FarmType.GLASS)
+            .cropType(CropType.PAPRIKA)
+            .build();
+
+        when(farmService.findOtherFarms(any(), any(), any())).thenReturn(emptyList());
 
         mockMvc.perform(post("/api/farm/other")
             .contentType(MediaType.APPLICATION_JSON)

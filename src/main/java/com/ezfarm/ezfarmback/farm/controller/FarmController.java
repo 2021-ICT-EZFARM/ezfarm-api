@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,9 +84,9 @@ public class FarmController {
 
     @ApiOperation(value = "타 농가 조회")
     @PostMapping("/other")
-    public ResponseEntity<Page<FarmSearchResponse>> findOtherFarms(@CurrentUser User user,
+    public ResponseEntity<List<FarmSearchResponse>> findOtherFarms(@CurrentUser User user,
         @RequestBody FarmSearchCond farmSearchCond, Pagination pagination) {
-        Page<FarmSearchResponse> otherFarms = farmService
+        List<FarmSearchResponse> otherFarms = farmService
             .findOtherFarms(user, farmSearchCond, pagination);
         return ResponseEntity.ok(otherFarms);
     }

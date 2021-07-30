@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,17 +98,17 @@ public class FarmService {
             () -> new CustomException(ErrorCode.INVALID_FARM_ID)
         );
 
-        if (farm.isNotPossibleToAccessFarm(user.getId())) {
+        if (!farm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
         return farm;
     }
 
     @Transactional(readOnly = true)
-    public Page<FarmSearchResponse> findOtherFarms(User user, FarmSearchCond farmSearchCond,
+    public List<FarmSearchResponse> findOtherFarms(User user, FarmSearchCond farmSearchCond,
         Pagination pagination) {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return farmRepository
-            .findByNotUserAndFarmSearchCond(user, farmSearchCond, pageable);
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, pageable).getContent();
     }
 }

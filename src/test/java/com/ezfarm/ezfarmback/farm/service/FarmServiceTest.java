@@ -236,12 +236,12 @@ public class FarmServiceTest {
         FarmSearchCond farmSearchCond = new FarmSearchCond();
         FarmSearchResponse farmSearchResponse = new FarmSearchResponse();
 
-        when(farmRepository.findByNotUserAndFarmSearchCond(any(), any(), any()))
+        when(farmRepository.findByNotUserAndNotFavoritesAndFarmSearchCond(any(), any(), any()))
             .thenReturn(new PageImpl<>(singletonList(farmSearchResponse)));
 
         farmService.findOtherFarms(user, farmSearchCond, new Pagination(0, 10));
 
         verify(farmRepository)
-            .findByNotUserAndFarmSearchCond(user, farmSearchCond, PageRequest.of(0, 10));
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, PageRequest.of(0, 10));
     }
 }

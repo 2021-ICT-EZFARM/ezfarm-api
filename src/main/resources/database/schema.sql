@@ -160,6 +160,16 @@ create table remote_history
     primary key (remote_history_id)
 );
 
+create table screen
+(
+    screen_id      BIGINT(20)   NOT NULL AUTO_INCREMENT,
+    farm_id        BIGINT(20)   NOT NULL,
+    crop_condition FLOAT        NOT NULL,
+    image_url      VARCHAR(255) NOT NULL,
+    measure_time   VARCHAR(50)  NOT NULL,
+    primary key (screen_id)
+);
+
 --fk--
 alter table alert_range
     add constraint alert_range_farm_id_fkey
@@ -204,5 +214,10 @@ alter table facility_month_avg
 
 alter table facility_day_avg
     add constraint facility_day_avg_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
+
+alter table screen
+    add constraint screen_farm_id_fkey
         foreign key (farm_id)
             references farm (farm_id);
