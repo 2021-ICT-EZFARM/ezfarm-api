@@ -4,9 +4,11 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.remote.domain.JschObject;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
+import com.ezfarm.ezfarmback.remote.dto.IotInfo;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -22,6 +24,8 @@ public class RemoteService {
     private final FarmRepository farmRepository;
 
     private final RemoteRepository remoteRepository;
+
+    private final IotInfo iotInfo;
 
     @Transactional(readOnly = true)
     public RemoteResponse findRemote(User user, Long farmId) {
@@ -50,14 +54,16 @@ public class RemoteService {
         );
     }
 
-    public void updateRemote(User user, RemoteRequest remoteRequest) {
+    public Boolean updateRemote(User user, RemoteRequest remoteRequest) {
         Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
         if (findRemote.getFarm().isNotPossibleToAccessFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
-
+        JschObject jschObject = new JschObject(iotInfo.getHostname(), iotInfo.getUsername(), iotInfo.getPassword());
         findRemote.updateRemote(remoteRequest);
+
+        return jschObject.connect();
     }
 }

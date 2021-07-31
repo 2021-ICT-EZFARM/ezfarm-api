@@ -33,6 +33,7 @@ dependencies {
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.7.2'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
     implementation 'org.jsonurl:jsonurl-jsonorg:2.0.1'
+    implementation 'dev.galasa:com.jcraft.jsch:0.1.55'
 
     runtimeOnly 'com.h2database:h2'
     compileOnly 'org.projectlombok:lombok'

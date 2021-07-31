@@ -42,9 +42,10 @@ public class RemoteController {
     @ApiOperation(value = "농가 제어 값 수정")
     @ApiResponse(code = 403, message = "해당 농가에 권한이 없습니다.")
     @PatchMapping
-    public ResponseEntity<Void> updateRemote(@CurrentUser User user,
+    public ResponseEntity<Boolean> updateRemote(@CurrentUser User user,
         @Valid @RequestBody RemoteRequest remoteRequest) {
-        remoteService.updateRemote(user, remoteRequest);
-        return ResponseEntity.ok().build();
+        Boolean isSuccess = remoteService.updateRemote(user, remoteRequest);
+        return ResponseEntity.ok(isSuccess);
     }
+
 }
