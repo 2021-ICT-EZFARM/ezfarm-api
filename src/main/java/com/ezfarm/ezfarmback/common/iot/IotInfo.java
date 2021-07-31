@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.remote.dto;
+package com.ezfarm.ezfarmback.common.iot;
 
 
 import lombok.Getter;

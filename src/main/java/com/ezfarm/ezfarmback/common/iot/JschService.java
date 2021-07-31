@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.remote.domain;
+package com.ezfarm.ezfarmback.common.iot;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
@@ -7,16 +7,14 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class JschObject {
+public class JschService {
 
   private String hostname;
 
@@ -28,15 +26,16 @@ public class JschObject {
 
   Session session = null;
   Channel channel = null;
+  ChannelExec channelExec = null;
+  String line = "";
 
-  public JschObject( String hostname, String username, String password) {
+  public JschService( String hostname, String username, String password) {
     this.hostname = hostname;
     this.username = username;
     this.password = password;
   }
 
-  public boolean connect() {
-    String line = "";
+  public void connect() {
     try {
       JSch jSch = new JSch();
       session = jSch.getSession(username, hostname, port);
@@ -44,9 +43,15 @@ public class JschObject {
       session.setPassword(password);
       session.connect();
 
-      channel = session.openChannel("exec");
-      ChannelExec channelExec = (ChannelExec) channel;
+      channelExec = (ChannelExec) channel;
+    } catch (JSchException e) {
+      new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+  }
 
+  public boolean updateRemote() {
+    connect();
+    try {
       log.info("Connect to {}", hostname);
 
       channelExec.setCommand("./test.py 1 2 3 4");
@@ -67,24 +72,25 @@ public class JschObject {
           break;
         }
       }
-
-    } catch (JSchException e) {
-      new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-    } catch (IOException e) {
+    } catch (Exception e) {
       new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
     } finally {
-      if (channel != null) {
-        channel.disconnect();
-      }
-      if (session != null) {
-        session.disconnect();
+      close();
+
+      if (line.equals("1")) {
+        return true;
+      } else {
+        return false;
       }
     }
+  }
 
-    if (line.equals("1")) {
-      return true;
-    } else {
-      return false;
+  private void close() {
+    if (channel != null) {
+      channel.disconnect();
+    }
+    if (session != null) {
+      session.disconnect();
     }
   }
 

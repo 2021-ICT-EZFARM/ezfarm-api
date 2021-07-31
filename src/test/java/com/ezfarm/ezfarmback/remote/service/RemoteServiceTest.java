@@ -13,7 +13,7 @@ import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
-import com.ezfarm.ezfarmback.remote.dto.IotInfo;
+import com.ezfarm.ezfarmback.common.iot.IotInfo;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
