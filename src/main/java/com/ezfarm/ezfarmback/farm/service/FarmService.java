@@ -6,6 +6,8 @@ import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
+import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
+import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
@@ -109,6 +111,12 @@ public class FarmService {
         Pagination pagination) {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return farmRepository
-            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, pageable).getContent();
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, pageable)
+            .getContent();
+    }
+
+    public FarmDetailSearchResponse findOtherFarm(Long farmId,
+        FarmDetailSearchCond farmDetailSearchCond) {
+        return null;
     }
 }

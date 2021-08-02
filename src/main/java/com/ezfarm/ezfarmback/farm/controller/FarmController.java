@@ -1,6 +1,8 @@
 package com.ezfarm.ezfarmback.farm.controller;
 
 import com.ezfarm.ezfarmback.common.dto.Pagination;
+import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
+import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
@@ -89,5 +91,13 @@ public class FarmController {
         List<FarmSearchResponse> otherFarms = farmService
             .findOtherFarms(user, farmSearchCond, pagination);
         return ResponseEntity.ok(otherFarms);
+    }
+
+    @ApiOperation(value = "타 농가 상세 조회")
+    @GetMapping("/other/{farmId}")
+    public ResponseEntity<FarmDetailSearchResponse> findOtherFarm(@PathVariable Long farmId,
+        @RequestBody FarmDetailSearchCond farmDetailSearchCond) {
+        FarmDetailSearchResponse otherFarm = farmService.findOtherFarm(farmId, farmDetailSearchCond);
+        return ResponseEntity.ok(otherFarm);
     }
 }
