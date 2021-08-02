@@ -21,6 +21,7 @@ import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
+import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
@@ -70,6 +71,7 @@ public class FarmServiceTest {
             .build();
 
         farm = Farm.builder()
+            .id(1L)
             .name("테스트 농가 이름1")
             .address("서울")
             .isMain(false)
@@ -242,6 +244,21 @@ public class FarmServiceTest {
         farmService.findOtherFarms(user, farmSearchCond, new Pagination(0, 10));
 
         verify(farmRepository)
-            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, PageRequest.of(0, 10));
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond,
+                PageRequest.of(0, 10));
+    }
+
+    @DisplayName("타 농가를 상세 조회한다.(디폴트)")
+    @Test
+    void findOtherFarm_default_success() {
+        FarmDetailSearchCond farmDetailSearchCond = FarmDetailSearchCond.builder()
+            .isDefault(true)
+            .build();
+
+        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+
+        farmService.findOtherFarm(1L, farmDetailSearchCond);
+
+        //when()
     }
 }
