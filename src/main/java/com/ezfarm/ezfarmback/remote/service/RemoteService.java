@@ -31,7 +31,7 @@ public class RemoteService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-        if (findFarm.isNotPossibleToAccessFarm(user.getId())) {
+        if (!findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
@@ -57,7 +57,7 @@ public class RemoteService {
         Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
-        if (findRemote.getFarm().isNotPossibleToAccessFarm(user.getId())) {
+        if (!findRemote.getFarm().isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
         findRemote.updateRemote(remoteRequest);

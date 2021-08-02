@@ -29,7 +29,7 @@ public class AlertService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-        if (findFarm.isNotPossibleToAccessFarm(user.getId())) {
+        if (!findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
@@ -46,7 +46,7 @@ public class AlertService {
         AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
-        if (alertRange.getFarm().isNotPossibleToAccessFarm(user.getId())) {
+        if (!alertRange.getFarm().isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 

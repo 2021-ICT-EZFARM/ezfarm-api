@@ -27,14 +27,13 @@ public class FavoriteService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-        if (findFarm.getUser().getId().equals(user.getId())) {
+        if (findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.MY_FARM_NOT_ALLOWED);
         }
 
-        boolean isExist = favoriteRepository.existsByUserAndFarm(user, findFarm);
-        if (isExist) {
-            throw new CustomException(ErrorCode.FAVORITE_DUPLICATED);
-        }
+        List<Favorite> favorites = favoriteRepository.findAllByUserAndFarm(user, findFarm);
+        confirmFavoriteMaximumNumber(favorites);
+        confirmSameFavorite(findFarm, favorites);
 
         Favorite favorite = Favorite.builder()
             .user(user)
@@ -42,6 +41,20 @@ public class FavoriteService {
             .build();
 
         favoriteRepository.save(favorite);
+    }
+
+    private void confirmFavoriteMaximumNumber(List<Favorite> favorites) {
+        if (favorites.size() > 5) {
+            throw new CustomException(ErrorCode.EXCEED_FAVORITE_SIZE);
+        }
+    }
+
+    private void confirmSameFavorite(Farm findFarm, List<Favorite> favorites) {
+        for (Favorite favorite : favorites) {
+            if (favorite.getFarm().isSameFarm(findFarm.getId())) {
+                throw new CustomException(ErrorCode.FAVORITE_DUPLICATED);
+            }
+        }
     }
 
     @Transactional(readOnly = true)

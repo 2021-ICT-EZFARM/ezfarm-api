@@ -18,21 +18,21 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Screen {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "screen_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "screen_id")
+    private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "farm_id")
-  private Farm farm;
+    @ManyToOne
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
 
-  private String imageUrl;
+    private String imageUrl;
 
-  private float cropCondition;
+    private float cropCondition;
 
-  private String measureTime;
-
+    private String measureTime;
+  
   @Builder
   public Screen(Farm farm, String imageUrl, float cropCondition, String measureTime) {
     this.farm = farm;
@@ -40,4 +40,5 @@ public class Screen {
     this.cropCondition = cropCondition;
     this.measureTime = measureTime;
   }
+
 }

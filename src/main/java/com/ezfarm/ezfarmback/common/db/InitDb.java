@@ -33,10 +33,13 @@ public class InitDb {
     //@PostConstruct
     @Transactional
     public void init() throws Exception {
-
         dbCleanUp.afterPropertiesSet();
         dbCleanUp.clearUp();
+        saveUserAndNormalFarm();
+        saveAdminAndBestFarm();
+    }
 
+    private void saveUserAndNormalFarm() {
         for (int i = 1; i <= 20; i++) {
             User user = User.builder()
                 .email("user" + i + "@email.com")
@@ -55,7 +58,9 @@ public class InitDb {
                 farmRepository.save(farm);
             }
         }
+    }
 
+    private void saveAdminAndBestFarm() throws Exception {
         User admin = User.builder()
             .email("admin@email.com")
             .name("어드민")

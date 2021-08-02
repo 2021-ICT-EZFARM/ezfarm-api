@@ -36,7 +36,6 @@ dependencies {
     implementation 'dev.galasa:com.jcraft.jsch:0.1.55'
 
     runtimeOnly 'com.h2database:h2'
-    compileOnly 'org.projectlombok:lombok'
 
     annotationProcessor 'org.projectlombok:lombok'
 

@@ -1,5 +1,7 @@
 package com.ezfarm.ezfarmback.favorite.service;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +20,6 @@ import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
 import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -67,6 +68,7 @@ public class FavoriteServiceTest {
             .build();
 
         farm = Farm.builder()
+            .id(1L)
             .user(farmOwner)
             .address("경기")
             .name("테스트 농가")
@@ -75,21 +77,18 @@ public class FavoriteServiceTest {
             .farmType(FarmType.GLASS)
             .cropType(CropType.PAPRIKA)
             .isMain(true)
-            .startDate(null)
             .build();
     }
 
     @DisplayName("농가 즐겨찾기를 추가한다.")
     @Test
     void addFavorite_success() {
-        //when
         when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(farm));
-        when(favoriteRepository.existsByUserAndFarm(any(), any())).thenReturn(false);
+        when(favoriteRepository.findAllByUserAndFarm(any(), any())).thenReturn(emptyList());
         when(favoriteRepository.save(any())).thenReturn(any());
 
         favoriteService.addFavorite(loginUser, 1L);
 
-        //then
         verify(favoriteRepository).save(any());
     }
 
@@ -117,9 +116,13 @@ public class FavoriteServiceTest {
     @DisplayName("즐겨찾기 추가 시 중복되는 농가이면 예외 처리한다.")
     @Test
     void addFavorite_failure_duplicated_farm() {
+        Favorite favorite = Favorite.builder()
+            .farm(farm)
+            .build();
 
         when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(farm));
-        when(favoriteRepository.existsByUserAndFarm(any(), any())).thenReturn(true);
+        when(favoriteRepository.findAllByUserAndFarm(any(), any()))
+            .thenReturn(singletonList(favorite));
 
         assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, 1L))
             .isInstanceOf(CustomException.class)
@@ -129,20 +132,17 @@ public class FavoriteServiceTest {
     @DisplayName("농가 즐겨찾기를 조회한다.")
     @Test
     void findFavorites_success() {
-        //given
         farm.setUser(farmOwner);
         Favorite favorite = Favorite.builder()
             .user(farmOwner)
             .farm(farm)
             .build();
 
-        //when
         when(favoriteRepository.findAllByUser(any())).thenReturn(
-            Collections.singletonList(favorite));
+            singletonList(favorite));
 
         List<FavoriteResponse> favoriteResponses = favoriteService.findFavorites(loginUser);
 
-        //then
         Assertions.assertAll(
             () -> assertThat(favoriteResponses.size()).isEqualTo(1),
             () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())

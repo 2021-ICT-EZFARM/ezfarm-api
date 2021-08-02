@@ -53,14 +53,17 @@ public class Farm extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private CropType cropType;
 
-    private LocalDate startDate;
-
+    @Enumerated(value = EnumType.STRING)
     private FarmGroup farmGroup;
 
+    private LocalDate startDate;
+
     @Builder
-    public Farm(String address, String name, String phoneNumber, String area, boolean isMain,
+    public Farm(Long id, String address, String name, String phoneNumber, String area,
+        boolean isMain,
         FarmType farmType,
         CropType cropType, LocalDate startDate, User user, FarmGroup farmGroup) {
+        this.id = id;
         this.address = address;
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -96,7 +99,11 @@ public class Farm extends BaseTimeEntity {
         this.startDate = farmRequest.getStartDate();
     }
 
-    public boolean isNotPossibleToAccessFarm(Long userId) {
-        return !this.getUser().getId().equals(userId);
+    public boolean isMyFarm(Long userId) {
+        return this.getUser().getId().equals(userId);
+    }
+
+    public boolean isSameFarm(Long farmId) {
+        return this.getId().equals(farmId);
     }
 }
