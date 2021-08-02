@@ -8,12 +8,12 @@ import static org.mockito.Mockito.when;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.iot.JschService;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
-import com.ezfarm.ezfarmback.common.iot.IotInfo;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
@@ -40,7 +40,7 @@ class RemoteServiceTest {
     RemoteRepository remoteRepository;
 
     @Mock
-    IotInfo iotInfo;
+    JschService jschService;
 
     User user;
 
@@ -58,7 +58,7 @@ class RemoteServiceTest {
 
     @BeforeEach
     void setUp() {
-        remoteService = new RemoteService(farmRepository, remoteRepository, iotInfo);
+        remoteService = new RemoteService(farmRepository, remoteRepository, jschService);
 
         remoteResponse = new RemoteResponse(1L, OnOff.ON, 37.5f, OnOff.OFF, OnOff.ON,
             LocalDateTime.now(), LocalDateTime.now());

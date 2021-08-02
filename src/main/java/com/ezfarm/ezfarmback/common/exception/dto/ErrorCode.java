@@ -6,6 +6,8 @@ import lombok.Getter;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "S_001", "서버에 문제가 생겼습니다."),
 
+    INTERNAL_IOT_SERVER_ERROR(500, "IOT_001", "IOT서버에 문제가 생겼습니다."),
+
     INVALID_INPUT_VALUE(400, "C_001", "적절하지 않은 요청 값입니다."),
     INVALID_TYPE_VALUE(400, "C_002", "요청 값의 타입이 잘못되었습니다."),
     METHOD_NOT_ALLOWED(405, "C_003", "적절하지 않은 HTTP 메소드입니다."),
@@ -22,7 +24,9 @@ public enum ErrorCode {
 
     DUPLICATED_EMAIL(400, "AU_002", "이미 존재하는 이메일입니다."),
 
-    FARM_ACCESS_DENIED(403, "AU_003", "해당 농가에 권한이 없습니다.");
+    FARM_ACCESS_DENIED(403, "AU_003", "해당 농가에 권한이 없습니다."),
+
+    NON_EXISTENT_SCREEN(404, "SC_001", "화면을 조회할 수 없습니다.");
 
     private final int status;
     private final String code;

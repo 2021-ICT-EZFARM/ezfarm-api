@@ -22,10 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RemoteService {
 
     private final FarmRepository farmRepository;
-
     private final RemoteRepository remoteRepository;
+    private final JschService jschService;
 
-    private final IotInfo iotInfo;
 
     @Transactional(readOnly = true)
     public RemoteResponse findRemote(User user, Long farmId) {
@@ -61,7 +60,6 @@ public class RemoteService {
         if (findRemote.getFarm().isNotPossibleToAccessFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
-        JschService jschService = new JschService(iotInfo.getHostname(), iotInfo.getUsername(), iotInfo.getPassword());
         findRemote.updateRemote(remoteRequest);
 
         return jschService.updateRemote();
