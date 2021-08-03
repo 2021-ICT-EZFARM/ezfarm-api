@@ -1,8 +1,12 @@
-package com.ezfarm.ezfarmback.facility.domain;
+package com.ezfarm.ezfarmback.facility.domain.month;
 
+
+import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,13 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
 @Entity
-public class Facility {
+public class FacilityMonthAvg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,18 +32,15 @@ public class Facility {
     @JoinColumn(name = "farm_id")
     private Farm farm;
 
-    private float tmp;
+    private String measureDate;
 
-    private float humidity;
+    @Embedded
+    private FacilityAvg facilityAvg;
 
-    private float illuminance;
-
-    private float co2;
-
-    private float ph;
-
-    private float mos;
-
-    private LocalDateTime measureDate;
-
+    @Builder
+    public FacilityMonthAvg(Farm farm, FacilityAvg facilityAvg, LocalDateTime measureDate) {
+        this.farm = farm;
+        this.facilityAvg = facilityAvg;
+        this.measureDate = measureDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+    }
 }

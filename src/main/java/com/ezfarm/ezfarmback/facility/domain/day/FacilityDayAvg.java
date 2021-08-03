@@ -1,5 +1,6 @@
-package com.ezfarm.ezfarmback.facility.domain;
+package com.ezfarm.ezfarmback.facility.domain.day;
 
+import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import javax.persistence.Column;
 import javax.persistence.Embedded;

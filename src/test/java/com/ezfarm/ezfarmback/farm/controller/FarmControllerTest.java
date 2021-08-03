@@ -20,8 +20,6 @@ import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
-import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
-import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchResponse;
 import com.ezfarm.ezfarmback.farm.service.FarmService;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -133,23 +131,6 @@ class FarmControllerTest extends CommonApiTest {
         mockMvc.perform(post("/api/farm/other")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(farmSearchCond)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
-
-    @WithMockCustomUser
-    @DisplayName("타 농가를 상세 조회한다.")
-    @Test
-    void findOtherFarm() throws Exception {
-        FarmDetailSearchCond farmDetailSearchCond = FarmDetailSearchCond.builder()
-            .isDefault(true)
-            .build();
-
-        when(farmService.findOtherFarm(any(), any())).thenReturn(new FarmDetailSearchResponse());
-
-        mockMvc.perform(get("/api/farm/other/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(farmDetailSearchCond)))
             .andExpect(status().isOk())
             .andDo(print());
     }

@@ -247,18 +247,4 @@ public class FarmServiceTest {
             .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond,
                 PageRequest.of(0, 10));
     }
-
-    @DisplayName("타 농가를 상세 조회한다.(디폴트)")
-    @Test
-    void findOtherFarm_default_success() {
-        FarmDetailSearchCond farmDetailSearchCond = FarmDetailSearchCond.builder()
-            .isDefault(true)
-            .build();
-
-        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-
-        farmService.findOtherFarm(1L, farmDetailSearchCond);
-
-        //when()
-    }
 }

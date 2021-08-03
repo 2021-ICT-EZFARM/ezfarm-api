@@ -1,9 +1,10 @@
 package com.ezfarm.ezfarmback.facility.domain;
 
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class FacilityAvg{
+public class FacilityAvg {
 
     private float avg_tmp;
 
@@ -17,7 +18,7 @@ public class FacilityAvg{
 
     private float avg_mos;
 
-    public FacilityAvg(){
+    public FacilityAvg() {
         this.avg_tmp = 0;
         this.avg_humidity = 0;
         this.avg_illuminance = 0;
