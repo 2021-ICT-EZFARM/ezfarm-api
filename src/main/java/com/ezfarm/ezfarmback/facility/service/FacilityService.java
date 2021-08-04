@@ -2,11 +2,11 @@ package com.ezfarm.ezfarmback.facility.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
-import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityMonthlyAvgResponse;
+import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.dto.day.FacilityDailyAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.month.FacilityMonthlyAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.week.FacilityWeekAvgResponse;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
@@ -21,14 +21,14 @@ public class FacilityService {
 
     private final FarmRepository farmRepository;
 
-    private final FacilityMonthAvgRepository facilityMonthAvgRepository;
+    private final FacilityDayAvgRepository facilityDayAvgRepository;
 
     @Transactional(readOnly = true)
     public FacilityPeriodResponse findFacilitySearchPeriod(Long farmId) {
         Farm findFarm = farmRepository.findById(farmId).orElseThrow(
             () -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-        return facilityMonthAvgRepository.findMinAndMinMeasureDateByFarm(findFarm);
+        return facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(findFarm);
     }
 
     public FacilityDailyAvgResponse findFacilityDailyAvg(Long farmId,

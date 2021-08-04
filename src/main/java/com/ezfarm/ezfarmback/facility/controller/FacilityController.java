@@ -1,9 +1,9 @@
 package com.ezfarm.ezfarmback.facility.controller;
 
-import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityMonthlyAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.day.FacilityDailyAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.month.FacilityMonthlyAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.week.FacilityWeekAvgResponse;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
 import io.swagger.annotations.Api;

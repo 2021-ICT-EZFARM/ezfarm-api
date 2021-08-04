@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
@@ -27,7 +27,7 @@ public class FacilityServiceTest {
     private FarmRepository farmRepository;
 
     @Mock
-    private FacilityMonthAvgRepository facilityMonthAvgRepository;
+    private FacilityDayAvgRepository facilityDayAvgRepository;
 
     FacilityService facilityService;
 
@@ -35,7 +35,7 @@ public class FacilityServiceTest {
 
     @BeforeEach
     void setUp() {
-        facilityService = new FacilityService(farmRepository, facilityMonthAvgRepository);
+        facilityService = new FacilityService(farmRepository, facilityDayAvgRepository);
 
         farm = Farm.builder()
             .id(1L)
@@ -51,13 +51,13 @@ public class FacilityServiceTest {
     void findFacilitySearchPeriod_success() {
         FacilityPeriodResponse periodResponse = new FacilityPeriodResponse("2020-1", "2021-10");
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-        when(facilityMonthAvgRepository.findMinAndMinMeasureDateByFarm(farm)).thenReturn(
+        when(facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(farm)).thenReturn(
             periodResponse);
 
         FacilityPeriodResponse response = facilityService.findFacilitySearchPeriod(1L);
 
         verify(farmRepository).findById(any());
-        verify(facilityMonthAvgRepository).findMinAndMinMeasureDateByFarm(any());
+        verify(facilityDayAvgRepository).findMinAndMaxMeasureDateByFarm(any());
 
         Assertions.assertAll(
             () -> assertThat(response.getStartDate()).isEqualTo(periodResponse.getStartDate()),
