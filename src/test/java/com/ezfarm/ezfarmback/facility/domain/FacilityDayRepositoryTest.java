@@ -6,10 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.ezfarm.ezfarmback.config.AppConfig;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,12 @@ public class FacilityDayRepositoryTest {
 
     Farm savedFarm;
 
+    FacilityDayAvg min;
+
+    FacilityDayAvg mid;
+
+    FacilityDayAvg max;
+
     @BeforeEach
     void setUp() {
         Farm farm = Farm.builder()
@@ -40,22 +48,22 @@ public class FacilityDayRepositoryTest {
         savedFarm = farmRepository.save(farm);
 
         LocalDateTime minDate = LocalDateTime.of(2017, 1, 10, 0, 0);
-        LocalDateTime midDate = LocalDateTime.of(2017, 5, 10, 0, 0);
+        LocalDateTime midDate = LocalDateTime.of(2017, 1, 20, 0, 0);
         LocalDateTime maxDate = LocalDateTime.of(2018, 1, 10, 0, 0);
 
-        FacilityDayAvg min = FacilityDayAvg.builder()
+        min = FacilityDayAvg.builder()
             .farm(savedFarm)
             .facilityAvg(new FacilityAvg())
             .measureDate(minDate)
             .build();
 
-        FacilityDayAvg mid = FacilityDayAvg.builder()
+        mid = FacilityDayAvg.builder()
             .farm(savedFarm)
             .facilityAvg(new FacilityAvg())
             .measureDate(midDate)
             .build();
 
-        FacilityDayAvg max = FacilityDayAvg.builder()
+        max = FacilityDayAvg.builder()
             .farm(savedFarm)
             .facilityAvg(new FacilityAvg())
             .measureDate(maxDate)
@@ -71,8 +79,24 @@ public class FacilityDayRepositoryTest {
             savedFarm);
 
         Assertions.assertAll(
-            () -> assertThat(response.getStartDate()).isEqualTo("2017-01-10"),
-            () -> assertThat(response.getEndDate()).isEqualTo("2018-01-10")
+            () -> assertThat(response.getStartDate()).isEqualTo(min.getMeasureDate()),
+            () -> assertThat(response.getEndDate()).isEqualTo(max.getMeasureDate())
+        );
+    }
+
+    @DisplayName("타 농가 일 평균 데이터를 조회한다.")
+    @Test
+    void findAllByFarmAndMeasureDateStartsWith() {
+        FacilityDailyAvgRequest facilityDailyAvgRequest = new FacilityDailyAvgRequest("2017", "01");
+        String date = facilityDailyAvgRequest.getYear() + "-" + facilityDailyAvgRequest.getMonth();
+
+        List<FacilityDayAvg> response = facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+            savedFarm, date);
+
+        Assertions.assertAll(
+            () -> assertThat(response.size()).isEqualTo(2),
+            () -> assertThat(response).extracting("measureDate")
+                .contains(min.getMeasureDate(), mid.getMeasureDate())
         );
     }
 }
