@@ -1,13 +1,13 @@
 package com.ezfarm.ezfarmback.facility.controller;
 
-import com.ezfarm.ezfarmback.facility.dto.day.FacilityDailyAvgResponse;
-import com.ezfarm.ezfarmback.facility.dto.month.FacilityMonthlyAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.week.FacilityWeekAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,28 +34,28 @@ public class FacilityController {
 
     @ApiOperation(value = "타 농가 상세 조회(일)")
     @GetMapping("/daily-avg/{farmId}")
-    public ResponseEntity<FacilityDailyAvgResponse> findFacilityDailyAvg(@PathVariable Long farmId,
-        @RequestBody FarmDetailSearchCond farmDetailSearchCond) {
-        FacilityDailyAvgResponse res = facilityService.findFacilityDailyAvg(farmId,
-            farmDetailSearchCond);
+    public ResponseEntity<List<FacilityResponse>> findFacilityDailyAvg(@PathVariable Long farmId,
+        @RequestBody FacilityDailyAvgRequest facilityDailyAvgRequest) {
+        List<FacilityResponse> res = facilityService.findFacilityDailyAvg(farmId,
+            facilityDailyAvgRequest);
         return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "타 농가 상세 조회(주)")
     @GetMapping("/week-avg/{farmId}")
-    public ResponseEntity<FacilityWeekAvgResponse> findFacilityWeekAvg(@PathVariable Long farmId,
+    public ResponseEntity<FacilityResponse> findFacilityWeekAvg(@PathVariable Long farmId,
         @RequestBody FarmDetailSearchCond farmDetailSearchCond) {
-        FacilityWeekAvgResponse res = facilityService.findFacilityWeekAvg(farmId,
+        FacilityResponse res = facilityService.findFacilityWeekAvg(farmId,
             farmDetailSearchCond);
         return ResponseEntity.ok(res);
     }
 
     @ApiOperation(value = "타 농가 상세 조회(월)")
     @GetMapping("/monthly-avg/{farmId}")
-    public ResponseEntity<FacilityMonthlyAvgResponse> findFacilityMonthlyAvg(
+    public ResponseEntity<FacilityResponse> findFacilityMonthlyAvg(
         @PathVariable Long farmId,
         @RequestBody FarmDetailSearchCond farmDetailSearchCond) {
-        FacilityMonthlyAvgResponse res = facilityService.findFacilityMonthlyAvg(farmId,
+        FacilityResponse res = facilityService.findFacilityMonthlyAvg(farmId,
             farmDetailSearchCond);
         return ResponseEntity.ok(res);
     }
