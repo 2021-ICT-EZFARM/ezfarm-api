@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.common.fileupload;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreService;
+import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileStoreServiceTest {
 
     @Autowired
-    FileStoreService fileStoreService;
+    FileStoreUtils fileStoreUtils;
 
     @DisplayName("S3에 파일을 저장한다.")
     @Test
@@ -30,7 +30,7 @@ public class FileStoreServiceTest {
             new FileInputStream("src/test/resources/images/ezfarm-logo.PNG")
         );
 
-        String storeFileS3Url = fileStoreService.storeFile(multipartFile);
+        String storeFileS3Url = fileStoreUtils.storeFile(multipartFile);
 
         assertThat(storeFileS3Url).isNotNull();
     }
@@ -45,8 +45,8 @@ public class FileStoreServiceTest {
             new FileInputStream("src/test/resources/images/ezfarm-logo.PNG")
         );
 
-        String storeFileS3Url = fileStoreService.storeFile(multipartFile);
-        fileStoreService.deleteFile(storeFileS3Url);
+        String storeFileS3Url = fileStoreUtils.storeFile(multipartFile);
+        fileStoreUtils.deleteFile(storeFileS3Url);
         //직접 확인
     }
 }

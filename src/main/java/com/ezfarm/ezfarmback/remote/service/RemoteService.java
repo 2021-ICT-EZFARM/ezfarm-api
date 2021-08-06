@@ -2,13 +2,12 @@ package com.ezfarm.ezfarmback.remote.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
-import com.ezfarm.ezfarmback.common.iot.JschService;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
-import com.ezfarm.ezfarmback.common.iot.IotInfo;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -22,9 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class RemoteService {
 
     private final FarmRepository farmRepository;
-    private final RemoteRepository remoteRepository;
-    private final JschService jschService;
 
+    private final RemoteRepository remoteRepository;
+
+    private final IotUtils iotUtils;
 
     @Transactional(readOnly = true)
     public RemoteResponse findRemote(User user, Long farmId) {
@@ -62,6 +62,6 @@ public class RemoteService {
         }
         findRemote.updateRemote(remoteRequest);
 
-        return jschService.updateRemote();
+        return iotUtils.updateRemote();
     }
 }

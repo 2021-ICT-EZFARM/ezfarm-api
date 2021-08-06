@@ -21,28 +21,28 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @WebMvcTest(controllers = ScreenController.class)
 public class ScreenControllerTest extends CommonApiTest {
 
-  @MockBean
-  ScreenService screenService;
+    @MockBean
+    ScreenService screenService;
 
-  ScreenResponse screenResponse;
+    ScreenResponse screenResponse;
 
-  @BeforeEach
-  @Override
-  public void setUp() {
-    super.setUp();
-    screenResponse = new ScreenResponse("test-url", 22.4F, "2021-09-12");
-  }
+    @BeforeEach
+    @Override
+    public void setUp() {
+        super.setUp();
+        screenResponse = new ScreenResponse("test-url", 22.4F, "9999-99-99");
+    }
 
-  @WithMockCustomUser
-  @DisplayName("실시간 화면을 조회한다.")
-  @Test
-  void findScreen() throws Exception {
-    when(screenService.findScreen(any(), any())).thenReturn(screenResponse);
+    @WithMockCustomUser
+    @DisplayName("실시간 화면을 조회한다.")
+    @Test
+    void findLiveScreen() throws Exception {
+        when(screenService.findLiveScreen(any(), any())).thenReturn(screenResponse);
 
-    mockMvc.perform(get(String.format("/api/screen?farmId=%d", 1L)))
-        .andExpect(status().isOk())
-        .andExpect(content().string(objectMapper.writeValueAsString(screenResponse)))
-        .andDo(print());
-  }
+        mockMvc.perform(get(String.format("/api/screen/live?farmId=%d", 1L)))
+            .andExpect(status().isOk())
+            .andExpect(content().string(objectMapper.writeValueAsString(screenResponse)))
+            .andDo(print());
+    }
 
 }

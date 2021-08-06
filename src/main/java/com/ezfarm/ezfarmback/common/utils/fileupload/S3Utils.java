@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class S3Utils {
 
     private final AmazonS3 amazonS3;
 

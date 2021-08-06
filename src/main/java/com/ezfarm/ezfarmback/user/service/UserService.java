@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.user.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreService;
+import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreUtils;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
@@ -23,7 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final FileStoreService fileStoreService;
+    private final FileStoreUtils fileStoreUtils;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -83,12 +83,12 @@ public class UserService {
 
     private String getUpdatedImageUrl(User user, MultipartFile newImageFile) {
         deleteOriginImage(user);
-        return fileStoreService.storeFile(newImageFile);
+        return fileStoreUtils.storeFile(newImageFile);
     }
 
     private void deleteOriginImage(User user) {
         if (user.hasImage()) {
-            fileStoreService.deleteFile(user.getImageUrl());
+            fileStoreUtils.deleteFile(user.getImageUrl());
         }
     }
 }

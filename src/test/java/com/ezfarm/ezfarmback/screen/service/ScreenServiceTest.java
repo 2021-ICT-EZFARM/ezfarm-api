@@ -8,12 +8,12 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.iot.JschService;
+import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.screen.domain.Screen;
 import com.ezfarm.ezfarmback.screen.dto.ScreenResponse;
-import com.ezfarm.ezfarmback.screen.repository.ScreenRepository;
+import com.ezfarm.ezfarmback.screen.domain.ScreenRepository;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ public class ScreenServiceTest {
   ScreenService screenService;
 
   @Mock
-  JschService jschService;
+  IotUtils iotUtils;
 
   @Mock
   ScreenRepository screenRepository;
@@ -54,7 +54,7 @@ public class ScreenServiceTest {
 
   @BeforeEach()
   void setUp() {
-    screenService = new ScreenService(jschService, screenRepository, farmRepository, modelMapper);
+    screenService = new ScreenService(iotUtils, screenRepository, farmRepository, modelMapper);
 
     user = User.builder()
         .id(1L)
@@ -85,13 +85,13 @@ public class ScreenServiceTest {
 
   @DisplayName("내 농가 실시간 화면 조회가 성공한다.")
   @Test
-  void findScreen() {
+  void findLiveScreen() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(jschService.viewScreen()).thenReturn(screen.getMeasureTime());
+    when(iotUtils.getLiveScreen()).thenReturn(screen.getMeasureTime());
     when(screenRepository.findByFarmAndMeasureTime(any(), any())).thenReturn(ofNullable(screen));
     when(modelMapper.map(any(), any())).thenReturn(screenResponse);
 
-    screenService.findScreen(user, 1L);
+    screenService.findLiveScreen(user, 1L);
 
     Assertions.assertAll(
         () -> assertThat(screenResponse.getImageUrl()).isEqualTo(screen.getImageUrl()),
@@ -102,34 +102,34 @@ public class ScreenServiceTest {
 
   @DisplayName("존재하지 않는 농가의 실시간 화면 조회시 예외가 발생한다.")
   @Test
-  void findScreen_failure_illegal_farmId() {
+  void findLiveScreen_failure_illegal_farmId() {
     when(farmRepository.findById(any())).thenThrow(new CustomException(ErrorCode.INVALID_FARM_ID));
 
-    assertThatThrownBy(() -> screenService.findScreen(user, 1L))
+    assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
   }
 
   @DisplayName("권한이 없는 농가의 실시간 화면 조회시 예외가 발생한다.")
   @Test
-  void findScreen_failure_illegal_access() {
+  void findLiveScreen_failure_illegal_access() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
 
     User anonymous = User.builder().build();
 
-    assertThatThrownBy(() -> screenService.findScreen(anonymous, 2L))
+    assertThatThrownBy(() -> screenService.findLiveScreen(anonymous, 2L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.FARM_ACCESS_DENIED.getMessage());
   }
 
   @DisplayName("iot 연결이 실패하면 예외가 발생한다.")
   @Test
-  void findScreen_failure_jsch_error() {
+  void findLiveScreen_failure_jsch_error() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(jschService.viewScreen())
+    when(iotUtils.getLiveScreen())
         .thenThrow(new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR));
 
-    assertThatThrownBy(() -> screenService.findScreen(user, 1L))
+    assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INTERNAL_IOT_SERVER_ERROR.getMessage());
 
@@ -137,24 +137,24 @@ public class ScreenServiceTest {
 
   @DisplayName("실기간 화면이 저장되지 않았을 경우 조회 시 예외가 발생한다.")
   @Test
-  void findScreen_failure_not_exist_screen() {
+  void findLiveScreen_failure_not_exist_screen() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(jschService.viewScreen()).thenReturn(screen.getMeasureTime());
+    when(iotUtils.getLiveScreen()).thenReturn(screen.getMeasureTime());
     when(screenRepository.findByFarmAndMeasureTime(any(), any()))
         .thenThrow(new CustomException(ErrorCode.NON_EXISTENT_SCREEN));
 
-    assertThatThrownBy(() -> screenService.findScreen(user, 1L))
+    assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.NON_EXISTENT_SCREEN.getMessage());
   }
 
   @DisplayName("IOT에서 요청을 처리하지 못했을 경우 예외가 발생한다.")
   @Test
-  void findScreen_failure_iotServer_error() {
+  void findLiveScreen_failure_iotServer_error() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(jschService.viewScreen()).thenThrow(new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR));
+    when(iotUtils.getLiveScreen()).thenThrow(new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR));
 
-    assertThatThrownBy(() -> screenService.findScreen(user, 1L))
+    assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INTERNAL_IOT_SERVER_ERROR.getMessage());
   }

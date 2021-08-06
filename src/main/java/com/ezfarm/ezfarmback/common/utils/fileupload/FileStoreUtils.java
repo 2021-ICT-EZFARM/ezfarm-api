@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class FileStoreService {
+public class FileStoreUtils {
 
-    private final S3Service s3Service;
+    private final S3Utils s3Utils;
 
     public String storeFile(MultipartFile multipartFile) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -19,16 +19,16 @@ public class FileStoreService {
 
         String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
         try {
-            s3Service.storeFile(multipartFile.getInputStream(), objectMetadata, storeFileName);
+            s3Utils.storeFile(multipartFile.getInputStream(), objectMetadata, storeFileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return s3Service.getStoreFileUrl(storeFileName);
+        return s3Utils.getStoreFileUrl(storeFileName);
     }
 
     public void deleteFile(String storeFileUrl) {
         String storeFileName = extractStoreFileName(storeFileUrl);
-        s3Service.deleteStoreFile(storeFileName);
+        s3Utils.deleteStoreFile(storeFileName);
     }
 
     public static String extractStoreFileName(String storeFileUrl) {
