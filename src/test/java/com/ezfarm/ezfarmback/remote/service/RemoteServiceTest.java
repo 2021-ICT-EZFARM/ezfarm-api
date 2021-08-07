@@ -151,6 +151,7 @@ class RemoteServiceTest {
     @Test
     void updateRemote() {
         when(remoteRepository.findById(any())).thenReturn(ofNullable(remote));
+        when(iotUtils.updateRemote(any())).thenReturn(true);
         remoteService.updateRemote(user, remoteRequest);
         Assertions.assertAll(
             () -> AssertionsForClassTypes.assertThat(remote.getTemperature())

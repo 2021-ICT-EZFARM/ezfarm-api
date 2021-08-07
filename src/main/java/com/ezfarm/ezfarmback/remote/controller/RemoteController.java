@@ -42,7 +42,6 @@ public class RemoteController {
     @ApiOperation(value = "농가 제어 값 수정")
     @ApiResponses({
         @ApiResponse(code = 403, message = "해당 농가에 권한이 없습니다."),
-        @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
         @ApiResponse(code = 500, message = "IOT 서버에 문제가 생겼습니다."),
         @ApiResponse(code = 500, message = "IOT 서버 연결에 실패했습니다."),
     })
