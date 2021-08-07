@@ -42,9 +42,9 @@ public class IotUtils {
         StringBuilder sb = new StringBuilder();
         sb.append("./").append(jschConnector.getRemoteFile())
             .append(" ").append(remoteRequest.getRemoteId())
-            .append(" ").append(remoteRequest.getIlluminance())
-            .append(" ").append(remoteRequest.getTemperature())
             .append(" ").append(remoteRequest.getWater())
+            .append(" ").append(remoteRequest.getTemperature())
+            .append(" ").append(remoteRequest.getIlluminance())
             .append(" ").append(remoteRequest.getCo2());
         log.info("updateRemote path = {}", sb);
         return sb.toString();
@@ -66,7 +66,7 @@ public class IotUtils {
 
             log.info("getLiveScreen output = {}", output);
 
-            if (output.equals("error")) {
+            if (output.equals("0")) {
                 throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
             } else {
                 return output;
