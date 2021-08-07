@@ -87,7 +87,7 @@ public class ScreenServiceTest {
   @Test
   void findLiveScreen() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveScreen()).thenReturn(screen.getMeasureTime());
+    when(iotUtils.getLiveScreen(any())).thenReturn(screen.getMeasureTime());
     when(screenRepository.findByFarmAndMeasureTime(any(), any())).thenReturn(ofNullable(screen));
     when(modelMapper.map(any(), any())).thenReturn(screenResponse);
 
@@ -126,7 +126,7 @@ public class ScreenServiceTest {
   @Test
   void findLiveScreen_failure_jsch_error() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveScreen())
+    when(iotUtils.getLiveScreen(any()))
         .thenThrow(new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR));
 
     assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
@@ -139,7 +139,7 @@ public class ScreenServiceTest {
   @Test
   void findLiveScreen_failure_not_exist_screen() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveScreen()).thenReturn(screen.getMeasureTime());
+    when(iotUtils.getLiveScreen(any())).thenReturn(screen.getMeasureTime());
     when(screenRepository.findByFarmAndMeasureTime(any(), any()))
         .thenThrow(new CustomException(ErrorCode.NON_EXISTENT_SCREEN));
 
@@ -152,7 +152,7 @@ public class ScreenServiceTest {
   @Test
   void findLiveScreen_failure_iotServer_error() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveScreen()).thenThrow(new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR));
+    when(iotUtils.getLiveScreen(any())).thenThrow(new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR));
 
     assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
         .isInstanceOf(CustomException.class)

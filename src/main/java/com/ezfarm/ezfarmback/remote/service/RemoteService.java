@@ -53,15 +53,18 @@ public class RemoteService {
         );
     }
 
-    public Boolean updateRemote(User user, RemoteRequest remoteRequest) {
+    public void updateRemote(User user, RemoteRequest remoteRequest) {
         Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
         if (!findRemote.getFarm().isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
-        findRemote.updateRemote(remoteRequest);
 
-        return iotUtils.updateRemote();
+        boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
+        if (!isRemoteSuccess) {
+            throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
+        }
+        findRemote.updateRemote(remoteRequest);
     }
 }

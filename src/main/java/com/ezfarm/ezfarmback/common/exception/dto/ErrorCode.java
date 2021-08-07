@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "S_001", "서버에 문제가 생겼습니다."),
 
-    INTERNAL_IOT_SERVER_ERROR(500, "IOT_001", "IOT서버에 문제가 생겼습니다."),
+    INTERNAL_IOT_SERVER_ERROR(500, "IOT_001", "IOT 서버에 문제가 생겼습니다."),
+    IOT_SERVER_CONNECTION_ERROR(500, "IOT_002", "IOT 서버 연결에 실패했습니다."),
 
     INVALID_INPUT_VALUE(400, "C_001", "적절하지 않은 요청 값입니다."),
     INVALID_TYPE_VALUE(400, "C_002", "요청 값의 타입이 잘못되었습니다."),

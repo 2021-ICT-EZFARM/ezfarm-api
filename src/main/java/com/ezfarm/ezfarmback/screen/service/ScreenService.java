@@ -32,8 +32,7 @@ public class ScreenService {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
-        //실시간 화면은 고유한 measureTime을 반환받아야 한다.
-        String measureTime = iotUtils.getLiveScreen();
+        String measureTime = iotUtils.getLiveScreen(findFarm.getId());
         Screen screen = screenRepository.findByFarmAndMeasureTime(findFarm, measureTime)
             .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_SCREEN));
 

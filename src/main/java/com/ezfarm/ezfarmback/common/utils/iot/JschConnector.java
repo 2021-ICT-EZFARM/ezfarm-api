@@ -18,16 +18,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class JschConnector {
 
-    @Value("${property.iot.hostname}")
+    @Value("${app.iot.port}")
+    private int port;
+
+    @Value("${app.iot.hostname}")
     private String hostname;
 
-    @Value("${property.iot.username}")
+    @Value("${app.iot.username}")
     private String username;
 
-    @Value("${property.iot.password}")
+    @Value("${app.iot.password}")
     private String password;
 
-    private final int port = 22;
+    @Value("${app.iot.remote-file}")
+    private String remoteFile;
+
+    @Value("${app.iot.live-screen-file}")
+    private String liveScreenFile;
 
     private Session session = null;
     private Channel channel = null;
@@ -44,24 +51,27 @@ public class JschConnector {
             channel = session.openChannel("exec");
             channelExec = (ChannelExec) channel;
         } catch (JSchException e) {
-            throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
+            throw new CustomException(ErrorCode.IOT_SERVER_CONNECTION_ERROR);
         }
     }
 
-    public void readLines(InputStream in, String line) throws IOException {
+    public String readLines(InputStream in) throws IOException {
         byte[] tmp = new byte[1024];
+        StringBuilder outputBuffer = new StringBuilder();
+
         while (true) {
             while (in.available() > 0) {
                 int i = in.read(tmp, 0, 1024);
                 if (i < 0) {
                     break;
                 }
-                line += new String(tmp, 0, i);
+                outputBuffer.append(new String(tmp, 0, i));
             }
             if (channelExec.isClosed()) {
                 break;
             }
         }
+        return outputBuffer.toString();
     }
 
     public void close() {
