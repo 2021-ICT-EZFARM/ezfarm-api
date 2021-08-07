@@ -55,7 +55,7 @@ public class RemoteService {
 
     public void updateRemote(User user, RemoteRequest remoteRequest) {
         Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
-            .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
         if (!findRemote.getFarm().isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
