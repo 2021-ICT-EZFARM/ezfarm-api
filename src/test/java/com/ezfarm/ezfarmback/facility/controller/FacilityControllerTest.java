@@ -2,16 +2,16 @@ package com.ezfarm.ezfarmback.facility.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
+import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ public class FacilityControllerTest extends CommonApiTest {
 
         when(facilityService.findFacilitySearchPeriod(any())).thenReturn(facilityPeriodResponse);
 
-        mockMvc.perform(get("/api/facility/search-condition/{farmId}", 1L))
+        mockMvc.perform(post("/api/facility/search-condition/{farmId}", 1L))
             .andExpect(status().isOk())
             .andDo(print());
     }
@@ -62,7 +62,7 @@ public class FacilityControllerTest extends CommonApiTest {
         when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
             List.of(facilityResponse));
 
-        mockMvc.perform(get("/api/facility/daily-avg/{farmId}", 1L)
+        mockMvc.perform(post("/api/facility/daily-avg/{farmId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(facilityDailyAvgRequest)))
             .andExpect(status().isOk())
@@ -83,7 +83,7 @@ public class FacilityControllerTest extends CommonApiTest {
         when(facilityService.findFacilityMonthlyAvg(any(), any())).thenReturn(
             List.of(facilityResponse));
 
-        mockMvc.perform(get("/api/facility/monthly-avg/{farmId}", 1L)
+        mockMvc.perform(post("/api/facility/monthly-avg/{farmId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(facilityYearAvgRequest)))
             .andExpect(status().isOk())
