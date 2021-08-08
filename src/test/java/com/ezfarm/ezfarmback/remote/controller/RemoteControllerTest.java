@@ -62,8 +62,8 @@ class RemoteControllerTest extends CommonApiTest {
         doNothing().when(remoteService).updateRemote(any(), any());
 
         mockMvc.perform(patch("/api/remote")
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(remoteRequest)))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(remoteRequest)))
             .andExpect(status().isOk())
             .andDo(print());
     }

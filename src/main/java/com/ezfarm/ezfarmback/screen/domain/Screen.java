@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,13 @@ public class Screen {
     private float cropCondition;
 
     private String measureTime;
+  
+  @Builder
+  public Screen(Farm farm, String imageUrl, float cropCondition, String measureTime) {
+    this.farm = farm;
+    this.imageUrl = imageUrl;
+    this.cropCondition = cropCondition;
+    this.measureTime = measureTime;
+  }
+
 }

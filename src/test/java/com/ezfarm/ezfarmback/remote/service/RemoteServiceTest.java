@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
@@ -38,6 +39,9 @@ class RemoteServiceTest {
     @Mock
     RemoteRepository remoteRepository;
 
+    @Mock
+    IotUtils iotUtils;
+
     User user;
 
     Remote defaultRemote;
@@ -54,7 +58,7 @@ class RemoteServiceTest {
 
     @BeforeEach
     void setUp() {
-        remoteService = new RemoteService(farmRepository, remoteRepository);
+        remoteService = new RemoteService(farmRepository, remoteRepository, iotUtils);
 
         remoteResponse = new RemoteResponse(1L, OnOff.ON, 37.5f, OnOff.OFF, OnOff.ON,
             LocalDateTime.now(), LocalDateTime.now());
@@ -147,6 +151,7 @@ class RemoteServiceTest {
     @Test
     void updateRemote() {
         when(remoteRepository.findById(any())).thenReturn(ofNullable(remote));
+        when(iotUtils.updateRemote(any())).thenReturn(true);
         remoteService.updateRemote(user, remoteRequest);
         Assertions.assertAll(
             () -> AssertionsForClassTypes.assertThat(remote.getTemperature())

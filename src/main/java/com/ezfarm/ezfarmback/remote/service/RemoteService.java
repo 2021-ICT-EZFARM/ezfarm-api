@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.remote.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
@@ -22,6 +23,8 @@ public class RemoteService {
     private final FarmRepository farmRepository;
 
     private final RemoteRepository remoteRepository;
+
+    private final IotUtils iotUtils;
 
     @Transactional(readOnly = true)
     public RemoteResponse findRemote(User user, Long farmId) {
@@ -58,6 +61,10 @@ public class RemoteService {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
+        boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
+        if (!isRemoteSuccess) {
+            throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
+        }
         findRemote.updateRemote(remoteRequest);
     }
 }
