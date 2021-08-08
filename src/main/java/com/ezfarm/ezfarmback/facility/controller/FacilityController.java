@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.facility.controller;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
 import io.swagger.annotations.Api;
@@ -52,11 +53,10 @@ public class FacilityController {
 
     @ApiOperation(value = "타 농가 상세 조회(월)")
     @GetMapping("/monthly-avg/{farmId}")
-    public ResponseEntity<FacilityResponse> findFacilityMonthlyAvg(
-        @PathVariable Long farmId,
-        @RequestBody FarmDetailSearchCond farmDetailSearchCond) {
-        FacilityResponse res = facilityService.findFacilityMonthlyAvg(farmId,
-            farmDetailSearchCond);
+    public ResponseEntity<List<FacilityResponse>> findFacilityMonthlyAvg(
+        @PathVariable Long farmId, @RequestBody FacilityMonthAvgRequest facilityYearAvgRequest) {
+        List<FacilityResponse> res = facilityService.findFacilityMonthlyAvg(farmId,
+            facilityYearAvgRequest);
         return ResponseEntity.ok(res);
     }
 }
