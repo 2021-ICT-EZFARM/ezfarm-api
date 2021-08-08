@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.dto;
+package com.ezfarm.ezfarmback.common;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

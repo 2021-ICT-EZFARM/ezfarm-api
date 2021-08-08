@@ -1,8 +1,6 @@
 package com.ezfarm.ezfarmback.farm.controller;
 
-import com.ezfarm.ezfarmback.common.dto.Pagination;
-import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
-import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchResponse;
+import com.ezfarm.ezfarmback.common.Pagination;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;

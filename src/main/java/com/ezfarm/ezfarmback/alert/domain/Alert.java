@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.alert.domain;
 
-import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
+import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.query;
+package com.ezfarm.ezfarmback.farm.domain.querydsl;
 
 import static com.ezfarm.ezfarmback.farm.domain.QFarm.farm;
 

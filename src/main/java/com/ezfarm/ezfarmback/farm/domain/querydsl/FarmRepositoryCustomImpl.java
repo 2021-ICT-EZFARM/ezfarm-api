@@ -1,8 +1,8 @@
 package com.ezfarm.ezfarmback.farm.domain.querydsl;
 
-import static com.ezfarm.ezfarmback.common.query.QueryCondition.cropTypeEq;
-import static com.ezfarm.ezfarmback.common.query.QueryCondition.farmGroupEq;
-import static com.ezfarm.ezfarmback.common.query.QueryCondition.farmTypeEq;
+import static com.ezfarm.ezfarmback.farm.domain.querydsl.QueryCondition.cropTypeEq;
+import static com.ezfarm.ezfarmback.farm.domain.querydsl.QueryCondition.farmGroupEq;
+import static com.ezfarm.ezfarmback.farm.domain.querydsl.QueryCondition.farmTypeEq;
 import static com.ezfarm.ezfarmback.farm.domain.QFarm.farm;
 import static com.ezfarm.ezfarmback.favorite.domain.QFavorite.favorite;
 

@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.bestfarm;
+package com.ezfarm.ezfarmback.common.farm;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
@@ -10,7 +10,6 @@ import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
-import com.ezfarm.ezfarmback.facility.dto.FacilityRequestDto;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
@@ -45,7 +44,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 @RequiredArgsConstructor
 @Component
-public class BestFarmService {
+public class PublicFarmParser {
 
     private final ModelMapper modelMapper;
     private final FarmRepository farmRepository;
@@ -234,7 +233,7 @@ public class BestFarmService {
         JSONArray items = jObject.getJSONArray("item");
         for (int i = 0; i < items.length(); i++) {
             JSONObject itemJson = (JSONObject) items.get(i);
-            FacilityRequestDto facilityRequestDto = FacilityRequestDto.of(itemJson, bestFarm);
+            PublicFarmRequest facilityRequestDto = PublicFarmRequest.of(itemJson, bestFarm);
             facilities.add(modelMapper.map(facilityRequestDto, Facility.class));
         }
     }

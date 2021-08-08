@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.common.db;
 
 import static io.restassured.RestAssured.given;
 
+import com.ezfarm.ezfarmback.common.database.DatabaseCleanUp;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
@@ -41,7 +42,7 @@ public abstract class CommonAcceptanceTest {
     protected ModelMapper modelMapper;
 
     @Autowired
-    protected DbCleanUp dbCleanUp;
+    protected DatabaseCleanUp databaseCleanUp;
 
     protected ObjectMapper objectMapper;
 
@@ -55,8 +56,8 @@ public abstract class CommonAcceptanceTest {
             RestAssured.port = port;
         }
 
-        dbCleanUp.afterPropertiesSet();
-        dbCleanUp.clearUp();
+        databaseCleanUp.afterPropertiesSet();
+        databaseCleanUp.clearUp();
 
         user1 = createUserOne();
         user2 = createUserTwo();

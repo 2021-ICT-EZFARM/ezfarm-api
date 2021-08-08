@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ezfarm.ezfarmback.common.dto.Pagination;
+import com.ezfarm.ezfarmback.common.Pagination;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -21,7 +21,6 @@ import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
-import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;

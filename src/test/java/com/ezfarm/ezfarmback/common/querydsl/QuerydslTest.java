@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.common.querydsl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ezfarm.ezfarmback.common.db.DbCleanUp;
+import com.ezfarm.ezfarmback.common.database.DatabaseCleanUp;
 import com.ezfarm.ezfarmback.user.domain.QUser;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -28,7 +28,7 @@ public class QuerydslTest {
     UserRepository userRepository;
 
     @Autowired
-    DbCleanUp dbCleanUp;
+    DatabaseCleanUp databaseCleanUp;
 
     JPAQueryFactory queryFactory;
 
@@ -36,8 +36,8 @@ public class QuerydslTest {
 
     @BeforeEach
     void setUp() {
-        dbCleanUp.afterPropertiesSet();
-        dbCleanUp.clearUp();
+        databaseCleanUp.afterPropertiesSet();
+        databaseCleanUp.clearUp();
 
         queryFactory = new JPAQueryFactory(em);
 
