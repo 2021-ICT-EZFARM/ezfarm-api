@@ -9,7 +9,10 @@ import static org.mockito.Mockito.when;
 import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
+import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
+import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -35,13 +38,17 @@ public class FacilityServiceTest {
     @Mock
     private FacilityDayAvgRepository facilityDayAvgRepository;
 
+    @Mock
+    private FacilityMonthAvgRepository facilityMonthAvgRepository;
+
     FacilityService facilityService;
 
     Farm farm;
 
     @BeforeEach
     void setUp() {
-        facilityService = new FacilityService(farmRepository, facilityDayAvgRepository);
+        facilityService = new FacilityService(farmRepository, facilityDayAvgRepository,
+            facilityMonthAvgRepository);
 
         farm = Farm.builder()
             .id(1L)
@@ -93,6 +100,33 @@ public class FacilityServiceTest {
             () -> assertThat(response.size()).isEqualTo(1),
             () -> assertThat(response).extracting("measureDate")
                 .contains("2020-01-01"),
+            () -> assertThat(response).extracting("avgCo2")
+                .contains(0.0f)
+        );
+    }
+
+    @DisplayName("타 농가 월 평균 데이터를 조회한다.")
+    @Test
+    void findFacilityMonthlyAvg_success() {
+        FacilityMonthAvgRequest facilityMonthAvgRequest = new FacilityMonthAvgRequest("2020");
+        FacilityMonthAvg facilityMonthAvg = FacilityMonthAvg.builder()
+            .facilityAvg(new FacilityAvg())
+            .measureDate(LocalDateTime.of(2020, 1, 1, 0, 0))
+            .build();
+
+        when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+        when(facilityMonthAvgRepository.findAllByFarmAndMeasureDateStartsWith(any(),
+            any())).thenReturn(List.of(facilityMonthAvg));
+
+        List<FacilityResponse> response = facilityService.findFacilityMonthlyAvg(1L,
+            facilityMonthAvgRequest);
+
+        verify(farmRepository).findById(any());
+        verify(facilityMonthAvgRepository).findAllByFarmAndMeasureDateStartsWith(any(), any());
+        Assertions.assertAll(
+            () -> assertThat(response.size()).isEqualTo(1),
+            () -> assertThat(response).extracting("measureDate")
+                .contains("2020-01"),
             () -> assertThat(response).extracting("avgCo2")
                 .contains(0.0f)
         );

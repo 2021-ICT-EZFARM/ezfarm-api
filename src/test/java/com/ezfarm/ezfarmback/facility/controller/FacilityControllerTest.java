@@ -11,6 +11,7 @@ import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +65,27 @@ public class FacilityControllerTest extends CommonApiTest {
         mockMvc.perform(get("/api/facility/daily-avg/{farmId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(facilityDailyAvgRequest)))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("타 농가 월 평균 데이터를 조회한다.")
+    @Test
+    void findFacilityYearAvg() throws Exception {
+        FacilityMonthAvgRequest facilityYearAvgRequest = new FacilityMonthAvgRequest("2020");
+
+        FacilityResponse facilityResponse = FacilityResponse.builder()
+            .avgCo2(1)
+            .measureDate("2020-01-01")
+            .build();
+
+        when(facilityService.findFacilityMonthlyAvg(any(), any())).thenReturn(
+            List.of(facilityResponse));
+
+        mockMvc.perform(get("/api/facility/monthly-avg/{farmId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(facilityYearAvgRequest)))
             .andExpect(status().isOk())
             .andDo(print());
     }

@@ -33,11 +33,7 @@ public class FacilityDayRepositoryTest {
 
     Farm savedFarm;
 
-    FacilityDayAvg min;
-
-    FacilityDayAvg mid;
-
-    FacilityDayAvg max;
+    FacilityDayAvg min, mid, max;
 
     @BeforeEach
     void setUp() {
@@ -86,7 +82,7 @@ public class FacilityDayRepositoryTest {
 
     @DisplayName("타 농가 일 평균 데이터를 조회한다.")
     @Test
-    void findAllByFarmAndMeasureDateStartsWith() {
+    void findAllByFarmAndMeasureDateStartsWith_day() {
         FacilityDailyAvgRequest facilityDailyAvgRequest = new FacilityDailyAvgRequest("2017", "01");
         String date = facilityDailyAvgRequest.getYear() + "-" + facilityDailyAvgRequest.getMonth();
 
