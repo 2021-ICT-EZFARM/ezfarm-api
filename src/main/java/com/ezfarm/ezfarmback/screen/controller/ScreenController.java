@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,5 +37,18 @@ public class ScreenController {
         @RequestParam Long farmId) {
         ScreenResponse screenResponse = screenService.findLiveScreen(user, farmId);
         return ResponseEntity.ok(screenResponse);
+    }
+
+    @ApiOperation(value = "내 농가 오늘 저장된 모든 화면 조회")
+    @ApiResponses({
+        @ApiResponse(code = 403, message = "해당 농가에 권한이 없습니다."),
+        @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
+    })
+    @GetMapping()
+    public ResponseEntity<List<ScreenResponse>> findTodayScreens(@CurrentUser User user,
+        @RequestParam Long farmId) {
+
+        List<ScreenResponse> screenResponses = screenService.findTodayScreens(user, farmId);
+        return ResponseEntity.ok(screenResponses);
     }
 }
