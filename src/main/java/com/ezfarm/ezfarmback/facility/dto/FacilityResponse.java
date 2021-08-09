@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.facility.dto;
 
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
+import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -53,6 +54,19 @@ public class FacilityResponse {
 
     public static List<FacilityResponse> listOfMonthAvg(List<FacilityMonthAvg> monthAvgs) {
         return monthAvgs.stream().map(v -> FacilityResponse.builder()
+            .avgTmp(v.getFacilityAvg().getAvgTmp())
+            .avgCo2(v.getFacilityAvg().getAvgCo2())
+            .avgHumidity(v.getFacilityAvg().getAvgHumidity())
+            .avgIlluminance(v.getFacilityAvg().getAvgIlluminance())
+            .avgMos(v.getFacilityAvg().getAvgMos())
+            .avgPh(v.getFacilityAvg().getAvgPh())
+            .measureDate(v.getMeasureDate())
+            .build()
+        ).collect(Collectors.toList());
+    }
+
+    public static List<FacilityResponse> listOfWeekAvg(List<FacilityWeekAvg> weekAvgs) {
+        return weekAvgs.stream().map(v -> FacilityResponse.builder()
             .avgTmp(v.getFacilityAvg().getAvgTmp())
             .avgCo2(v.getFacilityAvg().getAvgCo2())
             .avgHumidity(v.getFacilityAvg().getAvgHumidity())

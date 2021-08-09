@@ -4,8 +4,8 @@ import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
-import com.ezfarm.ezfarmback.farm.dto.detail.FarmDetailSearchCond;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -47,11 +47,12 @@ public class FacilityController {
     }
 
     @ApiOperation(value = "타 농가 상세 조회(주)")
+    @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
     @PostMapping("/week-avg/{farmId}")
-    public ResponseEntity<FacilityResponse> findFacilityWeekAvg(@PathVariable Long farmId,
-        @RequestBody FarmDetailSearchCond farmDetailSearchCond) {
-        FacilityResponse res = facilityService.findFacilityWeekAvg(farmId,
-            farmDetailSearchCond);
+    public ResponseEntity<List<FacilityResponse>> findFacilityWeekAvg(@PathVariable Long farmId,
+        @RequestBody FacilityWeekAvgRequest facilityWeekAvgRequest) {
+        List<FacilityResponse> res = facilityService.findFacilityWeekAvg(farmId,
+            facilityWeekAvgRequest);
         return ResponseEntity.ok(res);
     }
 
