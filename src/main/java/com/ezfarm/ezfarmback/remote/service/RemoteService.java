@@ -7,6 +7,8 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
+import com.ezfarm.ezfarmback.remote.domain.RemoteHistory;
+import com.ezfarm.ezfarmback.remote.domain.RemoteHistoryRepository;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
@@ -20,51 +22,61 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RemoteService {
 
-    private final FarmRepository farmRepository;
+  private final FarmRepository farmRepository;
 
-    private final RemoteRepository remoteRepository;
+  private final RemoteRepository remoteRepository;
 
-    private final IotUtils iotUtils;
+  private final IotUtils iotUtils;
 
-    @Transactional(readOnly = true)
-    public RemoteResponse findRemote(User user, Long farmId) {
-        Farm findFarm = farmRepository.findById(farmId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+  private final RemoteHistoryRepository remoteHistoryRepository;
 
-        if (!findFarm.isMyFarm(user.getId())) {
-            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+  @Transactional(readOnly = true)
+  public RemoteResponse findRemote(User user, Long farmId) {
+    Farm findFarm = farmRepository.findById(farmId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-        Remote remote = remoteRepository.findByFarm(findFarm)
-            .orElseGet(() -> createRemote(findFarm));
-
-        return RemoteResponse.of(remote);
+    if (!findFarm.isMyFarm(user.getId())) {
+      throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
 
-    private Remote createRemote(Farm findFarm) {
-        return remoteRepository.save(
-            Remote.builder()
-                .farm(findFarm)
-                .co2(OnOff.OFF)
-                .illuminance(OnOff.OFF)
-                .temperature(0.0f)
-                .water(OnOff.OFF)
-                .build()
-        );
+    Remote remote = remoteRepository.findByFarm(findFarm)
+        .orElseGet(() -> createRemote(findFarm));
+
+    return RemoteResponse.of(remote);
+  }
+
+  private Remote createRemote(Farm findFarm) {
+    return remoteRepository.save(
+        Remote.builder()
+            .farm(findFarm)
+            .co2(OnOff.OFF)
+            .illuminance(OnOff.OFF)
+            .temperature(0.0f)
+            .water(OnOff.OFF)
+            .build()
+    );
+  }
+
+  public void updateRemote(User user, RemoteRequest remoteRequest) {
+    Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
+        .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+    if (!findRemote.getFarm().isMyFarm(user.getId())) {
+      throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
 
-    public void updateRemote(User user, RemoteRequest remoteRequest) {
-        Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
-            .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+    boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
 
-        if (!findRemote.getFarm().isMyFarm(user.getId())) {
-            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+    RemoteHistory remoteHistory = RemoteHistory.of(findRemote.getFarm(), remoteRequest);
 
-        boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
-        if (!isRemoteSuccess) {
-            throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
-        }
-        findRemote.updateRemote(remoteRequest);
+    if (!isRemoteSuccess) {
+      remoteHistory.setSuccessYn(false);
+      remoteHistoryRepository.save(remoteHistory);
+      throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
     }
+
+    remoteHistory.setSuccessYn(true);
+    remoteHistoryRepository.save(remoteHistory);
+    findRemote.updateRemote(remoteRequest);
+  }
 }

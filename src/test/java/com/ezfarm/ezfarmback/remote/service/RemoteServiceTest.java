@@ -13,6 +13,7 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.remote.domain.OnOff;
 import com.ezfarm.ezfarmback.remote.domain.Remote;
+import com.ezfarm.ezfarmback.remote.domain.RemoteHistoryRepository;
 import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
@@ -42,6 +43,9 @@ class RemoteServiceTest {
     @Mock
     IotUtils iotUtils;
 
+    @Mock
+    RemoteHistoryRepository remoteHistoryRepository;
+
     User user;
 
     Remote defaultRemote;
@@ -58,7 +62,7 @@ class RemoteServiceTest {
 
     @BeforeEach
     void setUp() {
-        remoteService = new RemoteService(farmRepository, remoteRepository, iotUtils);
+        remoteService = new RemoteService(farmRepository, remoteRepository, iotUtils, remoteHistoryRepository);
 
         remoteResponse = new RemoteResponse(1L, OnOff.ON, 37.5f, OnOff.OFF, OnOff.ON,
             LocalDateTime.now(), LocalDateTime.now());
