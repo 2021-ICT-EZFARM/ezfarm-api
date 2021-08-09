@@ -3,6 +3,10 @@ package com.ezfarm.ezfarmback.facility.domain.week;
 
 import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,10 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,7 +43,8 @@ public class FacilityWeekAvg {
     public FacilityWeekAvg(Farm farm, FacilityAvg facilityAvg, LocalDateTime measureDate) {
         this.farm = farm;
         this.facilityAvg = facilityAvg;
-        this.measureDate = measureDate.format(DateTimeFormatter.ofPattern("yyyy-")) + measureDate.get(
-            WeekFields.of(Locale.KOREA).weekOfWeekBasedYear()) + "week";
+        this.measureDate =
+            measureDate.format(DateTimeFormatter.ofPattern("yyyy-MM-")) + measureDate.get(
+                WeekFields.of(Locale.KOREA).weekOfMonth());
     }
 }

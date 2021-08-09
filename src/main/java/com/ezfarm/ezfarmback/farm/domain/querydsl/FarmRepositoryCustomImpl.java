@@ -1,16 +1,17 @@
 package com.ezfarm.ezfarmback.farm.domain.querydsl;
 
-import static com.ezfarm.ezfarmback.farm.domain.querydsl.QueryCondition.cropTypeEq;
-import static com.ezfarm.ezfarmback.farm.domain.querydsl.QueryCondition.farmGroupEq;
-import static com.ezfarm.ezfarmback.farm.domain.querydsl.QueryCondition.farmTypeEq;
 import static com.ezfarm.ezfarmback.farm.domain.QFarm.farm;
 import static com.ezfarm.ezfarmback.favorite.domain.QFavorite.favorite;
 
+import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.farm.dto.QFarmSearchResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,5 +50,17 @@ public class FarmRepositoryCustomImpl implements FarmRepositoryCustom {
             .limit(pageable.getPageSize())
             .fetchResults();
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    public static BooleanExpression farmTypeEq(FarmType farmType) {
+        return farmType != null ? farm.farmType.eq(farmType) : null;
+    }
+
+    public static BooleanExpression cropTypeEq(CropType cropType) {
+        return cropType != null ? farm.cropType.eq(cropType) : null;
+    }
+
+    public static BooleanExpression farmGroupEq(FarmGroup farmGroup) {
+        return farmGroup != null ? farm.farmGroup.eq(farmGroup) : null;
     }
 }

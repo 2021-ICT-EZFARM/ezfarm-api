@@ -2,10 +2,10 @@ package com.ezfarm.ezfarmback.common.farm;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
 import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
@@ -149,7 +149,7 @@ public class PublicFarmParser {
 
         WeekFields weekFields = WeekFields.of(Locale.KOREA);
         int day = facilities.get(0).getMeasureDate().get(weekFields.dayOfWeek());
-        int week = facilities.get(0).getMeasureDate().get(weekFields.weekOfWeekBasedYear());
+        int week = facilities.get(0).getMeasureDate().get(weekFields.weekOfMonth());
         int month = facilities.get(0).getMeasureDate().getMonthValue();
         int year = facilities.get(0).getMeasureDate().getYear();
 
@@ -186,8 +186,8 @@ public class PublicFarmParser {
             }
 
             //주별 농가 데이터 평균 구함
-            if (week != facility.getMeasureDate().get(weekFields.weekOfWeekBasedYear())) {
-                week = facility.getMeasureDate().get(weekFields.weekOfWeekBasedYear());
+            if (week != facility.getMeasureDate().get(weekFields.weekOfMonth())) {
+                week = facility.getMeasureDate().get(weekFields.weekOfMonth());
                 tmpFacilityWeek.average(days);
                 tmpFacilityMonth.sum(tmpFacilityWeek);
 
@@ -216,7 +216,6 @@ public class PublicFarmParser {
             tmpFacilityDay.sum(facility);
             hours++;
         }
-        ;
     }
 
     //공공데이터로 읽어온 json을 FacilityRequestDto 객체로 파싱
