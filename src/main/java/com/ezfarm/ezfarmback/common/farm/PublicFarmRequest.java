@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.facility.dto;
+package com.ezfarm.ezfarmback.common.farm;
 
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ import org.json.JSONObject;
  */
 @Builder
 @Data
-public class FacilityRequestDto {
+public class PublicFarmRequest {
 
   private Farm farm;
 
@@ -43,8 +43,8 @@ public class FacilityRequestDto {
 
   private LocalDateTime measureDate;
 
-  public static FacilityRequestDto of(JSONObject jsonObject, Farm bestFarm) {
-    return FacilityRequestDto.builder()
+  public static PublicFarmRequest of(JSONObject jsonObject, Farm bestFarm) {
+    return PublicFarmRequest.builder()
         .farm(bestFarm)
         .tmp(jsonObject.getFloat("inTp"))
         .humidity(jsonObject.getFloat("inHd"))

@@ -1,7 +1,7 @@
 package com.ezfarm.ezfarmback.farm.domain;
 
 
-import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
+import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;

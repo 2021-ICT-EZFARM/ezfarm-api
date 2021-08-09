@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ezfarm.ezfarmback.common.dto.Pagination;
+import com.ezfarm.ezfarmback.common.Pagination;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -70,6 +70,7 @@ public class FarmServiceTest {
             .build();
 
         farm = Farm.builder()
+            .id(1L)
             .name("테스트 농가 이름1")
             .address("서울")
             .isMain(false)
@@ -242,6 +243,7 @@ public class FarmServiceTest {
         farmService.findOtherFarms(user, farmSearchCond, new Pagination(0, 10));
 
         verify(farmRepository)
-            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, PageRequest.of(0, 10));
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond,
+                PageRequest.of(0, 10));
     }
 }

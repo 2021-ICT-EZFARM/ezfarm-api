@@ -1,14 +1,12 @@
-package com.ezfarm.ezfarmback.common.db;
+package com.ezfarm.ezfarmback.common.database;
 
-import com.ezfarm.ezfarmback.common.bestfarm.BestFarmService;
+import com.ezfarm.ezfarmback.common.farm.PublicFarmParser;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,13 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class InitDb {
+public class DatabaseInitializer {
+    
+    private final DatabaseCleanUp databaseCleanUp;
 
-    private final EntityManager em;
-
-    private final DbCleanUp dbCleanUp;
-
-    private final BestFarmService bestFarmService;
+    private final PublicFarmParser publicFarmParser;
 
     private final UserRepository userRepository;
 
@@ -33,8 +29,8 @@ public class InitDb {
     //@PostConstruct
     @Transactional
     public void init() throws Exception {
-        dbCleanUp.afterPropertiesSet();
-        dbCleanUp.clearUp();
+        databaseCleanUp.afterPropertiesSet();
+        databaseCleanUp.clearUp();
         saveUserAndNormalFarm();
         saveAdminAndBestFarm();
     }
@@ -69,10 +65,10 @@ public class InitDb {
             .build();
         userRepository.save(admin);
 
-        bestFarmService.saveTomatoVinyl();
-        bestFarmService.saveTomatoGlass();
-        bestFarmService.saveStrawberryVinyl();
-        bestFarmService.savePaprikaVinyl();
-        bestFarmService.savePaprikaGlass();
+        publicFarmParser.saveTomatoVinyl();
+        publicFarmParser.saveTomatoGlass();
+        publicFarmParser.saveStrawberryVinyl();
+        publicFarmParser.savePaprikaVinyl();
+        publicFarmParser.savePaprikaGlass();
     }
 }

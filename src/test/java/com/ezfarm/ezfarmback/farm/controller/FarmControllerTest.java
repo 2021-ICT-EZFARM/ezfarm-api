@@ -62,8 +62,8 @@ class FarmControllerTest extends CommonApiTest {
         when(farmService.createFarm(any(), any())).thenReturn(1L);
 
         mockMvc.perform(post("/api/farm/me")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(farmRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(farmRequest)))
             .andExpect(status().isCreated())
             .andDo(print());
     }
@@ -75,7 +75,7 @@ class FarmControllerTest extends CommonApiTest {
         when(farmService.findMyFarms(any())).thenReturn(singletonList(farmResponse));
 
         mockMvc.perform(get("/api/farm/me")
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(print());
     }
@@ -87,7 +87,7 @@ class FarmControllerTest extends CommonApiTest {
         when(farmService.findMyFarm(any())).thenReturn(farmResponse);
 
         mockMvc.perform(get("/api/farm/me/{farmId}", 1L)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andDo(print());
     }
@@ -99,8 +99,8 @@ class FarmControllerTest extends CommonApiTest {
         doNothing().when(farmService).updateMyFarm(any(), any(), any());
 
         mockMvc.perform(patch("/api/farm/me/{farmId}", 1L)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(farmRequest)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(farmRequest)))
             .andExpect(status().isOk())
             .andDo(print());
     }
@@ -112,7 +112,7 @@ class FarmControllerTest extends CommonApiTest {
         doNothing().when(farmService).deleteMyFarm(any(), any());
 
         mockMvc.perform(delete("/api/farm/me/{farmId}", 1L)
-            .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent())
             .andDo(print());
     }
@@ -129,8 +129,8 @@ class FarmControllerTest extends CommonApiTest {
         when(farmService.findOtherFarms(any(), any(), any())).thenReturn(emptyList());
 
         mockMvc.perform(post("/api/farm/other")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(farmSearchCond)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(farmSearchCond)))
             .andExpect(status().isOk())
             .andDo(print());
     }

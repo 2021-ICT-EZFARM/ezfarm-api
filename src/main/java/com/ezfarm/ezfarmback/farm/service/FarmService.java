@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.farm.service;
 
-import com.ezfarm.ezfarmback.common.dto.Pagination;
+import com.ezfarm.ezfarmback.common.Pagination;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -109,6 +109,7 @@ public class FarmService {
         Pagination pagination) {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return farmRepository
-            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, pageable).getContent();
+            .findByNotUserAndNotFavoritesAndFarmSearchCond(user, farmSearchCond, pageable)
+            .getContent();
     }
 }

@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.remote.domain;
 
-import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
+import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import javax.persistence.Column;

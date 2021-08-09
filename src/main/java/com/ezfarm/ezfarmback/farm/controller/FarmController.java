@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.farm.controller;
 
-import com.ezfarm.ezfarmback.common.dto.Pagination;
+import com.ezfarm.ezfarmback.common.Pagination;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "농가 API")
 @RequiredArgsConstructor
 @RequestMapping("/api/farm")
-@RestController()
+@RestController
 public class FarmController {
 
     private final FarmService farmService;

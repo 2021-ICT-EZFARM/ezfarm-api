@@ -1,16 +1,15 @@
-package com.ezfarm.ezfarmback.common.bestfarm;
+package com.ezfarm.ezfarmback.common.farm;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.facility.domain.Facility;
 import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
-import com.ezfarm.ezfarmback.facility.domain.FacilityDayAvg;
-import com.ezfarm.ezfarmback.facility.domain.FacilityDayAvgRepository;
-import com.ezfarm.ezfarmback.facility.domain.FacilityMonthAvg;
-import com.ezfarm.ezfarmback.facility.domain.FacilityMonthAvgRepository;
-import com.ezfarm.ezfarmback.facility.domain.FacilityWeekAvg;
-import com.ezfarm.ezfarmback.facility.domain.FacilityWeekAvgRepository;
-import com.ezfarm.ezfarmback.facility.dto.FacilityRequestDto;
+import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
+import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
+import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
+import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
+import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
@@ -45,7 +44,7 @@ import org.springframework.web.client.RestTemplate;
 @Transactional
 @RequiredArgsConstructor
 @Component
-public class BestFarmService {
+public class PublicFarmParser {
 
     private final ModelMapper modelMapper;
     private final FarmRepository farmRepository;
@@ -150,7 +149,7 @@ public class BestFarmService {
 
         WeekFields weekFields = WeekFields.of(Locale.KOREA);
         int day = facilities.get(0).getMeasureDate().get(weekFields.dayOfWeek());
-        int week = facilities.get(0).getMeasureDate().get(weekFields.weekOfWeekBasedYear());
+        int week = facilities.get(0).getMeasureDate().get(weekFields.weekOfMonth());
         int month = facilities.get(0).getMeasureDate().getMonthValue();
         int year = facilities.get(0).getMeasureDate().getYear();
 
@@ -187,8 +186,8 @@ public class BestFarmService {
             }
 
             //주별 농가 데이터 평균 구함
-            if (week != facility.getMeasureDate().get(weekFields.weekOfWeekBasedYear())) {
-                week = facility.getMeasureDate().get(weekFields.weekOfWeekBasedYear());
+            if (week != facility.getMeasureDate().get(weekFields.weekOfMonth())) {
+                week = facility.getMeasureDate().get(weekFields.weekOfMonth());
                 tmpFacilityWeek.average(days);
                 tmpFacilityMonth.sum(tmpFacilityWeek);
 
@@ -217,7 +216,6 @@ public class BestFarmService {
             tmpFacilityDay.sum(facility);
             hours++;
         }
-        ;
     }
 
     //공공데이터로 읽어온 json을 FacilityRequestDto 객체로 파싱
@@ -234,7 +232,7 @@ public class BestFarmService {
         JSONArray items = jObject.getJSONArray("item");
         for (int i = 0; i < items.length(); i++) {
             JSONObject itemJson = (JSONObject) items.get(i);
-            FacilityRequestDto facilityRequestDto = FacilityRequestDto.of(itemJson, bestFarm);
+            PublicFarmRequest facilityRequestDto = PublicFarmRequest.of(itemJson, bestFarm);
             facilities.add(modelMapper.map(facilityRequestDto, Facility.class));
         }
     }

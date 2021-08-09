@@ -1,4 +1,4 @@
-package com.ezfarm.ezfarmback.common.db;
+package com.ezfarm.ezfarmback.common.database;
 
 import com.google.common.base.CaseFormat;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class DbCleanUp implements InitializingBean {
+public class DatabaseCleanUp implements InitializingBean {
 
     private final EntityManager em;
 
