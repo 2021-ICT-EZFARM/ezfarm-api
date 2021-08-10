@@ -3,6 +3,8 @@ package com.ezfarm.ezfarmback.remote.domain;
 import com.ezfarm.ezfarmback.common.domain.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,36 +33,17 @@ public class RemoteHistory extends BaseTimeEntity {
   @JoinColumn(name = "farm_id")
   private Farm farm;
 
-  private OnOff water;
+  private String value;
 
-  private float temperature;
-
-  private OnOff illuminance;
-
-  private OnOff co2;
-
-  private Boolean successYn;
-
-  public static RemoteHistory of(Farm farm, RemoteRequest remoteRequest) {
-    return RemoteHistory.builder()
-        .farm(farm)
-        .water(remoteRequest.getWater())
-        .temperature(remoteRequest.getTemperature())
-        .illuminance(remoteRequest.getIlluminance())
-        .co2(remoteRequest.getCo2())
-        .build();
-  }
+  private boolean successYn;
 
   @Builder
-  public RemoteHistory(Farm farm, OnOff water, float temperature, OnOff illuminance, OnOff co2) {
+  public RemoteHistory(Farm farm, String value) {
     this.farm = farm;
-    this.water = water;
-    this.temperature = temperature;
-    this.illuminance = illuminance;
-    this.co2 = co2;
+    this.value = value;
   }
 
-    public void setSuccessYn(boolean successYn) {
-        this.successYn = successYn;
-    }
+  public void setSuccessYn(boolean successYn) {
+    this.successYn = successYn;
+  }
 }

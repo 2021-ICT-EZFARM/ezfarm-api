@@ -13,6 +13,8 @@ import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
 import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,17 +68,53 @@ public class RemoteService {
     }
 
     boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
+    List<RemoteHistory> remoteHistories = new ArrayList<>();
 
-    RemoteHistory remoteHistory = RemoteHistory.of(findRemote.getFarm(), remoteRequest);
+    if (!findRemote.getWater().equals(remoteRequest.getWater())) {
+      RemoteHistory remoteHistory = RemoteHistory.builder()
+          .farm(findRemote.getFarm())
+          .value("Water 설정을 " + findRemote.getWater() + "에서 " + remoteRequest.getWater() + "(으)로 변경하였습니다")
+          .build();
+      remoteHistories.add(remoteHistory);
+    }
+
+    if (findRemote.getTemperature() != remoteRequest.getTemperature()) {
+      RemoteHistory remoteHistory = RemoteHistory.builder()
+          .farm(findRemote.getFarm())
+          .value("Temperature 설정을 " + findRemote.getTemperature() + "에서 " + remoteRequest.getTemperature() + "(으)로 변경하였습니다")
+          .build();
+      remoteHistories.add(remoteHistory);
+    }
+
+    if (!findRemote.getIlluminance().equals(remoteRequest.getIlluminance())) {
+      RemoteHistory remoteHistory = RemoteHistory.builder()
+          .farm(findRemote.getFarm())
+          .value("Illuminance 설정을 " + findRemote.getIlluminance() + "에서 " + remoteRequest.getIlluminance() + "(으)로 변경하였습니다")
+          .build();
+      remoteHistories.add(remoteHistory);
+    }
+
+    if (!findRemote.getCo2().equals(remoteRequest.getCo2())) {
+      RemoteHistory remoteHistory = RemoteHistory.builder()
+          .farm(findRemote.getFarm())
+          .value("Co2 설정을 " + findRemote.getCo2() + "에서 " + remoteRequest.getCo2() + "(으)로 변경하였습니다")
+          .build();
+      remoteHistories.add(remoteHistory);
+    }
 
     if (!isRemoteSuccess) {
-      remoteHistory.setSuccessYn(false);
-      remoteHistoryRepository.save(remoteHistory);
+      for (RemoteHistory remoteHistory : remoteHistories) {
+        remoteHistory.setSuccessYn(false);
+      }
+      remoteHistoryRepository.saveAll(remoteHistories);
       throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
     }
 
-    remoteHistory.setSuccessYn(true);
-    remoteHistoryRepository.save(remoteHistory);
+    for (RemoteHistory remoteHistory : remoteHistories) {
+      remoteHistory.setSuccessYn(true);
+    }
+    remoteHistoryRepository.saveAll(remoteHistories);
+
     findRemote.updateRemote(remoteRequest);
   }
 }
