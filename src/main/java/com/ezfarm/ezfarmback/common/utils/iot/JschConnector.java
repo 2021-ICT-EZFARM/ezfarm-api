@@ -36,6 +36,9 @@ public class JschConnector {
     @Value("${app.iot.live-screen-file}")
     private String liveScreenFile;
 
+    @Value("${app.iot.live-facility}")
+    private String liveFacility;
+
     private Session session = null;
     private Channel channel = null;
     private ChannelExec channelExec = null;
@@ -81,5 +84,12 @@ public class JschConnector {
         if (session != null) {
             session.disconnect();
         }
+    }
+
+    public InputStream executeCommand(String path) throws Exception {
+        channelExec.setCommand(path);
+        InputStream in = channelExec.getInputStream();
+        channelExec.connect();
+        return in;
     }
 }

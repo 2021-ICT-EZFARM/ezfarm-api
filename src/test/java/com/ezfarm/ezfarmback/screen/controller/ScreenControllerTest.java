@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.screen.controller;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,6 +12,9 @@ import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.screen.dto.ScreenResponse;
 import com.ezfarm.ezfarmback.screen.service.ScreenService;
+import com.google.common.collect.Lists;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,28 +25,42 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @WebMvcTest(controllers = ScreenController.class)
 public class ScreenControllerTest extends CommonApiTest {
 
-    @MockBean
-    ScreenService screenService;
+  @MockBean
+  ScreenService screenService;
 
-    ScreenResponse screenResponse;
+  ScreenResponse screenResponse;
 
-    @BeforeEach
-    @Override
-    public void setUp() {
-        super.setUp();
-        screenResponse = new ScreenResponse("test-url", 22.4F, "9999-99-99");
-    }
+  @BeforeEach
+  @Override
+  public void setUp() {
+    super.setUp();
+    screenResponse = new ScreenResponse("test-url", 22.4F, "9999-99-99");
+  }
 
-    @WithMockCustomUser
-    @DisplayName("실시간 화면을 조회한다.")
-    @Test
-    void findLiveScreen() throws Exception {
-        when(screenService.findLiveScreen(any(), any())).thenReturn(screenResponse);
+  @WithMockCustomUser
+  @DisplayName("실시간 화면을 조회한다.")
+  @Test
+  void findLiveScreen() throws Exception {
+    when(screenService.findLiveScreen(any(), any())).thenReturn(screenResponse);
 
-        mockMvc.perform(get(String.format("/api/screen/live?farmId=%d", 1L)))
-            .andExpect(status().isOk())
-            .andExpect(content().string(objectMapper.writeValueAsString(screenResponse)))
-            .andDo(print());
-    }
+    mockMvc.perform(get(String.format("/api/screen/live?farmId=%d", 1L)))
+        .andExpect(status().isOk())
+        .andExpect(content().string(objectMapper.writeValueAsString(screenResponse)))
+        .andDo(print());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("오늘 저장된 모든 화면을 조회한다.")
+  @Test
+  void findTodayScreens() throws Exception {
+    ScreenResponse screenResponse2 = new ScreenResponse("test-url", 11.4F, LocalDateTime.now().toString());
+    when(screenService.findTodayScreens(any(), any()))
+        .thenReturn(singletonList(screenResponse2));
+
+      mockMvc.perform(get(String.format("/api/screen?farmId=%d", 1L)))
+          .andExpect(status().isOk())
+          .andExpect(content().string(objectMapper.writeValueAsString(singletonList(screenResponse2))))
+          .andDo(print());
+  }
 
 }

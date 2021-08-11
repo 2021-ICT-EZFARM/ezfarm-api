@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.screen.service;
 
+import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,6 +18,8 @@ import com.ezfarm.ezfarmback.screen.domain.ScreenRepository;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -157,5 +160,42 @@ public class ScreenServiceTest {
     assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INTERNAL_IOT_SERVER_ERROR.getMessage());
+  }
+
+  @DisplayName("오늘 저장된 모든 화면을 조회한다.")
+  @Test
+  void findTodayScreens() {
+    Screen screen2 = Screen.builder()
+        .farm(farm)
+        .imageUrl("test-url")
+        .cropCondition(11.5F)
+        .measureTime(LocalDateTime.now().toString())
+        .build();
+
+    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+    when(screenRepository
+        .findByFarmAndMeasureTimeStartingWith(any(), any())).thenReturn(List.of(screen2));
+    when(modelMapper.map(any(), any())).thenReturn(ScreenResponse.of(screen2));
+
+    List<ScreenResponse> responses = screenService.findTodayScreens(user, 1L);
+
+    Assertions.assertAll(
+        () -> assertThat(responses.size()).isEqualTo(1),
+        () -> assertThat(responses.get(0).getImageUrl()).isEqualTo(screen2.getImageUrl()),
+        () -> assertThat(responses.get(0).getCropCondition()).isEqualTo(screen2.getCropCondition()),
+        () -> assertThat(responses.get(0).getMeasureTime()).isEqualTo(screen2.getMeasureTime())
+    );
+  }
+
+  @DisplayName("오늘 저장된 화면이 없을 경우 빈 리스트가 반환된다.")
+  @Test
+  void findTodayScreens_is_EmptyList() {
+    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+    when(screenRepository
+        .findByFarmAndMeasureTimeStartingWith(any(), any())).thenReturn(List.of());
+
+    List<ScreenResponse> responses = screenService.findTodayScreens(user, 1L);
+
+    assertThat(responses.size()).isEqualTo(0);
   }
 }
