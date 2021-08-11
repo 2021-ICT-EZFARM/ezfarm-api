@@ -10,7 +10,6 @@ import com.ezfarm.ezfarmback.screen.domain.ScreenRepository;
 import com.ezfarm.ezfarmback.screen.dto.ScreenResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -51,6 +50,8 @@ public class ScreenService {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
+        //TODO
+        // 1 2 3 <- 오늘 || (전체 조회) 전날 4  5 6
         String today = LocalDate.now().toString();
         List<Screen> screens = screenRepository
             .findByFarmAndMeasureTimeStartingWith(findFarm, today);

@@ -11,7 +11,7 @@ import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
@@ -38,7 +38,7 @@ public class FacilityService {
         return facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(findFarm);
     }
 
-    public List<FacilityResponse> findFacilityDailyAvg(Long farmId,
+    public List<FacilityAvgResponse> findFacilityDailyAvg(Long farmId,
         FacilityDailyAvgRequest facilityDailyAvgRequest) {
         Farm findFarm = confirmExistingFarm(farmId);
 
@@ -46,26 +46,26 @@ public class FacilityService {
         List<FacilityDayAvg> DayAvgs = facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(
             findFarm, date);
 
-        return FacilityResponse.listOfDayAvg(DayAvgs);
+        return FacilityAvgResponse.listOfDayAvg(DayAvgs);
     }
 
-    public List<FacilityResponse> findFacilityWeekAvg(Long farmId,
+    public List<FacilityAvgResponse> findFacilityWeekAvg(Long farmId,
         FacilityWeekAvgRequest facilityWeekAvgRequest) {
         Farm findFarm = confirmExistingFarm(farmId);
 
         List<FacilityWeekAvg> weekAvgs = facilityWeekAvgRepository.findAllByFarmAndMeasureDateStartsWith(
             findFarm, facilityWeekAvgRequest);
-        return FacilityResponse.listOfWeekAvg(weekAvgs);
+        return FacilityAvgResponse.listOfWeekAvg(weekAvgs);
     }
 
-    public List<FacilityResponse> findFacilityMonthlyAvg(Long farmId,
+    public List<FacilityAvgResponse> findFacilityMonthlyAvg(Long farmId,
         FacilityMonthAvgRequest facilityYearAvgRequest) {
         Farm findFarm = confirmExistingFarm(farmId);
 
         List<FacilityMonthAvg> monthAvgs = facilityMonthAvgRepository.findAllByFarmAndMeasureDateStartsWith(
             findFarm, facilityYearAvgRequest.getYear());
 
-        return FacilityResponse.listOfMonthAvg(monthAvgs);
+        return FacilityAvgResponse.listOfMonthAvg(monthAvgs);
     }
 
     private Farm confirmExistingFarm(Long farmId) {

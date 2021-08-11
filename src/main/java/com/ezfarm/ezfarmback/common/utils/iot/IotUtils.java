@@ -1,13 +1,8 @@
 package com.ezfarm.ezfarmback.common.utils.iot;
 
-import static com.ezfarm.ezfarmback.facility.domain.Facility.stringParseToFacility;
-
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.facility.domain.Facility;
 import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
-import com.jcraft.jsch.ChannelExec;
-import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,16 +70,7 @@ public class IotUtils {
         }
     }
 
-    private String getFarmIdPath(Long farmId, String functionName) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("./").append(functionName)
-            .append(" ").append(farmId);
-        log.info("liveScreen path = {}", sb);
-        return sb.toString();
-    }
-
-    //실시간 센서값 조회
-    public Facility getLiveFacility(Long farmId) {
+    public String getLiveSensorValue(Long farmId) {
         String path = getFarmIdPath(farmId, jschConnector.getLiveFacility());
         jschConnector.connect();
         try {
@@ -95,13 +81,14 @@ public class IotUtils {
             String output = jschConnector.readLines(in);
             jschConnector.close();
 
-            log.info("getLiveScreen output = {}", output);
+            log.info("getLiveSensorValue output = {}", output);
 
             if (output.equals("0")) {
                 throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
             } else {
-                //TODO facility로 반환, service에서 facilityResponse로 매핑해서 반환해야함
-                return stringParseToFacility(output);
+                return output;
+                //TODO
+                //return FacilityResponse.stringParseToFacilityRes(output);
             }
         } catch (Exception e) {
             log.error("Connect Error : Cant connect to {}", jschConnector.getHostname());
@@ -109,4 +96,11 @@ public class IotUtils {
         }
     }
 
+    private String getFarmIdPath(Long farmId, String fileName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("./").append(fileName)
+            .append(" ").append(farmId);
+        log.info("farmId path = {}", sb);
+        return sb.toString();
+    }
 }

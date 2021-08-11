@@ -16,7 +16,7 @@ import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
@@ -97,7 +97,7 @@ public class FacilityServiceTest {
         when(facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(any(),
             any())).thenReturn(List.of(facilityDayAvg));
 
-        List<FacilityResponse> response = facilityService.findFacilityDailyAvg(1L,
+        List<FacilityAvgResponse> response = facilityService.findFacilityDailyAvg(1L,
             facilityDailyAvgRequest);
 
         verify(farmRepository).findById(any());
@@ -125,7 +125,7 @@ public class FacilityServiceTest {
         when(facilityWeekAvgRepository.findAllByFarmAndMeasureDateStartsWith(any(),
             any())).thenReturn(List.of(facilityWeekAvg));
 
-        List<FacilityResponse> response = facilityService.findFacilityWeekAvg(1L,
+        List<FacilityAvgResponse> response = facilityService.findFacilityWeekAvg(1L,
             facilityWeekAvgRequest);
 
         verify(farmRepository).findById(any());
@@ -152,7 +152,7 @@ public class FacilityServiceTest {
         when(facilityMonthAvgRepository.findAllByFarmAndMeasureDateStartsWith(any(),
             any())).thenReturn(List.of(facilityMonthAvg));
 
-        List<FacilityResponse> response = facilityService.findFacilityMonthlyAvg(1L,
+        List<FacilityAvgResponse> response = facilityService.findFacilityMonthlyAvg(1L,
             facilityMonthAvgRequest);
 
         verify(farmRepository).findById(any());

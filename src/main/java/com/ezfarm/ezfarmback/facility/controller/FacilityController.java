@@ -3,7 +3,7 @@ package com.ezfarm.ezfarmback.facility.controller;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import io.swagger.annotations.Api;
@@ -39,9 +39,9 @@ public class FacilityController {
     @ApiOperation(value = "타 농가 상세 조회(일)")
     @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
     @PostMapping("/daily-avg/{farmId}")
-    public ResponseEntity<List<FacilityResponse>> findFacilityDailyAvg(@PathVariable Long farmId,
+    public ResponseEntity<List<FacilityAvgResponse>> findFacilityDailyAvg(@PathVariable Long farmId,
         @RequestBody FacilityDailyAvgRequest facilityDailyAvgRequest) {
-        List<FacilityResponse> res = facilityService.findFacilityDailyAvg(farmId,
+        List<FacilityAvgResponse> res = facilityService.findFacilityDailyAvg(farmId,
             facilityDailyAvgRequest);
         return ResponseEntity.ok(res);
     }
@@ -49,9 +49,9 @@ public class FacilityController {
     @ApiOperation(value = "타 농가 상세 조회(주)")
     @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
     @PostMapping("/week-avg/{farmId}")
-    public ResponseEntity<List<FacilityResponse>> findFacilityWeekAvg(@PathVariable Long farmId,
+    public ResponseEntity<List<FacilityAvgResponse>> findFacilityWeekAvg(@PathVariable Long farmId,
         @RequestBody FacilityWeekAvgRequest facilityWeekAvgRequest) {
-        List<FacilityResponse> res = facilityService.findFacilityWeekAvg(farmId,
+        List<FacilityAvgResponse> res = facilityService.findFacilityWeekAvg(farmId,
             facilityWeekAvgRequest);
         return ResponseEntity.ok(res);
     }
@@ -59,9 +59,9 @@ public class FacilityController {
     @ApiOperation(value = "타 농가 상세 조회(월)")
     @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
     @PostMapping("/monthly-avg/{farmId}")
-    public ResponseEntity<List<FacilityResponse>> findFacilityMonthlyAvg(
+    public ResponseEntity<List<FacilityAvgResponse>> findFacilityMonthlyAvg(
         @PathVariable Long farmId, @RequestBody FacilityMonthAvgRequest facilityYearAvgRequest) {
-        List<FacilityResponse> res = facilityService.findFacilityMonthlyAvg(farmId,
+        List<FacilityAvgResponse> res = facilityService.findFacilityMonthlyAvg(farmId,
             facilityYearAvgRequest);
         return ResponseEntity.ok(res);
     }

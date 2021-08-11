@@ -12,7 +12,7 @@ import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
 import java.util.List;
@@ -49,7 +49,7 @@ public class FacilityControllerTest extends CommonApiTest {
     void findFacilityDailyAvg() throws Exception {
         FacilityDailyAvgRequest facilityDailyAvgRequest = new FacilityDailyAvgRequest("2020", "01");
 
-        FacilityResponse facilityResponse = FacilityResponse.builder()
+        FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
             .avgCo2(1)
             .measureDate("2020-01-01")
             .build();
@@ -70,7 +70,7 @@ public class FacilityControllerTest extends CommonApiTest {
     void findFacilityWeekAvg() throws Exception {
         FacilityWeekAvgRequest facilityWeekAvgRequest = new FacilityWeekAvgRequest();
 
-        FacilityResponse facilityResponse = FacilityResponse.builder()
+        FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
             .avgCo2(1)
             .measureDate("2020-01-01")
             .build();
@@ -91,7 +91,7 @@ public class FacilityControllerTest extends CommonApiTest {
     void findFacilityYearAvg() throws Exception {
         FacilityMonthAvgRequest facilityYearAvgRequest = new FacilityMonthAvgRequest("2020");
 
-        FacilityResponse facilityResponse = FacilityResponse.builder()
+        FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
             .avgCo2(1)
             .measureDate("2020-01-01")
             .build();

@@ -36,7 +36,7 @@ public class JschConnector {
     @Value("${app.iot.live-screen-file}")
     private String liveScreenFile;
 
-    @Value("${app.iot.live-facility}")
+    @Value("${app.iot.live-facility-file}")
     private String liveFacility;
 
     private Session session = null;
@@ -56,6 +56,13 @@ public class JschConnector {
         } catch (JSchException e) {
             throw new CustomException(ErrorCode.IOT_SERVER_CONNECTION_ERROR);
         }
+    }
+
+    public InputStream executeCommand(String path) throws Exception {
+        channelExec.setCommand(path);
+        InputStream in = channelExec.getInputStream();
+        channelExec.connect();
+        return in;
     }
 
     public String readLines(InputStream in) throws IOException {
@@ -84,12 +91,5 @@ public class JschConnector {
         if (session != null) {
             session.disconnect();
         }
-    }
-
-    public InputStream executeCommand(String path) throws Exception {
-        channelExec.setCommand(path);
-        InputStream in = channelExec.getInputStream();
-        channelExec.connect();
-        return in;
     }
 }
