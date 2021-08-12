@@ -35,15 +35,15 @@ public class FacilityResponse {
     }
 
     public static FacilityResponse stringParseToFacilityRes(String output) {
-        String[] split = output.trim().split(",");
+        String[] split = output.split(",");
         return FacilityResponse.builder()
-            .humidity(split[0])
-            .tmp(split[1])
-            .illuminance(split[2])
-            .co2(split[3])
-            .ph(split[4])
-            .mos(split[5])
-            .measureDate(split[6])
+            .humidity(split[0].trim())
+            .tmp(split[1].trim())
+            .illuminance(split[2].trim())
+            .co2(split[3].trim())
+            .ph(split[4].trim())
+            .mos(split[5].trim())
+            .measureDate(split[6].trim())
             .build();
     }
 }

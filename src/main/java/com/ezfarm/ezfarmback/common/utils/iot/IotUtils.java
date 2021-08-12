@@ -87,8 +87,6 @@ public class IotUtils {
                 throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
             } else {
                 return output;
-                //TODO
-                //return FacilityResponse.stringParseToFacilityRes(output);
             }
         } catch (Exception e) {
             log.error("Connect Error : Cant connect to {}", jschConnector.getHostname());
