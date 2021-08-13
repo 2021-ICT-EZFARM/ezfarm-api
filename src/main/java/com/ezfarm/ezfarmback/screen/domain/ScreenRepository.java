@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScreenRepository extends JpaRepository<Screen, Long> {
 
-    Optional<Screen> findByFarmAndMeasureTime(Farm farm, String measureTime);
+  Optional<Screen> findByFarmAndMeasureTime(Farm farm, int valueOf);
 
-  List<Screen> findByFarmAndMeasureTimeStartingWith(Farm findFarm, String today);
+  List<Screen> findByMeasureTimeLessThanEqualOrderByMeasureTimeAsc(int valueOf);
+
 }

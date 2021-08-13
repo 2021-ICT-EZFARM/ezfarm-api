@@ -17,8 +17,8 @@ public class ScreenResponse {
     @ApiModelProperty(value = "생장률")
     private float cropCondition;
 
-    @ApiModelProperty(value = "측정 일자")
-    private String measureTime;
+    @ApiModelProperty(value = "측정 시간(1~24)")
+    private int measureTime;
 
     public static ScreenResponse of(Screen screen) {
         return new ScreenResponse(

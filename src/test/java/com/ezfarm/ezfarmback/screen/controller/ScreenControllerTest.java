@@ -34,7 +34,7 @@ public class ScreenControllerTest extends CommonApiTest {
   @Override
   public void setUp() {
     super.setUp();
-    screenResponse = new ScreenResponse("test-url", 22.4F, "9999-99-99");
+    screenResponse = new ScreenResponse("test-url", 22.4F, 9999);
   }
 
   @WithMockCustomUser
@@ -47,20 +47,6 @@ public class ScreenControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andExpect(content().string(objectMapper.writeValueAsString(screenResponse)))
         .andDo(print());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("오늘 저장된 모든 화면을 조회한다.")
-  @Test
-  void findTodayScreens() throws Exception {
-    ScreenResponse screenResponse2 = new ScreenResponse("test-url", 11.4F, LocalDateTime.now().toString());
-    when(screenService.findTodayScreens(any(), any()))
-        .thenReturn(singletonList(screenResponse2));
-
-      mockMvc.perform(get(String.format("/api/screen?farmId=%d", 1L)))
-          .andExpect(status().isOk())
-          .andExpect(content().string(objectMapper.writeValueAsString(singletonList(screenResponse2))))
-          .andDo(print());
   }
 
 }

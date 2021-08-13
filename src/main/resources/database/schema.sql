@@ -166,7 +166,7 @@ create table screen
     farm_id        BIGINT(20)   NOT NULL,
     crop_condition FLOAT        NOT NULL,
     image_url      VARCHAR(255) NOT NULL,
-    measure_time   VARCHAR(50)  NOT NULL,
+    measure_time   INTEGER  NOT NULL,
     primary key (screen_id)
 );
 
