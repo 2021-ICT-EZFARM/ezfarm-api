@@ -9,8 +9,7 @@ import com.ezfarm.ezfarmback.screen.domain.Screen;
 import com.ezfarm.ezfarmback.screen.domain.ScreenRepository;
 import com.ezfarm.ezfarmback.screen.dto.ScreenResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -36,7 +35,7 @@ public class ScreenService {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
-        String measureTime = iotUtils.getLiveScreen(findFarm.getId());
+        int measureTime = Integer.parseInt(iotUtils.getLiveScreen(findFarm.getId()));
         Screen screen = screenRepository.findByFarmAndMeasureTime(findFarm, measureTime)
             .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_SCREEN));
 
@@ -51,9 +50,8 @@ public class ScreenService {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
         }
 
-        String today = LocalDate.now().toString();
-        List<Screen> screens = screenRepository
-            .findByFarmAndMeasureTimeStartingWith(findFarm, today);
+        int today = LocalDateTime.now().getHour();
+        List<Screen> screens = screenRepository.findByMeasureTimeLessThanEqualOrderByMeasureTimeAsc(today);
 
         return screens.stream().map(screen -> modelMapper.map(screen, ScreenResponse.class))
             .collect(

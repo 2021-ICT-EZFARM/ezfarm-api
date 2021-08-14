@@ -31,10 +31,10 @@ public class Screen {
 
     private float cropCondition;
 
-    private String measureTime;
+    private int measureTime;
   
   @Builder
-  public Screen(Farm farm, String imageUrl, float cropCondition, String measureTime) {
+  public Screen(Farm farm, String imageUrl, float cropCondition, int measureTime) {
     this.farm = farm;
     this.imageUrl = imageUrl;
     this.cropCondition = cropCondition;

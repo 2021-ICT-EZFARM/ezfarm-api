@@ -4,6 +4,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -79,7 +80,7 @@ public class ScreenServiceTest {
         .farm(farm)
         .imageUrl("test-url")
         .cropCondition(24.5F)
-        .measureTime("2021-08-10")
+        .measureTime(2)
         .build();
 
     screenResponse = ScreenResponse.of(screen);
@@ -90,8 +91,8 @@ public class ScreenServiceTest {
   @Test
   void findLiveScreen() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveScreen(any())).thenReturn(screen.getMeasureTime());
-    when(screenRepository.findByFarmAndMeasureTime(any(), any())).thenReturn(ofNullable(screen));
+    when(iotUtils.getLiveScreen(any())).thenReturn(String.valueOf(screen.getMeasureTime()));
+    when(screenRepository.findByFarmAndMeasureTime(any(), anyInt())).thenReturn(ofNullable(screen));
     when(modelMapper.map(any(), any())).thenReturn(screenResponse);
 
     screenService.findLiveScreen(user, 1L);
@@ -142,8 +143,8 @@ public class ScreenServiceTest {
   @Test
   void findLiveScreen_failure_not_exist_screen() {
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveScreen(any())).thenReturn(screen.getMeasureTime());
-    when(screenRepository.findByFarmAndMeasureTime(any(), any()))
+    when(iotUtils.getLiveScreen(any())).thenReturn(String.valueOf(screen.getMeasureTime()));
+    when(screenRepository.findByFarmAndMeasureTime(any(), anyInt()))
         .thenThrow(new CustomException(ErrorCode.NON_EXISTENT_SCREEN));
 
     assertThatThrownBy(() -> screenService.findLiveScreen(user, 1L))
@@ -162,40 +163,4 @@ public class ScreenServiceTest {
         .hasMessage(ErrorCode.INTERNAL_IOT_SERVER_ERROR.getMessage());
   }
 
-  @DisplayName("오늘 저장된 모든 화면을 조회한다.")
-  @Test
-  void findTodayScreens() {
-    Screen screen2 = Screen.builder()
-        .farm(farm)
-        .imageUrl("test-url")
-        .cropCondition(11.5F)
-        .measureTime(LocalDateTime.now().toString())
-        .build();
-
-    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(screenRepository
-        .findByFarmAndMeasureTimeStartingWith(any(), any())).thenReturn(List.of(screen2));
-    when(modelMapper.map(any(), any())).thenReturn(ScreenResponse.of(screen2));
-
-    List<ScreenResponse> responses = screenService.findTodayScreens(user, 1L);
-
-    Assertions.assertAll(
-        () -> assertThat(responses.size()).isEqualTo(1),
-        () -> assertThat(responses.get(0).getImageUrl()).isEqualTo(screen2.getImageUrl()),
-        () -> assertThat(responses.get(0).getCropCondition()).isEqualTo(screen2.getCropCondition()),
-        () -> assertThat(responses.get(0).getMeasureTime()).isEqualTo(screen2.getMeasureTime())
-    );
-  }
-
-  @DisplayName("오늘 저장된 화면이 없을 경우 빈 리스트가 반환된다.")
-  @Test
-  void findTodayScreens_is_EmptyList() {
-    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(screenRepository
-        .findByFarmAndMeasureTimeStartingWith(any(), any())).thenReturn(List.of());
-
-    List<ScreenResponse> responses = screenService.findTodayScreens(user, 1L);
-
-    assertThat(responses.size()).isEqualTo(0);
-  }
 }

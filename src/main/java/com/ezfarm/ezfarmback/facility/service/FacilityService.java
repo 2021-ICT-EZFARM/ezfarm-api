@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.facility.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
@@ -11,10 +12,12 @@ import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.user.domain.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,51 +28,68 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FacilityService {
 
-    private final FarmRepository farmRepository;
+  private final FarmRepository farmRepository;
 
-    private final FacilityDayAvgRepository facilityDayAvgRepository;
+  private final FacilityDayAvgRepository facilityDayAvgRepository;
 
-    private final FacilityMonthAvgRepository facilityMonthAvgRepository;
+  private final FacilityMonthAvgRepository facilityMonthAvgRepository;
 
-    private final FacilityWeekAvgRepository facilityWeekAvgRepository;
+  private final FacilityWeekAvgRepository facilityWeekAvgRepository;
 
-    public FacilityPeriodResponse findFacilitySearchPeriod(Long farmId) {
-        Farm findFarm = confirmExistingFarm(farmId);
-        return facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(findFarm);
-    }
+  private final IotUtils iotUtils;
 
-    public List<FacilityResponse> findFacilityDailyAvg(Long farmId,
-        FacilityDailyAvgRequest facilityDailyAvgRequest) {
-        Farm findFarm = confirmExistingFarm(farmId);
+  public FacilityPeriodResponse findFacilitySearchPeriod(Long farmId) {
+    Farm findFarm = confirmExistingFarm(farmId);
+    return facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(findFarm);
+  }
 
-        String date = facilityDailyAvgRequest.getYear() + "-" + facilityDailyAvgRequest.getMonth();
-        List<FacilityDayAvg> DayAvgs = facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(
-            findFarm, date);
+  public List<FacilityAvgResponse> findFacilityDailyAvg(Long farmId,
+      FacilityDailyAvgRequest facilityDailyAvgRequest) {
+    Farm findFarm = confirmExistingFarm(farmId);
 
-        return FacilityResponse.listOfDayAvg(DayAvgs);
-    }
+    String date = facilityDailyAvgRequest.getYear() + "-" + facilityDailyAvgRequest.getMonth();
+    List<FacilityDayAvg> DayAvgs = facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+        findFarm, date);
 
-    public List<FacilityResponse> findFacilityWeekAvg(Long farmId,
-        FacilityWeekAvgRequest facilityWeekAvgRequest) {
-        Farm findFarm = confirmExistingFarm(farmId);
+    return FacilityAvgResponse.listOfDayAvg(DayAvgs);
+  }
 
-        List<FacilityWeekAvg> weekAvgs = facilityWeekAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+  public List<FacilityAvgResponse> findFacilityWeekAvg(Long farmId,
+      FacilityWeekAvgRequest facilityWeekAvgRequest) {
+    Farm findFarm = confirmExistingFarm(farmId);
+
+    List<FacilityWeekAvg> weekAvgs = facilityWeekAvgRepository
+        .findAllByFarmAndMeasureDateStartsWith(
             findFarm, facilityWeekAvgRequest);
-        return FacilityResponse.listOfWeekAvg(weekAvgs);
-    }
+    return FacilityAvgResponse.listOfWeekAvg(weekAvgs);
+  }
 
-    public List<FacilityResponse> findFacilityMonthlyAvg(Long farmId,
-        FacilityMonthAvgRequest facilityYearAvgRequest) {
-        Farm findFarm = confirmExistingFarm(farmId);
+  public List<FacilityAvgResponse> findFacilityMonthlyAvg(Long farmId,
+      FacilityMonthAvgRequest facilityYearAvgRequest) {
+    Farm findFarm = confirmExistingFarm(farmId);
 
-        List<FacilityMonthAvg> monthAvgs = facilityMonthAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+    List<FacilityMonthAvg> monthAvgs = facilityMonthAvgRepository
+        .findAllByFarmAndMeasureDateStartsWith(
             findFarm, facilityYearAvgRequest.getYear());
 
-        return FacilityResponse.listOfMonthAvg(monthAvgs);
+    return FacilityAvgResponse.listOfMonthAvg(monthAvgs);
+  }
+
+  private Farm confirmExistingFarm(Long farmId) {
+    return farmRepository.findById(farmId).orElseThrow(
+        () -> new CustomException(ErrorCode.INVALID_FARM_ID));
+  }
+
+  public FacilityResponse findLiveFacility(User user, Long farmId) {
+    Farm farm = confirmExistingFarm(farmId);
+
+    if (!farm.isMyFarm(user.getId())) {
+      throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
 
-    private Farm confirmExistingFarm(Long farmId) {
-        return farmRepository.findById(farmId).orElseThrow(
-            () -> new CustomException(ErrorCode.INVALID_FARM_ID));
-    }
+    String output = iotUtils.getLiveSensorValue(farmId);
+    FacilityResponse facilityResponse = FacilityResponse.stringParseToFacilityRes(output);
+
+    return facilityResponse;
+  }
 }
