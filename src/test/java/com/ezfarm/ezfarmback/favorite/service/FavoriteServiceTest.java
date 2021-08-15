@@ -15,9 +15,9 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
-import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.util.List;
@@ -141,13 +141,13 @@ public class FavoriteServiceTest {
         when(favoriteRepository.findAllByUser(any())).thenReturn(
             singletonList(favorite));
 
-        List<FavoriteResponse> favoriteResponses = favoriteService.findFavorites(loginUser);
+        List<FarmSearchResponse> favoriteResponses = favoriteService.findFavorites(loginUser);
 
         Assertions.assertAll(
             () -> assertThat(favoriteResponses.size()).isEqualTo(1),
-            () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())
+            () -> assertThat(favoriteResponses.get(0).getName())
                 .isEqualTo(farm.getName()),
-            () -> assertThat(favoriteResponses.get(0).getFarmOwnerResponse().getName())
+            () -> assertThat(favoriteResponses.get(0).getName())
                 .isEqualTo(farmOwner.getName())
         );
     }

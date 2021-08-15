@@ -4,12 +4,11 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
-import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,11 +57,9 @@ public class FavoriteService {
     }
 
     @Transactional(readOnly = true)
-    public List<FavoriteResponse> findFavorites(User user) {
+    public List<FarmSearchResponse> findFavorites(User user) {
         List<Favorite> favorites = favoriteRepository.findAllByUser(user);
-        return favorites.stream()
-            .map(FavoriteResponse::of)
-            .collect(Collectors.toList());
+        return FarmSearchResponse.listOf(favorites);
     }
 
     public void deleteFavorite(Long favoriteId) {
