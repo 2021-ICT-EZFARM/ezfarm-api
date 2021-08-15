@@ -4,9 +4,9 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
-import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
+import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -57,9 +57,9 @@ public class FavoriteService {
     }
 
     @Transactional(readOnly = true)
-    public List<FarmSearchResponse> findFavorites(User user) {
+    public List<FavoriteResponse> findFavorites(User user) {
         List<Favorite> favorites = favoriteRepository.findAllByUser(user);
-        return FarmSearchResponse.listOf(favorites);
+        return FavoriteResponse.listOf(favorites);
     }
 
     public void deleteFavorite(Long favoriteId) {

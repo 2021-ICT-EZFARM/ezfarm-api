@@ -1,6 +1,6 @@
 package com.ezfarm.ezfarmback.favorite.controller;
 
-import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
+import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.favorite.service.FavoriteService;
 import com.ezfarm.ezfarmback.security.CurrentUser;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -42,8 +42,8 @@ public class FavoriteController {
 
     @ApiOperation(value = "즐겨찾기 조회")
     @GetMapping
-    public ResponseEntity<List<FarmSearchResponse>> findFavorites(@CurrentUser User user) {
-        List<FarmSearchResponse> favoriteResponses = favoriteService.findFavorites(user);
+    public ResponseEntity<List<FavoriteResponse>> findFavorites(@CurrentUser User user) {
+        List<FavoriteResponse> favoriteResponses = favoriteService.findFavorites(user);
         return ResponseEntity.ok(favoriteResponses);
     }
 

@@ -6,8 +6,8 @@ import com.ezfarm.ezfarmback.common.db.AcceptanceStep;
 import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.farm.acceptance.step.FarmAcceptanceStep;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
-import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.favorite.acceptance.step.FavoriteAcceptanceStep;
+import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import io.restassured.response.ExtractableResponse;
@@ -70,12 +70,12 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
         ExtractableResponse<Response> response = FavoriteAcceptanceStep
             .requestToFindFavorite(authResponse);
-        List<FarmSearchResponse> farmSearchResponses = response.jsonPath()
-            .getList(".", FarmSearchResponse.class);
+        List<FavoriteResponse> favoriteResponses = response.jsonPath()
+            .getList(".", FavoriteResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
         FavoriteAcceptanceStep
-            .assertThatFindFavorites(farmSearchResponses, farmRequest);
+            .assertThatFindFavorites(favoriteResponses, farmRequest);
     }
 
     @DisplayName("농가 즐겨찾기를 삭제한다.")
@@ -87,14 +87,14 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
         ExtractableResponse<Response> favoriteResponse = FavoriteAcceptanceStep
             .requestToFindFavorite(authResponse);
-        List<FarmSearchResponse> farmSearchResponses = favoriteResponse.jsonPath()
-            .getList(".", FarmSearchResponse.class);
+        List<FavoriteResponse> favoriteResponses = favoriteResponse.jsonPath()
+            .getList(".", FavoriteResponse.class);
 
         ExtractableResponse<Response> deleteResponse = FavoriteAcceptanceStep
-            .requestToDeleteFavorite(authResponse, farmSearchResponses.get(0).getFarmId());
+            .requestToDeleteFavorite(authResponse, favoriteResponses.get(0).getFavoriteId());
 
-        List<FarmSearchResponse> response = FavoriteAcceptanceStep
-            .requestToFindFavorite(authResponse).jsonPath().getList(".", FarmSearchResponse.class);
+        List<FavoriteResponse> response = FavoriteAcceptanceStep
+            .requestToFindFavorite(authResponse).jsonPath().getList(".", FavoriteResponse.class);
 
         Assertions.assertAll(
             () -> AcceptanceStep.assertThatStatusIsNoContent(deleteResponse),

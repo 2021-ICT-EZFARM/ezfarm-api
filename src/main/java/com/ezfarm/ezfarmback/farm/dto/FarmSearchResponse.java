@@ -4,8 +4,6 @@ import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.querydsl.core.annotations.QueryProjection;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -31,15 +29,14 @@ public class FarmSearchResponse {
         this.cropType = cropType;
     }
 
-    public static List<FarmSearchResponse> listOf(List<Favorite> favorites) {
-        return favorites.stream().map(v ->
-            new FarmSearchResponse(v.getFarm().getId(),
-                v.getFarm().getName(),
-                v.getFarm().getAddress(),
-                v.getFarm().getArea(),
-                v.getFarm().getFarmType(),
-                v.getFarm().getCropType()
-            )
-        ).collect(Collectors.toList());
+    public static FarmSearchResponse favoriteOf(Favorite favorite) {
+        return new FarmSearchResponse(
+            favorite.getFarm().getId(),
+            favorite.getFarm().getName(),
+            favorite.getFarm().getAddress(),
+            favorite.getFarm().getArea(),
+            favorite.getFarm().getFarmType(),
+            favorite.getFarm().getCropType()
+        );
     }
 }
