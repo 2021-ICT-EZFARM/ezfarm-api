@@ -83,9 +83,9 @@ public class FarmController {
     }
 
     @ApiOperation(value = "타 농가 조회")
-    @PostMapping("/other")
+    @GetMapping("/other")
     public ResponseEntity<List<FarmSearchResponse>> findOtherFarms(@CurrentUser User user,
-        @RequestBody FarmSearchCond farmSearchCond, Pagination pagination) {
+        FarmSearchCond farmSearchCond, Pagination pagination) {
         List<FarmSearchResponse> otherFarms = farmService
             .findOtherFarms(user, farmSearchCond, pagination);
         return ResponseEntity.ok(otherFarms);
