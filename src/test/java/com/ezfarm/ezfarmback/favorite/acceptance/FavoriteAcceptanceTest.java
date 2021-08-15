@@ -75,7 +75,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
 
         AcceptanceStep.assertThatStatusIsOk(response);
         FavoriteAcceptanceStep
-            .assertThatFindFavorites(favoriteResponses, ownerLoginRequest, farmRequest);
+            .assertThatFindFavorites(favoriteResponses, farmRequest);
     }
 
     @DisplayName("농가 즐겨찾기를 삭제한다.")
@@ -91,7 +91,7 @@ public class FavoriteAcceptanceTest extends CommonAcceptanceTest {
             .getList(".", FavoriteResponse.class);
 
         ExtractableResponse<Response> deleteResponse = FavoriteAcceptanceStep
-            .requestToDeleteFavorite(authResponse, favoriteResponses.get(0).getId());
+            .requestToDeleteFavorite(authResponse, favoriteResponses.get(0).getFavoriteId());
 
         List<FavoriteResponse> response = FavoriteAcceptanceStep
             .requestToFindFavorite(authResponse).jsonPath().getList(".", FavoriteResponse.class);

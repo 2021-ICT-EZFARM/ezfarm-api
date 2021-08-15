@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.farm.dto;
 
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
+import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,5 +27,16 @@ public class FarmSearchResponse {
         this.area = area;
         this.farmType = farmType;
         this.cropType = cropType;
+    }
+
+    public static FarmSearchResponse favoriteOf(Favorite favorite) {
+        return new FarmSearchResponse(
+            favorite.getFarm().getId(),
+            favorite.getFarm().getName(),
+            favorite.getFarm().getAddress(),
+            favorite.getFarm().getArea(),
+            favorite.getFarm().getFarmType(),
+            favorite.getFarm().getCropType()
+        );
     }
 }

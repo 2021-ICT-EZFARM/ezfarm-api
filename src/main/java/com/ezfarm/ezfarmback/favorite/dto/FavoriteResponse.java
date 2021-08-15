@@ -1,49 +1,25 @@
 package com.ezfarm.ezfarmback.favorite.dto;
 
-import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
+import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
-import com.ezfarm.ezfarmback.user.domain.User;
-import lombok.AccessLevel;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FavoriteResponse {
 
-    private Long id;
-    private FarmResponse farmResponse;
-    private FarmOwnerResponse farmOwnerResponse;
+    private Long favoriteId;
 
-    public static FavoriteResponse of(Favorite favorite) {
-        return new FavoriteResponse(
-            favorite.getId(),
-            FarmResponse.of(favorite.getFarm()),
-            FarmOwnerResponse.of(favorite.getFarm().getUser())
-        );
-    }
+    private FarmSearchResponse farmSearchResponse;
 
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    @AllArgsConstructor(access = AccessLevel.PUBLIC)
-    public static class FarmOwnerResponse {
-
-        private String email;
-        private String name;
-        private String phoneNumber;
-        private String address;
-        private String imageUrl;
-
-        public static FarmOwnerResponse of(User user) {
-            return new FarmOwnerResponse(
-                user.getEmail(),
-                user.getName(),
-                user.getPhoneNumber(),
-                user.getAddress(),
-                user.getImageUrl()
-            );
-        }
+    public static List<FavoriteResponse> listOf(List<Favorite> favorites) {
+        return favorites.stream().map(v ->
+            new FavoriteResponse(v.getId(), FarmSearchResponse.favoriteOf(v))
+        ).collect(Collectors.toList());
     }
 }

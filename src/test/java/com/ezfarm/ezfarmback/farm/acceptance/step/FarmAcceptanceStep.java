@@ -133,14 +133,15 @@ public class FarmAcceptanceStep {
     }
 
     public static ExtractableResponse<Response> requestToFindOtherFarms(AuthResponse authResponse,
-        FarmSearchCond farmSearchCond, ObjectMapper objectMapper) throws Exception {
+        FarmSearchCond farmSearchCond) {
         return given().log().all()
             .header("Authorization",
                 authResponse.getTokenType() + " " + authResponse.getAccessToken())
             .when()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(objectMapper.writeValueAsString(farmSearchCond))
-            .post(String.format("/api/farm/other?page=%d&size=%d", 0, 10))
+            .get(String.format(
+                "/api/farm/other?farmGroup=%s&?farmType=%s&cropType=%s&?page=%d&size=%d",
+                farmSearchCond.getFarmGroup(), farmSearchCond.getFarmType(),
+                farmSearchCond.getCropType(), 0, 10))
             .then().log().all()
             .extract();
     }

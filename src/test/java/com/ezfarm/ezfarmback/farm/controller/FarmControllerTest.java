@@ -128,9 +128,10 @@ class FarmControllerTest extends CommonApiTest {
 
         when(farmService.findOtherFarms(any(), any(), any())).thenReturn(emptyList());
 
-        mockMvc.perform(post("/api/farm/other")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(farmSearchCond)))
+        mockMvc.perform(get(String.format(
+                "/api/farm/other?farmGroup=%s&?farmType=%s&cropType=%s&?page=%d&size=%d"
+                , farmSearchCond.getFarmGroup(), farmSearchCond.getFarmType(),
+                farmSearchCond.getCropType(), 0, 10)))
             .andExpect(status().isOk())
             .andDo(print());
     }

@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.dto.AuthResponse;
-import com.ezfarm.ezfarmback.user.dto.LoginRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
@@ -15,12 +14,10 @@ import org.junit.jupiter.api.Assertions;
 public class FavoriteAcceptanceStep {
 
     public static void assertThatFindFavorites(List<FavoriteResponse> favoriteResponses,
-        LoginRequest ownerLoginRequest, FarmRequest farmRequest) {
+        FarmRequest farmRequest) {
         Assertions.assertAll(
             () -> assertThat(favoriteResponses.size()).isEqualTo(1),
-            () -> assertThat(favoriteResponses.get(0).getFarmOwnerResponse().getEmail())
-                .isEqualTo(ownerLoginRequest.getEmail()),
-            () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())
+            () -> assertThat(favoriteResponses.get(0).getFarmSearchResponse().getName())
                 .isEqualTo(farmRequest.getName())
         );
     }

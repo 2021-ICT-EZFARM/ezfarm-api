@@ -155,7 +155,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
             .cropType(CropType.PAPRIKA)
             .build();
         ExtractableResponse<Response> response = FarmAcceptanceStep
-            .requestToFindOtherFarms(authResponse, farmSearchCond, objectMapper);
+            .requestToFindOtherFarms(authResponse, farmSearchCond);
         List<FarmSearchResponse> farmSearchResponse = response.jsonPath()
             .getList(".", FarmSearchResponse.class);
 

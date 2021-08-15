@@ -145,10 +145,8 @@ public class FavoriteServiceTest {
 
         Assertions.assertAll(
             () -> assertThat(favoriteResponses.size()).isEqualTo(1),
-            () -> assertThat(favoriteResponses.get(0).getFarmResponse().getName())
-                .isEqualTo(farm.getName()),
-            () -> assertThat(favoriteResponses.get(0).getFarmOwnerResponse().getName())
-                .isEqualTo(farmOwner.getName())
+            () -> assertThat(favoriteResponses.get(0).getFarmSearchResponse().getName())
+                .isEqualTo(farm.getName())
         );
     }
 
