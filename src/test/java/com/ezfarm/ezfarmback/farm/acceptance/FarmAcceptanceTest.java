@@ -69,7 +69,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         FarmResponse farmResponse = findResponse.jsonPath().getObject(".", FarmResponse.class);
 
         AcceptanceStep.assertThatStatusIsCreated(createResponse);
-        FarmAcceptanceStep.assertThatFindMyFarm(farmResponse, vinylTomatoFarmRequest);
+        FarmAcceptanceStep.assertThatFindMyNewFarm(farmResponse, vinylTomatoFarmRequest);
     }
 
     @DisplayName("나의 농가를 수정한다.")
@@ -120,7 +120,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         FarmResponse farmResponse = response.jsonPath().getObject(".", FarmResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        FarmAcceptanceStep.assertThatFindMyFarm(farmResponse, vinylTomatoFarmRequest);
+        FarmAcceptanceStep.assertThatFindMyNewFarm(farmResponse, vinylTomatoFarmRequest);
     }
 
     @DisplayName("농가를 삭제한다.")

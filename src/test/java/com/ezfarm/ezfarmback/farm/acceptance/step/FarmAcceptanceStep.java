@@ -45,6 +45,19 @@ public class FarmAcceptanceStep {
         );
     }
 
+    public static void assertThatFindMyNewFarm(FarmResponse farmResponse, FarmRequest farmRequest) {
+        assertAll(
+            () -> assertThat(farmResponse.getAddress()).isEqualTo(farmRequest.getAddress()),
+            () -> assertThat(farmResponse.getName()).isEqualTo(farmRequest.getName()),
+            () -> assertThat(farmResponse.getStartDate()).isEqualTo(farmRequest.getStartDate()),
+            () -> assertThat(farmResponse.isMain()).isEqualTo(true),
+            () -> assertThat(farmResponse.getPhoneNumber()).isEqualTo(farmRequest.getPhoneNumber()),
+            () -> assertThat(farmResponse.getArea()).isEqualTo(farmRequest.getArea()),
+            () -> assertThat(farmResponse.getFarmType()).isEqualTo(farmRequest.getFarmType()),
+            () -> assertThat(farmResponse.getCropType()).isEqualTo(farmRequest.getCropType())
+        );
+    }
+
     public static void assertThatFindOtherFarms(List<FarmSearchResponse> farmSearchResponse,
         FarmRequest farmRequest) {
         assertAll(

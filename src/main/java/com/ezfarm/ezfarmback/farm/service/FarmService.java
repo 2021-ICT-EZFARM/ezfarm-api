@@ -77,6 +77,10 @@ public class FarmService {
         if (farmRequest.isMain()) {
             Optional<Farm> prevMainFarm = farmRepository.findByIsMainAndUser(true, user);
             prevMainFarm.ifPresent(value -> value.setMain(false));
+        } else {
+            if (!farmRepository.existsByUser(user)) {
+                farmRequest.setMain(true);
+            }
         }
     }
 

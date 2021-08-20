@@ -5,6 +5,8 @@ import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
+import com.ezfarm.ezfarmback.facility.domain.hour.FacilityRepository;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
@@ -20,6 +22,7 @@ import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,8 @@ public class FacilityService {
   private final FacilityWeekAvgRepository facilityWeekAvgRepository;
 
   private final IotUtils iotUtils;
+
+  private final FacilityRepository facilityRepository;
 
   public FacilityPeriodResponse findFacilitySearchPeriod(Long farmId) {
     Farm findFarm = confirmExistingFarm(farmId);
@@ -91,5 +96,22 @@ public class FacilityService {
     FacilityResponse facilityResponse = FacilityResponse.stringParseToFacilityRes(output);
 
     return facilityResponse;
+  }
+
+  public FacilityResponse findMainFarmFacility(User user) {
+    Farm mainFarm = farmRepository.findByIsMainAndUser(true, user)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+
+    Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)
+        .orElse(null);
+
+    if (facility == null) {
+      if (facilityRepository.existsByFarm(mainFarm)) {
+        throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+      }
+      return new FacilityResponse();
+    }
+
+    return FacilityResponse.of(facility);
   }
 }
