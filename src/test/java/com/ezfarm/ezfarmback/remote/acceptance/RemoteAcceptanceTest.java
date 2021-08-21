@@ -19,6 +19,7 @@ import io.restassured.response.Response;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
         RemoteAcceptanceStep.assertThatFindRemote(remoteResponse);
     }
 
+    @Disabled
     @DisplayName("제어 값을 수정한다.")
     @Test
     void updateRemote() throws Exception {
@@ -80,6 +82,7 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
         RemoteAcceptanceStep.assertThatUpdateRemote(response, remoteRequest);
     }
 
+    @Disabled
     @DisplayName("제어 값을 수정할 경우 히스토리가 저장된다.")
     @Test
     void updateRemoteAndCreateHistory() throws Exception {
