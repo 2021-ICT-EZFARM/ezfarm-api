@@ -88,8 +88,7 @@ public class FacilityService {
     }
 
     String output = iotUtils.getLiveSensorValue(farmId);
-    FacilityResponse facilityResponse = FacilityResponse.stringParseToFacilityRes(output);
 
-    return facilityResponse;
+    return FacilityResponse.stringParseToFacilityRes(output);
   }
 }
