@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.facility.domain.day;
 
+import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekRepositoryCustom;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import java.util.List;

@@ -1,6 +1,7 @@
 package com.ezfarm.ezfarmback.facility.domain;
 
 import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgSearchResponse;
 import javax.persistence.Embeddable;
 import lombok.Getter;
 
@@ -27,6 +28,15 @@ public class FacilityAvg {
         this.avgCo2 = 0;
         this.avgPh = 0;
         this.avgMos = 0;
+    }
+
+    public FacilityAvg(FacilityAvgSearchResponse facilityAvgSearchResponse) {
+        this.avgTmp = facilityAvgSearchResponse.getAvgTmp();
+        this.avgHumidity = facilityAvgSearchResponse.getAvgHumidity();
+        this.avgIlluminance = facilityAvgSearchResponse.getAvgIlluminance();
+        this.avgCo2 = facilityAvgSearchResponse.getAvgCo2();
+        this.avgPh = facilityAvgSearchResponse.getAvgPh();
+        this.avgMos = facilityAvgSearchResponse.getAvgMos();
     }
 
     public void sum(Facility facility) {
