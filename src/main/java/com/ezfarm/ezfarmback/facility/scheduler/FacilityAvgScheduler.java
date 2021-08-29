@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FacilityAvgScheduler {
 
+  /*
   private final FacilityRepository facilityRepository;
   private final FacilityDayAvgRepository facilityDayAvgRepository;
   private final FacilityWeekAvgRepository facilityWeekAvgRepository;
@@ -84,4 +85,5 @@ public class FacilityAvgScheduler {
 
     log.info("{} end - 시설 데이터 월 평균 계산", LocalDateTime.now());
   }
+   */
 }
