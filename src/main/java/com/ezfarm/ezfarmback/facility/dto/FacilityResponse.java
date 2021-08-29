@@ -56,7 +56,8 @@ public class FacilityResponse {
         .co2(Float.toString(facility.getCo2()))
         .ph(Float.toString(facility.getPh()))
         .mos(Float.toString(facility.getMos()))
-        .measureDate(facility.getMeasureDate().toString())
+        .measureDate(
+            facility.getMeasureDate() != null ? facility.getMeasureDate().toString() : null)
         .build();
   }
 }

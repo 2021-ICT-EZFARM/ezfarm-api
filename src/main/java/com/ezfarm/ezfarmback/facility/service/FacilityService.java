@@ -86,7 +86,7 @@ public class FacilityService {
 
   public FacilityResponse findLiveFacility(User user, Long farmId) {
     Farm farm = confirmExistingFarm(farmId);
-    
+
     if (!farm.isMyFarm(user.getId())) {
       throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
@@ -100,7 +100,7 @@ public class FacilityService {
         .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_MAIN_FARM));
 
     Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)
-        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_FACILITY_DATA));
+        .orElseGet(Facility::new);
 
     return FacilityResponse.of(facility);
   }

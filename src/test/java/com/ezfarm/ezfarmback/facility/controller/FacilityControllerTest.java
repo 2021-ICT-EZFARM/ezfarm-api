@@ -29,127 +29,127 @@ import org.springframework.http.MediaType;
 @WebMvcTest(controllers = FacilityController.class)
 public class FacilityControllerTest extends CommonApiTest {
 
-    @MockBean
-    FacilityService facilityService;
+  @MockBean
+  FacilityService facilityService;
 
-    FacilityResponse facilityResponse;
+  FacilityResponse facilityResponse;
 
-    @BeforeEach
-    @Override
-    public void setUp() {
-        super.setUp();
+  @BeforeEach
+  @Override
+  public void setUp() {
+    super.setUp();
 
-        facilityResponse = FacilityResponse.builder()
-            .tmp("13.7")
-            .humidity("26.7")
-            .illuminance("55.3")
-            .co2("1.2")
-            .ph("22.4")
-            .mos("16.5")
-            .measureDate("2021-08-12")
-            .build();
-    }
+    facilityResponse = FacilityResponse.builder()
+        .tmp("13.7")
+        .humidity("26.7")
+        .illuminance("55.3")
+        .co2("1.2")
+        .ph("22.4")
+        .mos("16.5")
+        .measureDate("2021-08-12")
+        .build();
+  }
 
-    @WithMockCustomUser
-    @DisplayName("검색 가능한 기간을 조회한다.")
-    @Test
-    void findFacilitySearchPeriod() throws Exception {
-        FacilityPeriodResponse facilityPeriodResponse = new FacilityPeriodResponse("2020-1",
-            "2020-10");
+  @WithMockCustomUser
+  @DisplayName("검색 가능한 기간을 조회한다.")
+  @Test
+  void findFacilitySearchPeriod() throws Exception {
+    FacilityPeriodResponse facilityPeriodResponse = new FacilityPeriodResponse("2020-1",
+        "2020-10");
 
-        when(facilityService.findFacilitySearchPeriod(any())).thenReturn(facilityPeriodResponse);
+    when(facilityService.findFacilitySearchPeriod(any())).thenReturn(facilityPeriodResponse);
 
-        mockMvc.perform(get("/api/facility/search-condition/{farmId}", 1L))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(get("/api/facility/search-condition/{farmId}", 1L))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("타 농가 일 평균 데이터를 조회한다.")
-    @Test
-    void findFacilityDailyAvg() throws Exception {
-        FacilityDailyAvgRequest facilityDailyAvgRequest = new FacilityDailyAvgRequest("2020", "01");
+  @WithMockCustomUser
+  @DisplayName("타 농가 일 평균 데이터를 조회한다.")
+  @Test
+  void findFacilityDailyAvg() throws Exception {
+    FacilityDailyAvgRequest facilityDailyAvgRequest = new FacilityDailyAvgRequest("2020", "01");
 
-        FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
-            .avgCo2(1)
-            .measureDate("2020-01-01")
-            .build();
+    FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
+        .avgCo2(1)
+        .measureDate("2020-01-01")
+        .build();
 
-        when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
-            List.of(facilityResponse));
+    when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
+        List.of(facilityResponse));
 
-        mockMvc.perform(post("/api/facility/daily-avg/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(facilityDailyAvgRequest)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(post("/api/facility/daily-avg/{farmId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(facilityDailyAvgRequest)))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("타 농가 주 평균 데이터를 조회한다.")
-    @Test
-    void findFacilityWeekAvg() throws Exception {
-        FacilityWeekAvgRequest facilityWeekAvgRequest = new FacilityWeekAvgRequest();
+  @WithMockCustomUser
+  @DisplayName("타 농가 주 평균 데이터를 조회한다.")
+  @Test
+  void findFacilityWeekAvg() throws Exception {
+    FacilityWeekAvgRequest facilityWeekAvgRequest = new FacilityWeekAvgRequest();
 
-        FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
-            .avgCo2(1)
-            .measureDate("2020-01-01")
-            .build();
+    FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
+        .avgCo2(1)
+        .measureDate("2020-01-01")
+        .build();
 
-        when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
-            List.of(facilityResponse));
+    when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
+        List.of(facilityResponse));
 
-        mockMvc.perform(post("/api/facility/week-avg/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(facilityWeekAvgRequest)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(post("/api/facility/week-avg/{farmId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(facilityWeekAvgRequest)))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("타 농가 월 평균 데이터를 조회한다.")
-    @Test
-    void findFacilityYearAvg() throws Exception {
-        FacilityMonthAvgRequest facilityYearAvgRequest = new FacilityMonthAvgRequest("2020");
+  @WithMockCustomUser
+  @DisplayName("타 농가 월 평균 데이터를 조회한다.")
+  @Test
+  void findFacilityYearAvg() throws Exception {
+    FacilityMonthAvgRequest facilityYearAvgRequest = new FacilityMonthAvgRequest("2020");
 
-        FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
-            .avgCo2(1)
-            .measureDate("2020-01-01")
-            .build();
+    FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
+        .avgCo2(1)
+        .measureDate("2020-01-01")
+        .build();
 
-        when(facilityService.findFacilityMonthlyAvg(any(), any())).thenReturn(
-            List.of(facilityResponse));
+    when(facilityService.findFacilityMonthlyAvg(any(), any())).thenReturn(
+        List.of(facilityResponse));
 
-        mockMvc.perform(post("/api/facility/monthly-avg/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(facilityYearAvgRequest)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(post("/api/facility/monthly-avg/{farmId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(facilityYearAvgRequest)))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("타 농가 월 평균 데이터를 조회한다.")
-    @Test
-    void findLiveFacility() throws Exception {
-        when(facilityService.findLiveFacility(any(), any())).thenReturn(facilityResponse);
+  @WithMockCustomUser
+  @DisplayName("타 농가 월 평균 데이터를 조회한다.")
+  @Test
+  void findLiveFacility() throws Exception {
+    when(facilityService.findLiveFacility(any(), any())).thenReturn(facilityResponse);
 
-        mockMvc.perform(get("/api/facility/{farmId}", 1L)
+    mockMvc.perform(get("/api/facility/{farmId}", 1L)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(facilityResponse)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("메인 농가의 최근 센서값을 조회한다.")
-    @Test
-    void findMainFarmFacility() throws Exception {
-        when(facilityService.findMainFarmFacility(any())).thenReturn(facilityResponse);
+  @WithMockCustomUser
+  @DisplayName("메인 농가의 최근 센서값을 조회한다.")
+  @Test
+  void findMainFarmFacility() throws Exception {
+    when(facilityService.findMainFarmFacility(any())).thenReturn(facilityResponse);
 
-        mockMvc.perform(get("/api/facility")
+    mockMvc.perform(get("/api/facility/recent")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(facilityResponse)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 }

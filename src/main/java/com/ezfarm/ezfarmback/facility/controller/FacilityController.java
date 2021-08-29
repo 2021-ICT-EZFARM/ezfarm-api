@@ -84,11 +84,9 @@ public class FacilityController {
 
   @ApiOperation(value = "메인 농가 최근 센서값 조회")
   @ApiResponses({
-      @ApiResponse(code = 404, message = "존재하지 않는 농가입니다."),
-      @ApiResponse(code = 404, message = "메인 농가를 설정해주세요."),
-      @ApiResponse(code = 404, message = "해당 농가의 시설 데이터가 존재하지 않습니다.")
+      @ApiResponse(code = 404, message = "메인 농가가 없습니다. 메인 농가를 설정해주세요.")
   })
-  @GetMapping()
+  @GetMapping("/recent")
   public ResponseEntity<FacilityResponse> findMainFarmFacility(@CurrentUser User user) {
     FacilityResponse facilityResponse = facilityService.findMainFarmFacility(user);
     return ResponseEntity.ok(facilityResponse);

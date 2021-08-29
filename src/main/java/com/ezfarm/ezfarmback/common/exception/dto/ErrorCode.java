@@ -17,8 +17,7 @@ public enum ErrorCode {
 
   INVALID_FARM_ID(404, "FA_001", "존재하지 않는 농가입니다."),
   INVALID_FARM_START_DATE(400, "FA_002", "잘못된 농가 생성일을 입력했습니다."),
-  NON_EXISTENT_MAIN_FARM(404, "FA_003", "메인 농가를 설정해주세요."),
-  NON_EXISTENT_FACILITY_DATA(404, "FA_004", "해당 농가의 시설 데이터가 존재하지 않습니다."),
+  NON_EXISTENT_MAIN_FARM(404, "FA_003", "메인 농가가 없습니다. 메인 농가를 설정해주세요."),
 
   FAVORITE_DUPLICATED(400, "FA_001", "이미 즐겨찾기에 등록된 농가입니다."),
   MY_FARM_NOT_ALLOWED(400, "FA_002", "나의 농가는 즐겨찾기에 등록할 수 없습니다."),
