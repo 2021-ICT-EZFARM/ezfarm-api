@@ -12,4 +12,5 @@ public interface FarmRepository extends JpaRepository<Farm, Long>, FarmRepositor
 
     Optional<Farm> findByIsMainAndUser(boolean isMain, User user);
 
+    boolean existsByUser(User user);
 }

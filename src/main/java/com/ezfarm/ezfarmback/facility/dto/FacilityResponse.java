@@ -1,5 +1,6 @@
 package com.ezfarm.ezfarmback.facility.dto;
 
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,18 @@ public class FacilityResponse {
             .ph(split[4].trim())
             .mos(split[5].trim())
             .measureDate(split[6].trim())
+            .build();
+    }
+
+    public static FacilityResponse of(Facility facility) {
+        return FacilityResponse.builder()
+            .tmp(Float.toString(facility.getTmp()))
+            .humidity(Float.toString(facility.getHumidity()))
+            .illuminance(Float.toString(facility.getIlluminance()))
+            .co2(Float.toString(facility.getCo2()))
+            .ph(Float.toString(facility.getPh()))
+            .mos(Float.toString(facility.getMos()))
+            .measureDate(facility.getMeasureDate().toString())
             .build();
     }
 }

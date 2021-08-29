@@ -139,4 +139,17 @@ public class FacilityControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print());
     }
+
+    @WithMockCustomUser
+    @DisplayName("메인 농가의 최근 센서값을 조회한다.")
+    @Test
+    void findMainFarmFacility() throws Exception {
+        when(facilityService.findMainFarmFacility(any())).thenReturn(facilityResponse);
+
+        mockMvc.perform(get("/api/facility")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(facilityResponse)))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
 }
