@@ -80,7 +80,6 @@ public class FacilityController {
     @GetMapping("{farmId}")
     public ResponseEntity<FacilityResponse> findLiveFacility(@CurrentUser User user, @PathVariable Long farmId) {
         FacilityResponse facilityResponse = facilityService.findLiveFacility(user, farmId);
-
         return ResponseEntity.ok(facilityResponse);
     }
 }
