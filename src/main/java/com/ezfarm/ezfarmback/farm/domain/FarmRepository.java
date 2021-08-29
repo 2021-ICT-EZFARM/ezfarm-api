@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface FarmRepository extends JpaRepository<Farm, Long>, FarmRepositoryCustom {
 
-    List<Farm> findAllByUser(User user);
+  List<Farm> findAllByUser(User user);
 
-    Optional<Farm> findByIsMainAndUser(boolean isMain, User user);
+  Optional<Farm> findByUserAndIsMain(User user, boolean main);
 
-    boolean existsByUser(User user);
+  boolean existsByUser(User user);
 }

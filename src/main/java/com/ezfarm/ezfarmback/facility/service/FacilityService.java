@@ -11,10 +11,10 @@ import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -86,29 +86,21 @@ public class FacilityService {
 
   public FacilityResponse findLiveFacility(User user, Long farmId) {
     Farm farm = confirmExistingFarm(farmId);
-
+    
     if (!farm.isMyFarm(user.getId())) {
       throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
 
     String output = iotUtils.getLiveSensorValue(farmId);
-
     return FacilityResponse.stringParseToFacilityRes(output);
   }
 
   public FacilityResponse findMainFarmFacility(User user) {
-    Farm mainFarm = farmRepository.findByIsMainAndUser(true, user)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+    Farm mainFarm = farmRepository.findByUserAndIsMain(user, true)
+        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_MAIN_FARM));
 
     Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)
-        .orElse(null);
-
-    if (facility == null) {
-      if (facilityRepository.existsByFarm(mainFarm)) {
-        throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-      }
-      return new FacilityResponse();
-    }
+        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_FACILITY_DATA));
 
     return FacilityResponse.of(facility);
   }

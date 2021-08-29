@@ -185,7 +185,7 @@ public class FarmServiceTest {
             .build();
 
         when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-        when(farmRepository.findByIsMainAndUser(anyBoolean(), any()))
+        when(farmRepository.findByUserAndIsMain(any(), anyBoolean()))
             .thenReturn(of(prevMainFarm));
 
         farmService.updateMyFarm(user, 1L, farmRequest);

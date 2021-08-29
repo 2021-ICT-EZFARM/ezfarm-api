@@ -1,5 +1,7 @@
 package com.ezfarm.ezfarmback.facility.acceptance;
 
+import static java.util.List.of;
+
 import com.ezfarm.ezfarmback.common.db.CommonAcceptanceTest;
 import com.ezfarm.ezfarmback.facility.acceptance.step.FacilityAcceptanceStep;
 import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
@@ -17,6 +19,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,18 +62,19 @@ public class FacilityAcceptanceTest extends CommonAcceptanceTest {
 
   @DisplayName("메인 농가의 센서값을 조회한다.(메인페이지)")
   @Test
-  void findMainFarmFaciltiy() throws Exception {
+  void findMainFarmFacility() throws Exception {
     ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
         .requestToCreateFarm(authResponse, farmRequest, objectMapper);
     Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
-    requestToCreateFacility(farmId);
+    createFacilityData(farmId);
 
-    ExtractableResponse<Response> response = FacilityAcceptanceStep.requestToFindMainFarmFacility(authResponse);
+    ExtractableResponse<Response> response = FacilityAcceptanceStep.requestToFindMainFarmFacility(
+        authResponse);
     FacilityResponse facilityResponse = response.jsonPath().getObject(".", FacilityResponse.class);
     FacilityAcceptanceStep.assertThatFindMainFarmFacility(facilityResponse, facility);
   }
 
-  void requestToCreateFacility(Long farmId) {
+  void createFacilityData(Long farmId) {
     Farm farm = farmRepository.findById(farmId).get();
     facility = Facility.builder()
         .farm(farm)
@@ -82,7 +86,6 @@ public class FacilityAcceptanceTest extends CommonAcceptanceTest {
         .mos(55.1f)
         .measureDate(LocalDateTime.of(2021, 8, 20, 19, 19))
         .build();
-    facilityRepository.save(facility);
 
     Facility oldFacility = Facility.builder()
         .farm(farm)
@@ -94,6 +97,7 @@ public class FacilityAcceptanceTest extends CommonAcceptanceTest {
         .mos(55f)
         .measureDate(LocalDateTime.of(2020, 8, 20, 19, 19))
         .build();
-    facilityRepository.save(oldFacility);
+
+    facilityRepository.saveAll(of(facility, oldFacility));
   }
 }

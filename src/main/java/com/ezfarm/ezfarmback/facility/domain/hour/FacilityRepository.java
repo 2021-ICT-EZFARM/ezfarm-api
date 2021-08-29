@@ -8,6 +8,4 @@ public interface FacilityRepository extends JpaRepository<Facility, Long>,
     FacilityDayRepositoryCustom {
 
   Optional<Facility> findTop1ByFarmOrderByMeasureDateDesc(Farm mainFarm);
-
-  boolean existsByFarm(Farm mainFarm);
 }

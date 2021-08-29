@@ -234,19 +234,27 @@ public class FacilityServiceTest {
         .measureDate(LocalDateTime.now())
         .build();
 
-    when(farmRepository.findByIsMainAndUser(anyBoolean(), any())).thenReturn(ofNullable(mainFarm));
-    when(facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(any())).thenReturn(ofNullable(recentFacility));
+    when(farmRepository.findByUserAndIsMain(any(), anyBoolean())).thenReturn(ofNullable(mainFarm));
+    when(facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(any())).thenReturn(
+        ofNullable(recentFacility));
 
     FacilityResponse facilityResponse = facilityService.findMainFarmFacility(user);
 
     Assertions.assertAll(
-        () -> assertThat(facilityResponse.getHumidity()).isEqualTo(Float.toString(recentFacility.getHumidity())),
-        () -> assertThat(facilityResponse.getTmp()).isEqualTo(Float.toString(recentFacility.getTmp())),
-        () -> assertThat(facilityResponse.getIlluminance()).isEqualTo(Float.toString(recentFacility.getIlluminance())),
-        () -> assertThat(facilityResponse.getCo2()).isEqualTo(Float.toString(recentFacility.getCo2())),
-        () -> assertThat(facilityResponse.getPh()).isEqualTo(Float.toString(recentFacility.getPh())),
-        () -> assertThat(facilityResponse.getMos()).isEqualTo(Float.toString(recentFacility.getMos())),
-        () -> assertThat(facilityResponse.getMeasureDate()).isEqualTo(recentFacility.getMeasureDate().toString())
+        () -> assertThat(facilityResponse.getHumidity()).isEqualTo(
+            Float.toString(recentFacility.getHumidity())),
+        () -> assertThat(facilityResponse.getTmp()).isEqualTo(
+            Float.toString(recentFacility.getTmp())),
+        () -> assertThat(facilityResponse.getIlluminance()).isEqualTo(
+            Float.toString(recentFacility.getIlluminance())),
+        () -> assertThat(facilityResponse.getCo2()).isEqualTo(
+            Float.toString(recentFacility.getCo2())),
+        () -> assertThat(facilityResponse.getPh()).isEqualTo(
+            Float.toString(recentFacility.getPh())),
+        () -> assertThat(facilityResponse.getMos()).isEqualTo(
+            Float.toString(recentFacility.getMos())),
+        () -> assertThat(facilityResponse.getMeasureDate()).isEqualTo(
+            recentFacility.getMeasureDate().toString())
     );
   }
 }
