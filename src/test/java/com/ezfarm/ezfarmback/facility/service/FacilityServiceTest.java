@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.facility.service;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,6 +11,8 @@ import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
+import com.ezfarm.ezfarmback.facility.domain.hour.FacilityRepository;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
@@ -54,6 +57,9 @@ public class FacilityServiceTest {
   @Mock
   private IotUtils iotUtils;
 
+  @Mock
+  private FacilityRepository facilityRepository;
+
   FacilityService facilityService;
 
   Farm farm;
@@ -63,7 +69,7 @@ public class FacilityServiceTest {
   @BeforeEach
   void setUp() {
     facilityService = new FacilityService(farmRepository, facilityDayAvgRepository,
-        facilityMonthAvgRepository, facilityWeekAvgRepository, iotUtils);
+        facilityMonthAvgRepository, facilityWeekAvgRepository, iotUtils, facilityRepository);
 
     user = User.builder()
         .id(1L)
@@ -202,6 +208,53 @@ public class FacilityServiceTest {
         () -> assertThat(facilityResponse.getPh()).isEqualTo("22.4"),
         () -> assertThat(facilityResponse.getMos()).isEqualTo("16.5"),
         () -> assertThat(facilityResponse.getMeasureDate()).isEqualTo("2021-08-12")
+    );
+  }
+
+  @DisplayName("메인 농가의 최근 센서값을 조회한다.(메인 페이지)")
+  @Test
+  void findMainFarmFacility() {
+    Farm mainFarm = Farm.builder()
+        .id(1L)
+        .user(user)
+        .name("메인 농가")
+        .address("서울")
+        .isMain(true)
+        .startDate(LocalDate.now())
+        .build();
+
+    Facility recentFacility = Facility.builder()
+        .farm(mainFarm)
+        .tmp(21.4F)
+        .humidity(12.5F)
+        .illuminance(11)
+        .co2(16.2f)
+        .ph(18.9f)
+        .mos(55.1f)
+        .measureDate(LocalDateTime.now())
+        .build();
+
+    when(farmRepository.findByUserAndIsMain(any(), anyBoolean())).thenReturn(ofNullable(mainFarm));
+    when(facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(any())).thenReturn(
+        ofNullable(recentFacility));
+
+    FacilityResponse facilityResponse = facilityService.findMainFarmFacility(user);
+
+    Assertions.assertAll(
+        () -> assertThat(facilityResponse.getHumidity()).isEqualTo(
+            Float.toString(recentFacility.getHumidity())),
+        () -> assertThat(facilityResponse.getTmp()).isEqualTo(
+            Float.toString(recentFacility.getTmp())),
+        () -> assertThat(facilityResponse.getIlluminance()).isEqualTo(
+            Float.toString(recentFacility.getIlluminance())),
+        () -> assertThat(facilityResponse.getCo2()).isEqualTo(
+            Float.toString(recentFacility.getCo2())),
+        () -> assertThat(facilityResponse.getPh()).isEqualTo(
+            Float.toString(recentFacility.getPh())),
+        () -> assertThat(facilityResponse.getMos()).isEqualTo(
+            Float.toString(recentFacility.getMos())),
+        () -> assertThat(facilityResponse.getMeasureDate()).isEqualTo(
+            recentFacility.getMeasureDate().toString())
     );
   }
 }

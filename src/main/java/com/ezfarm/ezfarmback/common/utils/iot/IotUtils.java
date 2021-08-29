@@ -72,20 +72,17 @@ public class IotUtils {
 
     public String getLiveSensorValue(Long farmId) {
         String path = getFarmIdPath(farmId, jschConnector.getLiveFacility());
-        //jschConnector.connect();
+        jschConnector.connect();
         try {
             log.info("Connect to {}", jschConnector.getHostname());
 
-            /*
-            TODO : IOT 작업 완료되면 실제 데이터로 변경
             InputStream in = jschConnector.executeCommand(path);
 
             String output = jschConnector.readLines(in);
             jschConnector.close();
 
             log.info("getLiveSensorValue output = {}", output);
-            */
-            String output = "10,37.5,200,150,20,70,2021-8-15";
+
             if (output.equals("0")) {
                 throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
             } else {

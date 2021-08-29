@@ -5,14 +5,16 @@ import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
+import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
+import com.ezfarm.ezfarmback.facility.domain.hour.FacilityRepository;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvg;
 import com.ezfarm.ezfarmback.facility.domain.month.FacilityMonthAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvg;
 import com.ezfarm.ezfarmback.facility.domain.week.FacilityWeekAvgRepository;
+import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
 import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
@@ -37,6 +39,8 @@ public class FacilityService {
   private final FacilityWeekAvgRepository facilityWeekAvgRepository;
 
   private final IotUtils iotUtils;
+
+  private final FacilityRepository facilityRepository;
 
   public FacilityPeriodResponse findFacilitySearchPeriod(Long farmId) {
     Farm findFarm = confirmExistingFarm(farmId);
@@ -88,8 +92,16 @@ public class FacilityService {
     }
 
     String output = iotUtils.getLiveSensorValue(farmId);
-    FacilityResponse facilityResponse = FacilityResponse.stringParseToFacilityRes(output);
+    return FacilityResponse.stringParseToFacilityRes(output);
+  }
 
-    return facilityResponse;
+  public FacilityResponse findMainFarmFacility(User user) {
+    Farm mainFarm = farmRepository.findByUserAndIsMain(user, true)
+        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_MAIN_FARM));
+
+    Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)
+        .orElseGet(Facility::new);
+
+    return FacilityResponse.of(facility);
   }
 }
