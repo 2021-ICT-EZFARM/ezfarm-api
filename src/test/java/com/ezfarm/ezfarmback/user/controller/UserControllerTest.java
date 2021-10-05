@@ -1,6 +1,5 @@
 package com.ezfarm.ezfarmback.user.controller;
 
-import static java.util.Optional.ofNullable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -13,9 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
-import com.ezfarm.ezfarmback.user.domain.Role;
-import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.SignUpRequest;
+import com.ezfarm.ezfarmback.user.dto.UserResponse;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateRequest;
 import com.ezfarm.ezfarmback.user.dto.UserUpdateResponse;
 import com.ezfarm.ezfarmback.user.service.UserService;
@@ -29,70 +27,66 @@ import org.springframework.http.MediaType;
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest extends CommonApiTest {
 
-    @MockBean
-    UserService userService;
+  @MockBean
+  UserService userService;
 
-    @DisplayName("유저 회원가입을 한다.")
-    @Test
-    void createUser() throws Exception {
-        //given
-        SignUpRequest signUpRequest = new SignUpRequest("highright", "highright@mail.com", "비밀번호");
+  @DisplayName("유저 회원가입을 한다.")
+  @Test
+  void createUser() throws Exception {
+    SignUpRequest signUpRequest = new SignUpRequest("highright", "highright@mail.com", "비밀번호");
 
-        //when, then
-        when(userService.createUser(any())).thenReturn(1L);
+    when(userService.createUser(any())).thenReturn(1L);
 
-        mockMvc.perform(post("/api/user/signup")
+    mockMvc.perform(post("/api/user/signup")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(signUpRequest)))
-            .andExpect(status().isCreated())
-            .andDo(print());
-    }
+        .andExpect(status().isCreated())
+        .andDo(print());
+  }
 
-    @DisplayName("유저 정보를 조회한다.")
-    @WithMockCustomUser
-    @Test
-    void readUser() throws Exception {
-        User user = User.builder()
-            .name("남상우")
-            .email("a@gmail.com")
-            .password("비밀번호")
-            .role(Role.ROLE_USER)
-            .build();
+  @DisplayName("유저 정보를 조회한다.")
+  @WithMockCustomUser
+  @Test
+  void findUser() throws Exception {
+    UserResponse response = UserResponse.builder()
+        .id(1L)
+        .name("남상우")
+        .address("서울특별시")
+        .phoneNumber("010-1234-1234")
+        .imageUrl("이미지")
+        .email("이메일")
+        .build();
 
-        when(userRepository.findByEmail(any())).thenReturn(ofNullable(user));
+    when(userService.findUser(any())).thenReturn(response);
 
-        mockMvc.perform(get("/api/user"))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(get("/api/user"))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @DisplayName("유저 정보를 수정한다.")
-    @WithMockCustomUser
-    @Test
-    void updateUser() throws Exception {
-        //given
-        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder().build();
+  @DisplayName("유저 정보를 수정한다.")
+  @WithMockCustomUser
+  @Test
+  void updateUser() throws Exception {
+    UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder().build();
 
-        //when, then
-        when(userService.updateUser(any(), any())).thenReturn(new UserUpdateResponse());
+    when(userService.updateUser(any(), any())).thenReturn(new UserUpdateResponse());
 
-        mockMvc.perform(patch("/api/user")
+    mockMvc.perform(patch("/api/user")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userUpdateRequest)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @DisplayName("회원 탈퇴한다.")
-    @WithMockCustomUser
-    @Test
-    void deleteUser() throws Exception {
-        //given
-        doNothing().when(userRepository).deleteAllById(any());
+  @DisplayName("회원 탈퇴한다.")
+  @WithMockCustomUser
+  @Test
+  void deleteUser() throws Exception {
+    doNothing().when(userRepository).deleteById(any());
 
-        //when, then
-        mockMvc.perform(delete("/api/user"))
-            .andExpect(status().isNoContent());
-    }
+    mockMvc.perform(delete("/api/user"))
+        .andExpect(status().isNoContent());
+  }
 }
 

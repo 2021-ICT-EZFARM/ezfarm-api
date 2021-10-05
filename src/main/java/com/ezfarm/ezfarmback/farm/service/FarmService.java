@@ -5,7 +5,6 @@ import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
-import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,84 +26,66 @@ public class FarmService {
 
   private final FarmRepository farmRepository;
 
-  private final ModelMapper modelMapper;
-
-  public Long createFarm(User user, FarmRequest farmRequest) {
-    confirmStartDateToCreateFarm(farmRequest);
-    confirmIsMain(user, farmRequest);
-
-    Farm farm = modelMapper.map(farmRequest, Farm.class);
-    farm.setUser(user);
-    farm.setFarmGroup(FarmGroup.NORMAL);
-
+  public Long createFarm(User user, FarmRequest request) {
+    validateFarmStartDate(request.getStartDate());
+    updateMainFarm(user, request);
+    Farm farm = Farm.create(user, request);
     return farmRepository.save(farm).getId();
   }
 
-  private void confirmStartDateToCreateFarm(FarmRequest farmRequest) {
-    LocalDate farmStartDate = farmRequest.getStartDate();
-    if (farmStartDate != null) {
-      if (farmStartDate.isBefore(LocalDate.now())) {
-        throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
-      }
+  private void validateFarmStartDate(LocalDate startDate) {
+    if (startDate != null && startDate.isBefore(LocalDate.now())) {
+      throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
     }
   }
 
   @Transactional(readOnly = true)
   public List<FarmResponse> findMyFarms(User user) {
-    List<Farm> farms = farmRepository.findAllByUser(user);
-    return farms.stream()
-        .map(farm -> modelMapper.map(farm, FarmResponse.class))
+    return farmRepository.findAllByUser(user).stream().map(FarmResponse::of)
         .collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
   public FarmResponse findMyFarm(Long farmId) {
-    Farm farm = farmRepository.findById(farmId).orElseThrow(
-        () -> new CustomException(ErrorCode.INVALID_FARM_ID)
-    );
-    return modelMapper.map(farm, FarmResponse.class);
+    return FarmResponse.of(validateFarmIdAndGetFarm(farmId));
   }
 
-  public void updateMyFarm(User user, Long farmId, FarmRequest farmRequest) {
-    Farm farm = confirmAuthorityToAccessFarm(user, farmId);
-    confirmStartDateToUpdateFarm(farm, farmRequest);
-    confirmIsMain(user, farmRequest);
-    farm.update(farmRequest);
+  public void updateMyFarm(User user, Long farmId, FarmRequest request) {
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    validateIsMyFarm(user, farm);
+    validateFarmStartDateToUpdate(farm.getCreatedDate().toLocalDate(), request.getStartDate());
+    updateMainFarm(user, request);
+    farm.update(request);
   }
 
-  private void confirmIsMain(User user, FarmRequest farmRequest) {
-    if (farmRequest.isMain()) {
-      Optional<Farm> prevMainFarm = farmRepository.findByUserAndIsMain(user, true);
-      prevMainFarm.ifPresent(value -> value.setMain(false));
-    } else {
-      if (!farmRepository.existsByUser(user)) {
-        farmRequest.setMain(true);
-      }
+  private void validateFarmStartDateToUpdate(LocalDate createdDate, LocalDate startDate) {
+    if (startDate != null && startDate.isBefore(createdDate)) {
+      throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
     }
   }
 
-  private void confirmStartDateToUpdateFarm(Farm farm, FarmRequest farmRequest) {
-    if (farmRequest.getStartDate() != null) {
-      if (farmRequest.getStartDate().isBefore(farm.getCreatedDate().toLocalDate())) {
-        throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
-      }
+  private void updateMainFarm(User user, FarmRequest farmRequest) {
+    if (farmRequest.isMain()) {
+      Optional<Farm> mainFarm = farmRepository.findByUserAndMain(user, true);
+      mainFarm.ifPresent(farm -> farm.setMain(false));
     }
   }
 
   public void deleteMyFarm(User user, Long farmId) {
-    Farm farm = confirmAuthorityToAccessFarm(user, farmId);
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    validateIsMyFarm(user, farm);
     farmRepository.delete(farm);
   }
 
-  private Farm confirmAuthorityToAccessFarm(User user, Long farmId) {
-    Farm farm = farmRepository.findById(farmId).orElseThrow(
-        () -> new CustomException(ErrorCode.INVALID_FARM_ID)
-    );
+  public Farm validateFarmIdAndGetFarm(Long farmId) {
+    return farmRepository.findById(farmId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+  }
 
-    if (!farm.isMyFarm(user.getId())) {
+  private void validateIsMyFarm(User loginUser, Farm farm) {
+    if (!farm.isMyFarm(loginUser.getId())) {
       throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
-    return farm;
   }
 
   @Transactional(readOnly = true)

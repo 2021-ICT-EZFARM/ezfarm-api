@@ -96,7 +96,7 @@ public class FacilityService {
   }
 
   public FacilityResponse findMainFarmFacility(User user) {
-    Farm mainFarm = farmRepository.findByUserAndIsMain(user, true)
+    Farm mainFarm = farmRepository.findByUserAndMain(user, true)
         .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_MAIN_FARM));
 
     Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)

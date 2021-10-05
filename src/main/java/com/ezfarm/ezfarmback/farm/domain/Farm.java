@@ -28,82 +28,87 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Farm extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "farm_id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "farm_id")
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-    private String name;
+  private String name;
 
-    private String address;
+  private String address;
 
-    private String phoneNumber;
+  private String phoneNumber;
 
-    private String area;
+  private String area;
 
-    private boolean isMain;
+  private boolean isMain;
 
-    @Enumerated(value = EnumType.STRING)
-    private FarmType farmType;
+  @Enumerated(value = EnumType.STRING)
+  private FarmType farmType;
 
-    @Enumerated(value = EnumType.STRING)
-    private CropType cropType;
+  @Enumerated(value = EnumType.STRING)
+  private CropType cropType;
 
-    @Enumerated(value = EnumType.STRING)
-    private FarmGroup farmGroup;
+  @Enumerated(value = EnumType.STRING)
+  private FarmGroup farmGroup;
 
-    private LocalDate startDate;
+  private LocalDate startDate;
 
-    @Builder
-    public Farm(Long id, String address, String name, String phoneNumber, String area,
-        boolean isMain,
-        FarmType farmType,
-        CropType cropType, LocalDate startDate, User user, FarmGroup farmGroup) {
-        this.id = id;
-        this.address = address;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.area = area;
-        this.isMain = isMain;
-        this.farmType = farmType;
-        this.cropType = cropType;
-        this.startDate = startDate;
-        this.user = user;
-        this.farmGroup = farmGroup;
-    }
+  @Builder
+  public Farm(Long id, String address, String name, String phoneNumber, String area, boolean isMain,
+      FarmType farmType, CropType cropType, LocalDate startDate, User user, FarmGroup farmGroup) {
+    this.id = id;
+    this.address = address;
+    this.name = name;
+    this.phoneNumber = phoneNumber;
+    this.area = area;
+    this.isMain = isMain;
+    this.farmType = farmType;
+    this.cropType = cropType;
+    this.startDate = startDate;
+    this.user = user;
+    this.farmGroup = farmGroup;
+  }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+  public void setMain(boolean isMain) {
+    this.isMain = isMain;
+  }
 
-    public void setFarmGroup(FarmGroup farmGroup) {
-        this.farmGroup = farmGroup;
-    }
+  public static Farm create(User loginUser, FarmRequest request) {
+    return Farm.builder()
+        .user(loginUser)
+        .name(request.getName())
+        .address(request.getAddress())
+        .phoneNumber(request.getPhoneNumber())
+        .area(request.getArea())
+        .isMain(request.isMain())
+        .farmType(FarmType.valueOf(request.getFarmType()))
+        .cropType(CropType.valueOf(request.getCropType()))
+        .farmGroup(FarmGroup.NORMAL)
+        .startDate(request.getStartDate())
+        .build();
+  }
 
-    public void setMain(boolean isMain) {
-        this.isMain = isMain;
-    }
+  public void update(FarmRequest request) {
+    this.address = request.getAddress();
+    this.name = request.getName();
+    this.phoneNumber = request.getPhoneNumber();
+    this.area = request.getArea();
+    this.isMain = request.isMain();
+    this.farmType = FarmType.valueOf(request.getFarmType());
+    this.cropType = CropType.valueOf(request.getCropType());
+    this.startDate = request.getStartDate();
+  }
 
-    public void update(FarmRequest farmRequest) {
-        this.address = farmRequest.getAddress();
-        this.name = farmRequest.getName();
-        this.phoneNumber = farmRequest.getPhoneNumber();
-        this.area = farmRequest.getArea();
-        this.isMain = farmRequest.isMain();
-        this.farmType = farmRequest.getFarmType();
-        this.cropType = farmRequest.getCropType();
-        this.startDate = farmRequest.getStartDate();
-    }
+  public boolean isMyFarm(Long userId) {
+    return this.getUser().getId().equals(userId);
+  }
 
-    public boolean isMyFarm(Long userId) {
-        return this.getUser().getId().equals(userId);
-    }
-
-    public boolean isSameFarm(Long farmId) {
-        return this.getId().equals(farmId);
-    }
+  public boolean isSameFarm(Long farmId) {
+    return this.getId().equals(farmId);
+  }
 }
