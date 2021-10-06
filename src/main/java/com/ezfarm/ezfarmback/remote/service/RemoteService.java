@@ -37,9 +37,10 @@ public class RemoteService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
+        /*
         if (!findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+        }*/
 
         Remote remote = remoteRepository.findByFarm(findFarm)
             .orElseGet(() -> createRemote(findFarm));
@@ -63,9 +64,10 @@ public class RemoteService {
         Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
             .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
+        /*
         if (!findRemote.getFarm().isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+        }*/
 
         boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
         if (!isRemoteSuccess) {

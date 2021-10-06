@@ -40,8 +40,8 @@ public class ModelMapperTest {
             "010-2222-2222",
             "100",
             true,
-            FarmType.GLASS,
-            CropType.PAPRIKA,
+            FarmType.GLASS.toString(),
+            CropType.PAPRIKA.toString(),
             null
         );
 

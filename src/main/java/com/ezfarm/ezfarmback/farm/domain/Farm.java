@@ -2,6 +2,8 @@ package com.ezfarm.ezfarmback.farm.domain;
 
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
+import com.ezfarm.ezfarmback.common.exception.CustomException;
+import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
@@ -85,7 +87,7 @@ public class Farm extends BaseTimeEntity {
         .address(request.getAddress())
         .phoneNumber(request.getPhoneNumber())
         .area(request.getArea())
-        .isMain(request.isMain())
+        .isMain(request.getIsMain())
         .farmType(FarmType.valueOf(request.getFarmType()))
         .cropType(CropType.valueOf(request.getCropType()))
         .farmGroup(FarmGroup.NORMAL)
@@ -98,14 +100,16 @@ public class Farm extends BaseTimeEntity {
     this.name = request.getName();
     this.phoneNumber = request.getPhoneNumber();
     this.area = request.getArea();
-    this.isMain = request.isMain();
+    this.isMain = request.getIsMain();
     this.farmType = FarmType.valueOf(request.getFarmType());
     this.cropType = CropType.valueOf(request.getCropType());
     this.startDate = request.getStartDate();
   }
 
-  public boolean isMyFarm(Long userId) {
-    return this.getUser().getId().equals(userId);
+  public void validateIsMyFarm(User loginUser) {
+    if (!this.user.getId().equals(loginUser.getId())) {
+      throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+    }
   }
 
   public boolean isSameFarm(Long farmId) {

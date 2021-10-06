@@ -19,37 +19,35 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AlertService {
 
-    private final AlertRangeRepository alertRangeRepository;
+  private final AlertRangeRepository alertRangeRepository;
 
-    private final FarmRepository farmRepository;
+  private final FarmRepository farmRepository;
 
-    private final ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
-    public AlertRangeResponse findAlertRange(User user, Long farmId) {
-        Farm findFarm = farmRepository.findById(farmId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+  public AlertRangeResponse findAlertRange(User user, Long farmId) {
+    Farm farm = farmRepository.findById(farmId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-        if (!findFarm.isMyFarm(user.getId())) {
+    farm.validateIsMyFarm(user);
+
+    AlertRange alertRange = alertRangeRepository.findByFarm(farm)
+        .orElseGet(() -> {
+          AlertRange savedAlertRange = new AlertRange(farm);
+          return alertRangeRepository.save(savedAlertRange);
+        });
+    return modelMapper.map(alertRange, AlertRangeResponse.class);
+  }
+
+  public void updateAlertRange(User user, Long alertRangeId,
+      AlertRangeRequest alertRangeRequest) {
+    AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+        /*
+        if (!alertRange.getFarm().validateIsMyFarm(user);) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+        }*/
 
-        AlertRange alertRange = alertRangeRepository.findByFarm(findFarm)
-            .orElseGet(() -> {
-                AlertRange savedAlertRange = new AlertRange(findFarm);
-                return alertRangeRepository.save(savedAlertRange);
-            });
-        return modelMapper.map(alertRange, AlertRangeResponse.class);
-    }
-
-    public void updateAlertRange(User user, Long alertRangeId,
-        AlertRangeRequest alertRangeRequest) {
-        AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
-
-        if (!alertRange.getFarm().isMyFarm(user.getId())) {
-            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
-
-        alertRange.updateAlertRange(alertRangeRequest);
-    }
+    alertRange.updateAlertRange(alertRangeRequest);
+  }
 }

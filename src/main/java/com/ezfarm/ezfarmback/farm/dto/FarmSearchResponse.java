@@ -1,5 +1,7 @@
 package com.ezfarm.ezfarmback.farm.dto;
 
+import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
+import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
@@ -18,13 +20,13 @@ public class FarmSearchResponse {
 
   @QueryProjection
   public FarmSearchResponse(Long farmId, String name, String address, String area,
-      String farmType, String cropType) {
+      FarmType farmType, CropType cropType) {
     this.farmId = farmId;
     this.name = name;
     this.address = address;
     this.area = area;
-    this.farmType = farmType;
-    this.cropType = cropType;
+    this.farmType = farmType.getName();
+    this.cropType = cropType.getName();
   }
 
   public static FarmSearchResponse favoriteOf(Favorite favorite) {
@@ -33,8 +35,8 @@ public class FarmSearchResponse {
         favorite.getFarm().getName(),
         favorite.getFarm().getAddress(),
         favorite.getFarm().getArea(),
-        favorite.getFarm().getFarmType().getName(),
-        favorite.getFarm().getCropType().getName()
+        favorite.getFarm().getFarmType(),
+        favorite.getFarm().getCropType()
     );
   }
 }

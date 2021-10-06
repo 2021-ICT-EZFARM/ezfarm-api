@@ -26,9 +26,10 @@ public class FavoriteService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
+        /*
         if (findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.MY_FARM_NOT_ALLOWED);
-        }
+        }*/
 
         List<Favorite> favorites = favoriteRepository.findAllByUserAndFarm(user, findFarm);
         confirmFavoriteMaximumNumber(favorites);

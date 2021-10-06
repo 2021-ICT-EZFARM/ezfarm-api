@@ -31,9 +31,10 @@ public class ScreenService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
+        /*
         if (!findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+        }*/
 
         int measureTime = Integer.parseInt(iotUtils.getLiveScreen(findFarm.getId()));
         Screen screen = screenRepository.findByFarmAndMeasureTime(findFarm, measureTime)
@@ -46,9 +47,10 @@ public class ScreenService {
         Farm findFarm = farmRepository.findById(farmId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
+        /*
         if (!findFarm.isMyFarm(user.getId())) {
             throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-        }
+        }*/
 
         int today = LocalDateTime.now().getHour();
         List<Screen> screens = screenRepository.findByMeasureTimeLessThanEqualOrderByMeasureTimeAsc(today);

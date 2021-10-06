@@ -17,7 +17,6 @@ import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
-import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.farm.dto.FarmRequest;
 import com.ezfarm.ezfarmback.farm.dto.FarmResponse;
@@ -70,8 +69,10 @@ public class FarmServiceTest {
         .id(1L)
         .name("테스트 농가 이름1")
         .address("서울")
-        .isMain(false)
         .startDate(LocalDate.now())
+        .farmType(FarmType.GLASS)
+        .cropType(CropType.PAPRIKA)
+        .user(user)
         .build();
 
     farmRequest = FarmRequest.builder()
@@ -81,6 +82,7 @@ public class FarmServiceTest {
         .area("10000")
         .farmType(FarmType.GLASS.toString())
         .cropType(CropType.PAPRIKA.toString())
+        .startDate(LocalDate.now())
         .build();
 
     farmResponse = FarmResponse.builder()
@@ -93,21 +95,37 @@ public class FarmServiceTest {
   @DisplayName("농가 시작일이 없는 농가를 생성한다.")
   @Test
   void createFarm_startDate_null_success() {
+    farmRequest.setIsMain(false);
+
     when(farmRepository.save(any())).thenReturn(farm);
 
     farmService.createFarm(user, farmRequest);
 
-    assertThat(farm.getUser()).isEqualTo(user);
-    assertThat(farm.getFarmGroup()).isEqualTo(FarmGroup.NORMAL);
     verify(farmRepository).save(any());
+  }
+
+  @DisplayName("메인 농가를 생성한다.")
+  @Test
+  void createMainFarm_success() {
+    Farm prevMainFarm = Farm.builder().isMain(true).build();
+    farmRequest.setIsMain(true);
+
+    when(farmRepository.save(any())).thenReturn(farm);
+    when(farmRepository.findByUserAndIsMain(any(), anyBoolean())).thenReturn(of(prevMainFarm));
+
+    farmService.createFarm(user, farmRequest);
+
+    assertThat(prevMainFarm.isMain()).isEqualTo(false);
+    verify(farmRepository).save(any());
+    verify(farmRepository).findByUserAndIsMain(any(), anyBoolean());
   }
 
   @DisplayName("농가 시작일이 농가 생성일 이후인 농가를 생성한다.")
   @Test
   void createFarm_startDate_notNull_success() {
-    when(farmRepository.save(any())).thenReturn(farm);
-    farmRequest.setStartDate(LocalDate.now());
+    farmRequest.setStartDate(LocalDate.of(9999, 12, 12));
 
+    when(farmRepository.save(any())).thenReturn(farm);
     farmService.createFarm(user, farmRequest);
 
     assertThat(farm.getUser()).isEqualTo(user);
@@ -126,12 +144,15 @@ public class FarmServiceTest {
   @DisplayName("나의 모든 농가를 조회한다.")
   @Test
   void findMyFarms_success() {
-    farm.setUser(user);
     when(farmRepository.findAllByUser(any())).thenReturn(singletonList(farm));
 
-    List<FarmResponse> farmResponses = farmService.findMyFarms(user);
+    List<FarmResponse> responses = farmService.findMyFarms(user);
 
-    assertThat(farmResponses.size()).isEqualTo(1);
+    Assertions.assertAll(
+        () -> assertThat(responses.size()).isEqualTo(1),
+        () -> assertThat(responses.get(0).getName()).isEqualTo(farm.getName()),
+        () -> assertThat(responses.get(0).getAddress()).isEqualTo(farm.getAddress())
+    );
   }
 
   @DisplayName("나의 농가를 조회한다")
@@ -149,7 +170,7 @@ public class FarmServiceTest {
 
   @DisplayName("존재하지 않는 농가일 경우 예외가 발생한다")
   @Test
-  void findFarm_is_not_owner_failure() {
+  void findFarm_InvalidFarmId_failure() {
     when(farmRepository.findById(any())).thenReturn(empty());
 
     assertThatThrownBy(() -> farmService.findMyFarm(1L))
@@ -160,7 +181,7 @@ public class FarmServiceTest {
   @DisplayName("나의 농가를 수정한다.")
   @Test
   void updateFarm_success() {
-    farm.setUser(user);
+    farm.setCreatedDate(LocalDateTime.now());
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
 
     farmService.updateMyFarm(user, 1L, farmRequest);
@@ -171,46 +192,11 @@ public class FarmServiceTest {
     );
   }
 
-  @DisplayName("새로운 메인 농가로 수정한다.")
-  @Test
-  void updateFarm_success_change_main() {
-    farm.setUser(user);
-    farmRequest.setMain(true);
-    Farm prevMainFarm = Farm.builder()
-        .isMain(true)
-        .build();
-
-    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(farmRepository.findByUserAndMain(any(), anyBoolean()))
-        .thenReturn(of(prevMainFarm));
-
-    farmService.updateMyFarm(user, 1L, farmRequest);
-
-    Assertions.assertAll(
-        () -> assertThat(farm.isMain()).isEqualTo(true),
-        () -> assertThat(prevMainFarm.isMain()).isEqualTo(false)
-    );
-  }
-
-  @DisplayName("농가 재배 시작 일자가 농가 생성 일자보다 빠르면 예외가 발생한다.")
-  @Test
-  void updateFarm_failure_startDateException() {
-    farm.setUser(user);
-    farm.setCreatedDate(LocalDateTime.now());
-    farmRequest.setStartDate(LocalDate.now().minusDays(1));
-
-    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-
-    assertThatThrownBy(() -> farmService.updateMyFarm(user, 1L, farmRequest))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.INVALID_FARM_START_DATE.getMessage());
-  }
-
   @DisplayName("나의 농가를 삭제한다.")
   @Test
   void deleteFarm_success() {
-    farm.setUser(user);
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+
     farmService.deleteMyFarm(user, 1L);
 
     verify(farmRepository).delete(farm);
@@ -219,8 +205,8 @@ public class FarmServiceTest {
   @DisplayName("자신의 농가가 아닌 농가를 삭제하면 예외가 발생한다.")
   @Test
   void deleteFarm_access_denied_failure() {
-    farm.setUser(User.builder().id(2L).build());
-    when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
+    Farm anotherFarm = Farm.builder().user(User.builder().id(2L).build()).build();
+    when(farmRepository.findById(any())).thenReturn(ofNullable(anotherFarm));
 
     assertThatThrownBy(() -> farmService.deleteMyFarm(user, 1L))
         .isInstanceOf(CustomException.class)

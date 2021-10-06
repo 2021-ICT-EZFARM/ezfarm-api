@@ -11,6 +11,7 @@ import com.ezfarm.ezfarmback.farm.dto.FarmSearchCond;
 import com.ezfarm.ezfarmback.farm.dto.FarmSearchResponse;
 import com.ezfarm.ezfarmback.user.domain.User;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,40 +53,34 @@ public class FarmService {
 
   public void updateMyFarm(User user, Long farmId, FarmRequest request) {
     Farm farm = validateFarmIdAndGetFarm(farmId);
-    validateIsMyFarm(user, farm);
-    validateFarmStartDateToUpdate(farm.getCreatedDate().toLocalDate(), request.getStartDate());
+    farm.validateIsMyFarm(user);
+    validateFarmStartDateToUpdate(farm.getCreatedDate(), request.getStartDate());
     updateMainFarm(user, request);
     farm.update(request);
   }
 
-  private void validateFarmStartDateToUpdate(LocalDate createdDate, LocalDate startDate) {
-    if (startDate != null && startDate.isBefore(createdDate)) {
+  private void validateFarmStartDateToUpdate(LocalDateTime createdDate, LocalDate startDate) {
+    if (startDate != null && startDate.isBefore(createdDate.toLocalDate())) {
       throw new CustomException(ErrorCode.INVALID_FARM_START_DATE);
     }
   }
 
-  private void updateMainFarm(User user, FarmRequest farmRequest) {
-    if (farmRequest.isMain()) {
-      Optional<Farm> mainFarm = farmRepository.findByUserAndMain(user, true);
+  public void updateMainFarm(User user, FarmRequest farmRequest) {
+    if (farmRequest.getIsMain()) {
+      Optional<Farm> mainFarm = farmRepository.findByUserAndIsMain(user, true);
       mainFarm.ifPresent(farm -> farm.setMain(false));
     }
   }
 
   public void deleteMyFarm(User user, Long farmId) {
     Farm farm = validateFarmIdAndGetFarm(farmId);
-    validateIsMyFarm(user, farm);
+    farm.validateIsMyFarm(user);
     farmRepository.delete(farm);
   }
 
   public Farm validateFarmIdAndGetFarm(Long farmId) {
     return farmRepository.findById(farmId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
-  }
-
-  private void validateIsMyFarm(User loginUser, Farm farm) {
-    if (!farm.isMyFarm(loginUser.getId())) {
-      throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-    }
   }
 
   @Transactional(readOnly = true)

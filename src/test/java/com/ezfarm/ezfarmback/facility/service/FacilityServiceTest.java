@@ -234,7 +234,7 @@ public class FacilityServiceTest {
         .measureDate(LocalDateTime.now())
         .build();
 
-    when(farmRepository.findByUserAndMain(any(), anyBoolean())).thenReturn(ofNullable(mainFarm));
+    when(farmRepository.findByUserAndIsMain(any(), anyBoolean())).thenReturn(ofNullable(mainFarm));
     when(facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(any())).thenReturn(
         ofNullable(recentFacility));
 

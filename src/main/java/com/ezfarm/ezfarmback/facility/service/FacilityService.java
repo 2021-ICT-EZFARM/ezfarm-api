@@ -87,16 +87,17 @@ public class FacilityService {
   public FacilityResponse findLiveFacility(User user, Long farmId) {
     Farm farm = confirmExistingFarm(farmId);
 
+    /*
     if (!farm.isMyFarm(user.getId())) {
       throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-    }
+    }*/
 
     String output = iotUtils.getLiveSensorValue(farmId);
     return FacilityResponse.stringParseToFacilityRes(output);
   }
 
   public FacilityResponse findMainFarmFacility(User user) {
-    Farm mainFarm = farmRepository.findByUserAndMain(user, true)
+    Farm mainFarm = farmRepository.findByUserAndIsMain(user, true)
         .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_MAIN_FARM));
 
     Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)

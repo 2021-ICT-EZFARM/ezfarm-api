@@ -132,7 +132,7 @@ public class FavoriteServiceTest {
     @DisplayName("농가 즐겨찾기를 조회한다.")
     @Test
     void findFavorites_success() {
-        farm.setUser(farmOwner);
+        //farm.setUser(farmOwner);
         Favorite favorite = Favorite.builder()
             .user(farmOwner)
             .farm(farm)
