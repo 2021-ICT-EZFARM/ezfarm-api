@@ -87,7 +87,7 @@ public class Farm extends BaseTimeEntity {
         .address(request.getAddress())
         .phoneNumber(request.getPhoneNumber())
         .area(request.getArea())
-        .isMain(request.getIsMain())
+        .isMain(request.isMain())
         .farmType(FarmType.valueOf(request.getFarmType()))
         .cropType(CropType.valueOf(request.getCropType()))
         .farmGroup(FarmGroup.NORMAL)
@@ -100,7 +100,7 @@ public class Farm extends BaseTimeEntity {
     this.name = request.getName();
     this.phoneNumber = request.getPhoneNumber();
     this.area = request.getArea();
-    this.isMain = request.getIsMain();
+    this.isMain = request.isMain();
     this.farmType = FarmType.valueOf(request.getFarmType());
     this.cropType = CropType.valueOf(request.getCropType());
     this.startDate = request.getStartDate();
@@ -110,9 +110,5 @@ public class Farm extends BaseTimeEntity {
     if (!this.user.getId().equals(loginUser.getId())) {
       throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }
-  }
-
-  public boolean isSameFarm(Long farmId) {
-    return this.getId().equals(farmId);
   }
 }

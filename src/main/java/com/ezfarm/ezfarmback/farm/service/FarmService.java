@@ -66,7 +66,7 @@ public class FarmService {
   }
 
   public void updateMainFarm(User user, FarmRequest farmRequest) {
-    if (farmRequest.getIsMain()) {
+    if (farmRequest.isMain()) {
       Optional<Farm> mainFarm = farmRepository.findByUserAndIsMain(user, true);
       mainFarm.ifPresent(farm -> farm.setMain(false));
     }

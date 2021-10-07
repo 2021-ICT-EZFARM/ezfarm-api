@@ -45,7 +45,7 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
         .area("1000")
         .farmType(FarmType.VINYL.toString())
         .cropType(CropType.TOMATO.toString())
-        .isMain(false)
+        .isMain(true)
         .build();
 
     vinylPaprikaFarmRequest = FarmRequest.builder()
@@ -61,35 +61,38 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
   @DisplayName("나의 농가를 생성한다.")
   @Test
-  void createFarm() throws Exception {
-    ExtractableResponse<Response> createResponse = FarmAcceptanceStep
-        .requestToCreateFarm(authResponse, vinylTomatoFarmRequest, objectMapper);
+  void createFarm() {
+    ExtractableResponse<Response> createResponse = FarmAcceptanceStep.requestToCreateFarm(
+        authResponse, vinylTomatoFarmRequest);
     Long farmId = FarmAcceptanceStep.getLocation(createResponse);
 
-    ExtractableResponse<Response> findResponse = FarmAcceptanceStep
-        .requestToFindMyFarm(authResponse, farmId);
+    ExtractableResponse<Response> findResponse = FarmAcceptanceStep.requestToFindMyFarm(
+        authResponse, farmId);
     FarmResponse farmResponse = findResponse.jsonPath().getObject(".", FarmResponse.class);
 
     AcceptanceStep.assertThatStatusIsCreated(createResponse);
-    FarmAcceptanceStep.assertThatFindMyNewFarm(farmResponse, vinylTomatoFarmRequest);
+    FarmAcceptanceStep.assertThatFindMyFarm(farmResponse, vinylTomatoFarmRequest);
   }
 
   @DisplayName("나의 농가를 수정한다.")
   @Test
-  void updateFarm() throws Exception {
+  void updateFarm() {
     FarmRequest updateRequest = FarmRequest.builder()
         .name("테스트 농가 이름3")
         .address("경기")
+        .phoneNumber("01098765432")
+        .cropType(CropType.PAPRIKA.toString())
+        .farmType(FarmType.GLASS.toString())
+        .area("20000")
         .isMain(true)
         .build();
 
-    Long farmId = FarmAcceptanceStep
-        .requestToCreateFarmAndGetLocation(authResponse, vinylTomatoFarmRequest, objectMapper);
-    ExtractableResponse<Response> updateResponse = FarmAcceptanceStep
-        .requestToUpdateFarm(authResponse, updateRequest, objectMapper, farmId);
-
-    ExtractableResponse<Response> findResponse = FarmAcceptanceStep
-        .requestToFindMyFarm(authResponse, farmId);
+    Long farmId = FarmAcceptanceStep.requestToCreateFarmAndGetLocation(authResponse,
+        vinylTomatoFarmRequest);
+    ExtractableResponse<Response> updateResponse = FarmAcceptanceStep.requestToUpdateFarm(
+        authResponse, updateRequest, farmId);
+    ExtractableResponse<Response> findResponse = FarmAcceptanceStep.requestToFindMyFarm(
+        authResponse, farmId);
     FarmResponse farmResponse = findResponse.jsonPath().getObject(".", FarmResponse.class);
 
     assertThatStatusIsOk(updateResponse);
@@ -98,13 +101,11 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
   @DisplayName("나의 모든 농가를 조회한다.")
   @Test
-  void findMyFarms() throws Exception {
+  void findMyFarms() {
+    FarmAcceptanceStep.requestToCreateFarm(authResponse, vinylTomatoFarmRequest);
+    FarmAcceptanceStep.requestToCreateFarm(authResponse, vinylPaprikaFarmRequest);
 
-    FarmAcceptanceStep.requestToCreateFarm(authResponse, vinylTomatoFarmRequest, objectMapper);
-    FarmAcceptanceStep.requestToCreateFarm(authResponse, vinylPaprikaFarmRequest, objectMapper);
-
-    ExtractableResponse<Response> response = FarmAcceptanceStep
-        .requestToFindMyFarms(authResponse);
+    ExtractableResponse<Response> response = FarmAcceptanceStep.requestToFindMyFarms(authResponse);
     List<FarmResponse> farmResponses = response.jsonPath().getList(".", FarmResponse.class);
 
     assertThatStatusIsOk(response);
@@ -114,22 +115,22 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
   @DisplayName("나의 농가를 조회한다.")
   @Test
-  void findMyFarm() throws Exception {
-    Long farmId = FarmAcceptanceStep
-        .requestToCreateFarmAndGetLocation(authResponse, vinylTomatoFarmRequest, objectMapper);
-    ExtractableResponse<Response> response = FarmAcceptanceStep
-        .requestToFindMyFarm(authResponse, farmId);
+  void findMyFarm() {
+    Long farmId = FarmAcceptanceStep.requestToCreateFarmAndGetLocation(authResponse,
+        vinylTomatoFarmRequest);
+    ExtractableResponse<Response> response = FarmAcceptanceStep.requestToFindMyFarm(authResponse,
+        farmId);
     FarmResponse farmResponse = response.jsonPath().getObject(".", FarmResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    FarmAcceptanceStep.assertThatFindMyNewFarm(farmResponse, vinylTomatoFarmRequest);
+    FarmAcceptanceStep.assertThatFindMyFarm(farmResponse, vinylTomatoFarmRequest);
   }
 
   @DisplayName("농가를 삭제한다.")
   @Test
-  void deleteFarm() throws Exception {
+  void deleteFarm() {
     Long farmId = FarmAcceptanceStep
-        .requestToCreateFarmAndGetLocation(authResponse, vinylTomatoFarmRequest, objectMapper);
+        .requestToCreateFarmAndGetLocation(authResponse, vinylTomatoFarmRequest);
 
     ExtractableResponse<Response> deleteResponse = FarmAcceptanceStep
         .requestToDeleteMyFarm(authResponse, farmId);
@@ -144,13 +145,13 @@ public class FarmAcceptanceTest extends CommonAcceptanceTest {
 
   @DisplayName("타 농가를 조회한다.")
   @Test
-  void findOtherFarms() throws Exception {
+  void findOtherFarms() {
     AuthResponse ownerAuthResponse = getAuthResponse(
         new LoginRequest("test2@email.com", "비밀번호"));
     FarmAcceptanceStep
-        .requestToCreateFarm(ownerAuthResponse, vinylTomatoFarmRequest, objectMapper);
+        .requestToCreateFarm(ownerAuthResponse, vinylTomatoFarmRequest);
     FarmAcceptanceStep
-        .requestToCreateFarm(ownerAuthResponse, vinylPaprikaFarmRequest, objectMapper);
+        .requestToCreateFarm(ownerAuthResponse, vinylPaprikaFarmRequest);
 
     FarmSearchCond farmSearchCond = FarmSearchCond.builder()
         .farmType(FarmType.VINYL.toString())

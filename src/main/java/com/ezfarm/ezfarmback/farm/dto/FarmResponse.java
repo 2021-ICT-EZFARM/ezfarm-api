@@ -48,6 +48,7 @@ public class FarmResponse {
         .startDate(farm.getStartDate())
         .farmType(farm.getFarmType().getName())
         .cropType(farm.getCropType().getName())
+        .isMain(farm.isMain())
         .createdDate(farm.getCreatedDate())
         .build();
   }

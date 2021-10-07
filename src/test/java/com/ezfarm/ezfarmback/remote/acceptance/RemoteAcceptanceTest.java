@@ -52,7 +52,7 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
     @Test
     void createRemote() throws Exception {
         Long farmId = FarmAcceptanceStep
-            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest);
 
         ExtractableResponse<Response> response = RemoteAcceptanceStep
             .requestToFindRemote(authResponse, farmId);
@@ -67,7 +67,7 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
     @Test
     void updateRemote() throws Exception {
         Long farmId = FarmAcceptanceStep
-            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest);
         Long remoteId = RemoteAcceptanceStep.requestToFindRemote(authResponse, farmId).jsonPath()
             .getObject(".", RemoteResponse.class).getId();
 
@@ -87,7 +87,7 @@ public class RemoteAcceptanceTest extends CommonAcceptanceTest {
     @Test
     void updateRemoteAndCreateHistory() throws Exception {
         Long farmId = FarmAcceptanceStep
-            .requestToCreateFarmAndGetLocation(authResponse, farmRequest, objectMapper);
+            .requestToCreateFarmAndGetLocation(authResponse, farmRequest);
         Long remoteId = RemoteAcceptanceStep.requestToFindRemote(authResponse, farmId).jsonPath()
             .getObject(".", RemoteResponse.class).getId();
         RemoteRequest remoteRequest = new RemoteRequest(remoteId, OnOff.ON, 37.5f, OnOff.OFF,

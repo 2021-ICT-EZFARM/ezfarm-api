@@ -33,8 +33,7 @@ public class FarmRequest {
   private String area;
 
   @ApiModelProperty(value = "메인 농가 여부", required = true)
-  @NotNull
-  private Boolean isMain;
+  private boolean isMain;
 
   @ApiModelProperty(value = "농가 타입", required = true)
   @NotBlank

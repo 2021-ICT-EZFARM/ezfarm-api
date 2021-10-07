@@ -95,7 +95,7 @@ public class FarmServiceTest {
   @DisplayName("농가 시작일이 없는 농가를 생성한다.")
   @Test
   void createFarm_startDate_null_success() {
-    farmRequest.setIsMain(false);
+    farmRequest.setMain(false);
 
     when(farmRepository.save(any())).thenReturn(farm);
 
@@ -108,7 +108,7 @@ public class FarmServiceTest {
   @Test
   void createMainFarm_success() {
     Farm prevMainFarm = Farm.builder().isMain(true).build();
-    farmRequest.setIsMain(true);
+    farmRequest.setMain(true);
 
     when(farmRepository.save(any())).thenReturn(farm);
     when(farmRepository.findByUserAndIsMain(any(), anyBoolean())).thenReturn(of(prevMainFarm));

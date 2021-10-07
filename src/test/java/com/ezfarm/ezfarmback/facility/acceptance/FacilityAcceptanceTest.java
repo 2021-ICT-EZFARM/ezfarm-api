@@ -64,7 +64,7 @@ public class FacilityAcceptanceTest extends CommonAcceptanceTest {
   @Test
   void findMainFarmFacility() throws Exception {
     ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-        .requestToCreateFarm(authResponse, farmRequest, objectMapper);
+        .requestToCreateFarm(authResponse, farmRequest);
     Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
     createFacilityData(farmId);
 

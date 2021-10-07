@@ -42,8 +42,6 @@ public class FarmRepositoryTest {
 
   private User loginUser;
 
-  private User otherUser;
-
   private Farm loginUserFarm;
 
   private Farm otherUserBestPaprikaGlass;
@@ -54,22 +52,27 @@ public class FarmRepositoryTest {
 
   @BeforeEach
   void setUp() {
-    loginUser = User.builder()
+    loginUser = userRepository.save(
+        User.builder()
         .name("테스트 이름1")
         .email("test1@email.com")
         .password("비밀번호")
         .role(Role.ROLE_USER)
-        .build();
+        .build()
+    );
 
-    otherUser = User.builder()
-        .name("테스트 이름2")
-        .email("test2@email.com")
-        .password("비밀번호")
-        .role(Role.ROLE_USER)
-        .build();
+    User anotherUser = userRepository.save(
+        User.builder()
+            .name("테스트 이름2")
+            .email("test2@email.com")
+            .password("비밀번호")
+            .role(Role.ROLE_USER)
+            .build()
+    );
 
     loginUserFarm = Farm.builder()
         .name("농가1")
+        .user(loginUser)
         .isMain(false)
         .farmType(FarmType.VINYL)
         .cropType(CropType.STRAWBERRY)
@@ -77,6 +80,7 @@ public class FarmRepositoryTest {
 
     otherUserBestPaprikaGlass = Farm.builder()
         .name("농가2")
+        .user(anotherUser)
         .isMain(false)
         .farmGroup(FarmGroup.BEST)
         .farmType(FarmType.GLASS)
@@ -85,6 +89,7 @@ public class FarmRepositoryTest {
 
     otherUserNormalPaprikaVinyl = Farm.builder()
         .name("농가3")
+        .user(anotherUser)
         .isMain(false)
         .farmGroup(FarmGroup.NORMAL)
         .farmType(FarmType.VINYL)
@@ -93,6 +98,7 @@ public class FarmRepositoryTest {
 
     otherUserBestPaprikaVinyl = Farm.builder()
         .name("농가4")
+        .user(anotherUser)
         .isMain(false)
         .farmGroup(FarmGroup.BEST)
         .farmType(FarmType.VINYL)
@@ -103,13 +109,6 @@ public class FarmRepositoryTest {
   @DisplayName("농가 타입이 비닐인 타 농가를 조회한다.")
   @Test
   void findOtherFarms_farmType_vinyl() {
-    User savedLoginUser = userRepository.save(loginUser);
-    User savedOtherUser = userRepository.save(otherUser);
-    //loginUserFarm.setUser(savedLoginUser);
-    //otherUserBestPaprikaGlass.setUser(savedOtherUser);
-    //otherUserNormalPaprikaVinyl.setUser(savedOtherUser);
-    //otherUserBestPaprikaVinyl.setUser(savedOtherUser);
-
     farmRepository.saveAll(
         Arrays.asList(loginUserFarm, otherUserBestPaprikaGlass,
             otherUserNormalPaprikaVinyl, otherUserBestPaprikaVinyl));
@@ -120,7 +119,7 @@ public class FarmRepositoryTest {
         .build();
 
     Page<FarmSearchResponse> result = farmRepository
-        .findByNotUserAndNotFavoritesAndFarmSearchCond(savedLoginUser, farmSearchCond,
+        .findByNotUserAndNotFavoritesAndFarmSearchCond(loginUser, farmSearchCond,
             PageRequest.of(0, 10));
 
     Assertions.assertAll(
@@ -134,12 +133,7 @@ public class FarmRepositoryTest {
   @DisplayName("작물 타입이 파프리카인 타 농가를 조회한다.")
   @Test
   void findOtherFarms_cropType_paprika() {
-    User savedLoginUser = userRepository.save(loginUser);
-    User savedOtherUser = userRepository.save(otherUser);
-    //loginUserFarm.setUser(savedLoginUser);
-    //otherUserBestPaprikaGlass.setUser(savedOtherUser);
-    //otherUserNormalPaprikaVinyl.setUser(savedOtherUser);
-    //otherUserBestPaprikaVinyl.setUser(savedOtherUser);
+
 
     farmRepository.saveAll(
         Arrays.asList(loginUserFarm, otherUserBestPaprikaGlass,
@@ -151,7 +145,7 @@ public class FarmRepositoryTest {
         .build();
 
     Page<FarmSearchResponse> result = farmRepository
-        .findByNotUserAndNotFavoritesAndFarmSearchCond(savedLoginUser, farmSearchCond,
+        .findByNotUserAndNotFavoritesAndFarmSearchCond(loginUser, farmSearchCond,
             PageRequest.of(0, 10));
 
     Assertions.assertAll(
@@ -165,12 +159,6 @@ public class FarmRepositoryTest {
   @DisplayName("타 농가를 조회 시 즐겨찾기에 등록된 농가는 조회하지 않는다.")
   @Test
   void findOtherFarms_not_find_favoriteFarms() {
-    User savedLoginUser = userRepository.save(loginUser);
-    User savedOtherUser = userRepository.save(otherUser);
-    //loginUserFarm.setUser(savedLoginUser);
-    //otherUserBestPaprikaGlass.setUser(savedOtherUser);
-    //otherUserBestPaprikaVinyl.setUser(savedOtherUser);
-
     farmRepository.saveAll(
         Arrays.asList(loginUserFarm, otherUserBestPaprikaGlass,
             otherUserNormalPaprikaVinyl, otherUserBestPaprikaVinyl));
@@ -187,7 +175,7 @@ public class FarmRepositoryTest {
         .build();
 
     Page<FarmSearchResponse> result = farmRepository
-        .findByNotUserAndNotFavoritesAndFarmSearchCond(savedLoginUser, farmSearchCond,
+        .findByNotUserAndNotFavoritesAndFarmSearchCond(loginUser, farmSearchCond,
             PageRequest.of(0, 10));
 
     Assertions.assertAll(

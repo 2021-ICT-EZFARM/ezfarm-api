@@ -40,5 +40,4 @@ public class Screen {
     this.cropCondition = cropCondition;
     this.measureTime = measureTime;
   }
-
 }
