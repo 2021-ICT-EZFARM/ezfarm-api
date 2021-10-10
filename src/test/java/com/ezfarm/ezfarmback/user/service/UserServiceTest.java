@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.utils.fileupload.FileStoreUtils;
+import com.ezfarm.ezfarmback.common.upload.FileUploader;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.domain.UserRepository;
@@ -39,7 +39,7 @@ public class UserServiceTest {
   private UserRepository userRepository;
 
   @Mock
-  private FileStoreUtils fileStoreUtils;
+  private FileUploader fileUploader;
 
   @Mock
   private PasswordEncoder passwordEncoder;
@@ -53,7 +53,7 @@ public class UserServiceTest {
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository, fileStoreUtils, passwordEncoder, modelMapper);
+    userService = new UserService(userRepository, fileUploader, passwordEncoder, modelMapper);
     user = User.builder()
         .name("남상우")
         .email("a@gmail.com")
@@ -128,7 +128,7 @@ public class UserServiceTest {
         .build();
 
     when(userRepository.findById(any())).thenReturn(ofNullable(user));
-    doNothing().when(fileStoreUtils).deleteFile(any());
+    doNothing().when(fileUploader).deleteFile(any());
 
     userService.updateUser(user, userUpdateRequest);
 
@@ -145,8 +145,8 @@ public class UserServiceTest {
         .build();
 
     when(userRepository.findById(any())).thenReturn(ofNullable(user));
-    doNothing().when(fileStoreUtils).deleteFile(any());
-    when(fileStoreUtils.storeFile(any())).thenReturn("new-image");
+    doNothing().when(fileUploader).deleteFile(any());
+    when(fileUploader.storeFile(any())).thenReturn("new-image");
 
     userService.updateUser(user, userUpdateRequest);
 

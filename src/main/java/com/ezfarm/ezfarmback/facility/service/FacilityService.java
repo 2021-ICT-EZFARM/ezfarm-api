@@ -2,7 +2,7 @@ package com.ezfarm.ezfarmback.facility.service;
 
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
+import com.ezfarm.ezfarmback.common.iot.IotConnector;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
 import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
@@ -38,7 +38,7 @@ public class FacilityService {
 
   private final FacilityWeekAvgRepository facilityWeekAvgRepository;
 
-  private final IotUtils iotUtils;
+  private final IotConnector iotConnector;
 
   private final FacilityRepository facilityRepository;
 
@@ -92,7 +92,7 @@ public class FacilityService {
       throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
     }*/
 
-    String output = iotUtils.getLiveSensorValue(farmId);
+    String output = iotConnector.getLiveSensorValue(farmId);
     return FacilityResponse.stringParseToFacilityRes(output);
   }
 

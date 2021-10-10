@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
+import com.ezfarm.ezfarmback.common.iot.IotConnector;
 import com.ezfarm.ezfarmback.facility.domain.FacilityAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvg;
 import com.ezfarm.ezfarmback.facility.domain.day.FacilityDayAvgRepository;
@@ -55,7 +55,7 @@ public class FacilityServiceTest {
   private FacilityWeekAvgRepository facilityWeekAvgRepository;
 
   @Mock
-  private IotUtils iotUtils;
+  private IotConnector iotConnector;
 
   @Mock
   private FacilityRepository facilityRepository;
@@ -69,7 +69,7 @@ public class FacilityServiceTest {
   @BeforeEach
   void setUp() {
     facilityService = new FacilityService(farmRepository, facilityDayAvgRepository,
-        facilityMonthAvgRepository, facilityWeekAvgRepository, iotUtils, facilityRepository);
+        facilityMonthAvgRepository, facilityWeekAvgRepository, iotConnector, facilityRepository);
 
     user = User.builder()
         .id(1L)
@@ -197,7 +197,7 @@ public class FacilityServiceTest {
     //humidity, tmp, illuminance, co2, ph, mos, measureDate;
     String output = "13.7, 26.7, 55.3, 1.2, 22.4, 16.5, 2021-08-12";
     when(farmRepository.findById(any())).thenReturn(ofNullable(farm));
-    when(iotUtils.getLiveSensorValue(any())).thenReturn(output);
+    when(iotConnector.getLiveSensorValue(any())).thenReturn(output);
     FacilityResponse facilityResponse = facilityService.findLiveFacility(user, 1L);
 
     Assertions.assertAll(

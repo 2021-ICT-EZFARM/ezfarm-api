@@ -27,7 +27,7 @@ public enum ErrorCode {
 
   FARM_ACCESS_DENIED(403, "AU_003", "해당 농가에 권한이 없습니다."),
 
-  NON_EXISTENT_SCREEN(404, "SC_001", "화면을 조회할 수 없습니다.");
+  INVALID_SCREEN_MEASURE_TIME(404, "SC_001", "화면을 조회할 수 없습니다.");
 
   private final int status;
   private final String code;
