@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +30,16 @@ public class Alert extends BaseTimeEntity {
 
     private AlertType alertType;
 
+    private AlertFacilityType alertFacilityType;
+
     private Boolean isChecked;
+
+    @Builder
+    public Alert(Farm farm, AlertType alertType, AlertFacilityType alertFacilityType) {
+        this.farm = farm;
+        this.alertType = alertType;
+        this.alertFacilityType = alertFacilityType;
+        this.isChecked = false;
+    }
 
 }

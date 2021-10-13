@@ -1,11 +1,17 @@
 package com.ezfarm.ezfarmback.config.security;
 
+import com.ezfarm.ezfarmback.alert.service.AlertService;
 import com.ezfarm.ezfarmback.security.filter.LoginFilter;
 import com.ezfarm.ezfarmback.security.filter.TokenAuthenticationFilter;
 import com.ezfarm.ezfarmback.security.handler.LoginSuccessHandler;
 import com.ezfarm.ezfarmback.security.local.CustomAuthenticationEntryPoint;
 import com.ezfarm.ezfarmback.security.local.CustomUserDetailsService;
 import com.ezfarm.ezfarmback.security.local.TokenProvider;
+import com.ezfarm.ezfarmback.user.domain.User;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +23,12 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -34,6 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenProvider tokenProvider;
 
     private final CorsFilter corsFilter;
+
+    private final AlertService alertService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -76,7 +88,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/swagger-ui/",
                 "/api/user/signup")
             .permitAll()
-            .antMatchers("/api/**").hasRole(USER);
+            .antMatchers("/api/**").hasRole(USER)
+            .and()
+            .logout()
+            .addLogoutHandler(new LogoutHandler() {
+                @Override
+                public void logout(HttpServletRequest request, HttpServletResponse response,
+                    Authentication authentication) {
+                    User logoutUser = (User) SecurityContextHolder.getContext().getAuthentication()
+                        .getPrincipal();
+                    alertService.deleteToken(logoutUser.getId());
+                }
+            });
     }
 
     @Override
