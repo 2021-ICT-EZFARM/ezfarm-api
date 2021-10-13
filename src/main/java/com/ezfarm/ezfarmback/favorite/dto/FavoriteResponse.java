@@ -13,13 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FavoriteResponse {
 
-    private Long favoriteId;
+  private Long favoriteId;
 
-    private FarmSearchResponse farmSearchResponse;
+  private FarmSearchResponse farmSearchResponse;
 
-    public static List<FavoriteResponse> listOf(List<Favorite> favorites) {
-        return favorites.stream().map(v ->
-            new FavoriteResponse(v.getId(), FarmSearchResponse.favoriteOf(v))
-        ).collect(Collectors.toList());
-    }
+  public static List<FavoriteResponse> listOf(List<Favorite> favorites) {
+    return favorites.stream().map(favorite ->
+        new FavoriteResponse(favorite.getId(), FarmSearchResponse.favoriteOf(favorite))
+    ).collect(Collectors.toList());
+  }
 }

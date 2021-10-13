@@ -17,6 +17,7 @@ import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
 import com.ezfarm.ezfarmback.favorite.domain.Favorite;
 import com.ezfarm.ezfarmback.favorite.domain.FavoriteRepository;
+import com.ezfarm.ezfarmback.favorite.dto.FavoriteRequest;
 import com.ezfarm.ezfarmback.favorite.dto.FavoriteResponse;
 import com.ezfarm.ezfarmback.user.domain.Role;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -34,126 +35,114 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("즐겨찾기 단위 테스트(Service)")
 public class FavoriteServiceTest {
 
-    @Mock
-    private FavoriteRepository favoriteRepository;
+  @Mock
+  private FavoriteRepository favoriteRepository;
 
-    @Mock
-    private FarmRepository farmRepository;
+  @Mock
+  private FarmRepository farmRepository;
 
-    private FavoriteService favoriteService;
+  private FavoriteService favoriteService;
 
-    private User loginUser;
+  private User loginUser;
 
-    private User farmOwner;
+  private User farmOwner;
 
-    private Farm farm;
+  private Farm farm;
 
-    @BeforeEach
-    void setUp() {
-        favoriteService = new FavoriteService(farmRepository, favoriteRepository);
-        loginUser = User.builder()
-            .id(1L)
-            .name("남상우")
-            .email("a@gmail.com")
-            .password("비밀번호")
-            .role(Role.ROLE_USER)
-            .build();
+  @BeforeEach
+  void setUp() {
+    favoriteService = new FavoriteService(farmRepository, favoriteRepository);
+    loginUser = User.builder()
+        .id(1L)
+        .name("남상우")
+        .email("a@gmail.com")
+        .password("비밀번호")
+        .role(Role.ROLE_USER)
+        .build();
 
-        farmOwner = User.builder()
-            .id(2L)
-            .name("홍길동")
-            .email("b@gmail.com")
-            .password("비밀번호")
-            .role(Role.ROLE_USER)
-            .build();
+    farmOwner = User.builder()
+        .id(2L)
+        .name("홍길동")
+        .email("b@gmail.com")
+        .password("비밀번호")
+        .role(Role.ROLE_USER)
+        .build();
 
-        farm = Farm.builder()
-            .id(1L)
-            .user(farmOwner)
-            .address("경기")
-            .name("테스트 농가")
-            .phoneNumber("010-2222-2222")
-            .area("100")
-            .farmType(FarmType.GLASS)
-            .cropType(CropType.PAPRIKA)
-            .isMain(true)
-            .build();
-    }
+    farm = Farm.builder()
+        .id(1L)
+        .user(farmOwner)
+        .address("경기")
+        .name("테스트 농가")
+        .phoneNumber("010-2222-2222")
+        .area("100")
+        .farmType(FarmType.GLASS)
+        .cropType(CropType.PAPRIKA)
+        .isMain(true)
+        .build();
+  }
 
-    @DisplayName("농가 즐겨찾기를 추가한다.")
-    @Test
-    void addFavorite_success() {
-        when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(farm));
-        when(favoriteRepository.findAllByUserAndFarm(any(), any())).thenReturn(emptyList());
-        when(favoriteRepository.save(any())).thenReturn(any());
+  @DisplayName("농가 즐겨찾기를 추가한다.")
+  @Test
+  void addFavorite_success() {
+    when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(farm));
+    when(favoriteRepository.findAllByUserAndFarm(any(), any())).thenReturn(emptyList());
+    when(favoriteRepository.save(any())).thenReturn(any());
 
-        favoriteService.addFavorite(loginUser, 1L);
+    favoriteService.addFavorite(loginUser, new FavoriteRequest(1L));
 
-        verify(favoriteRepository).save(any());
-    }
+    verify(favoriteRepository).save(any());
+  }
 
-    @DisplayName("즐겨찾기를 추가 시 존재하는 농가가 아니면 예외 처리한다.")
-    @Test
-    void addFavorite_failure_invalid_farm() {
-        when(farmRepository.findById(any())).thenReturn(Optional.empty());
+  @DisplayName("즐겨찾기를 추가 시 존재하는 농가가 아니면 예외 처리한다.")
+  @Test
+  void addFavorite_failure_invalid_farm() {
+    when(farmRepository.findById(any())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, 1L))
-            .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
-    }
+    assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, new FavoriteRequest(1L)))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.INVALID_FARM_ID.getMessage());
+  }
 
-    @DisplayName("즐겨찾기 추가 시 자신의 농가면 예외 처리한다.")
-    @Test
-    void addFavorite_failure_my_farm() {
-        Farm myFarm = Farm.builder().user(loginUser).build();
-        when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(myFarm));
+  @DisplayName("즐겨찾기 추가 시 중복되는 농가이면 예외 처리한다.")
+  @Test
+  void addFavorite_failure_duplicated_farm() {
+    Favorite favorite = Favorite.builder()
+        .farm(farm)
+        .build();
 
-        assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, 1L))
-            .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.MY_FARM_NOT_ALLOWED.getMessage());
-    }
+    when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(farm));
+    when(favoriteRepository.findAllByUserAndFarm(any(), any()))
+        .thenReturn(singletonList(favorite));
 
-    @DisplayName("즐겨찾기 추가 시 중복되는 농가이면 예외 처리한다.")
-    @Test
-    void addFavorite_failure_duplicated_farm() {
-        Favorite favorite = Favorite.builder()
-            .farm(farm)
-            .build();
+    assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, new FavoriteRequest(1L)))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.DUPLICATED_FAVORITE.getMessage());
+  }
 
-        when(farmRepository.findById(any())).thenReturn(Optional.ofNullable(farm));
-        when(favoriteRepository.findAllByUserAndFarm(any(), any()))
-            .thenReturn(singletonList(favorite));
+  @DisplayName("농가 즐겨찾기를 조회한다.")
+  @Test
+  void findFavorites_success() {
+    Favorite favorite = Favorite.builder()
+        .user(farmOwner)
+        .farm(farm)
+        .build();
 
-        assertThatThrownBy(() -> favoriteService.addFavorite(loginUser, 1L))
-            .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.FAVORITE_DUPLICATED.getMessage());
-    }
+    when(favoriteRepository.findAllByUser(any())).thenReturn(
+        singletonList(favorite));
 
-    @DisplayName("농가 즐겨찾기를 조회한다.")
-    @Test
-    void findFavorites_success() {
-        farm.setUser(farmOwner);
-        Favorite favorite = Favorite.builder()
-            .user(farmOwner)
-            .farm(farm)
-            .build();
+    List<FavoriteResponse> favoriteResponses = favoriteService.findFavorites(loginUser);
 
-        when(favoriteRepository.findAllByUser(any())).thenReturn(
-            singletonList(favorite));
+    Assertions.assertAll(
+        () -> assertThat(favoriteResponses.size()).isEqualTo(1),
+        () -> assertThat(favoriteResponses.get(0).getFarmSearchResponse().getName())
+            .isEqualTo(farm.getName())
+    );
+  }
 
-        List<FavoriteResponse> favoriteResponses = favoriteService.findFavorites(loginUser);
-
-        Assertions.assertAll(
-            () -> assertThat(favoriteResponses.size()).isEqualTo(1),
-            () -> assertThat(favoriteResponses.get(0).getFarmSearchResponse().getName())
-                .isEqualTo(farm.getName())
-        );
-    }
-
-    @DisplayName("농가 즐겨찾기를 삭제한다.")
-    @Test
-    void deleteFavorite_success() {
-        favoriteService.deleteFavorite(1L);
-        verify(favoriteRepository).deleteById(anyLong());
-    }
+  @DisplayName("농가 즐겨찾기를 삭제한다.")
+  @Test
+  void deleteFavorite_success() {
+    favoriteService.deleteFavorite(1L);
+    verify(favoriteRepository).deleteById(anyLong());
+  }
 }

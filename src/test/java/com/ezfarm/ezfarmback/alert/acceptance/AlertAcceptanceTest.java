@@ -40,8 +40,8 @@ public class AlertAcceptanceTest extends CommonAcceptanceTest {
             "010-2222-2222",
             "100",
             true,
-            FarmType.GLASS,
-            CropType.PAPRIKA,
+            FarmType.GLASS.toString(),
+            CropType.PAPRIKA.toString(),
             LocalDate.now()
         );
 
@@ -52,7 +52,7 @@ public class AlertAcceptanceTest extends CommonAcceptanceTest {
     @Test
     void findAlertRange_after_creation() throws Exception {
         ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
+            .requestToCreateFarm(authResponse, farmRequest);
         Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
 
         ExtractableResponse<Response> response = AlertAcceptanceStep
@@ -73,7 +73,7 @@ public class AlertAcceptanceTest extends CommonAcceptanceTest {
 
         //when
         ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-            .requestToCreateFarm(authResponse, farmRequest, objectMapper);
+            .requestToCreateFarm(authResponse, farmRequest);
         Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
 
         Long alertRangeId = AlertAcceptanceStep

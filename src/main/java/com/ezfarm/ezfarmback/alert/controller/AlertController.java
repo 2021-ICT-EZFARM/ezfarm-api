@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,10 +28,6 @@ public class AlertController {
     private final AlertService alertService;
 
     @ApiOperation(value = "알림 범위 조회")
-    @ApiResponses({
-        @ApiResponse(code = 403, message = "해당 농가에 권한이 없습니다."),
-        @ApiResponse(code = 404, message = "존재하지 않는 농가입니다.")
-    })
     @GetMapping("/alert-range")
     public ResponseEntity<AlertRangeResponse> findAlertRange(@CurrentUser User user,
         @RequestParam Long farmId) {
@@ -46,5 +43,4 @@ public class AlertController {
         alertService.updateAlertRange(user, alertRangeId, alertRangeRequest);
         return ResponseEntity.ok().build();
     }
-
 }

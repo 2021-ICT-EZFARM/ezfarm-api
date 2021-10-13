@@ -33,106 +33,106 @@ import org.springframework.http.MediaType;
 @WebMvcTest(controllers = FarmController.class)
 class FarmControllerTest extends CommonApiTest {
 
-    @MockBean
-    FarmService farmService;
+  @MockBean
+  FarmService farmService;
 
-    @MockBean
-    FarmRepository farmRepository;
+  @MockBean
+  FarmRepository farmRepository;
 
-    FarmRequest farmRequest;
+  FarmRequest farmRequest;
 
-    FarmResponse farmResponse;
+  FarmResponse farmResponse;
 
-    @BeforeEach
-    @Override
-    public void setUp() {
-        super.setUp();
-        farmRequest = new FarmRequest(
-            "서울", "테스트 이름", "010-1234-1234",
-            "100", false, FarmType.GLASS,
-            CropType.PAPRIKA, LocalDate.now()
-        );
-        farmResponse = new FarmResponse();
-    }
+  @BeforeEach
+  @Override
+  public void setUp() {
+    super.setUp();
+    farmRequest = new FarmRequest(
+        "서울", "테스트 이름", "010-1234-1234",
+        "100", false, FarmType.GLASS.toString(),
+        CropType.PAPRIKA.toString(), LocalDate.now()
+    );
+    farmResponse = new FarmResponse();
+  }
 
-    @WithMockCustomUser
-    @DisplayName("농가를 생성한다.")
-    @Test
-    void createFarm() throws Exception {
-        when(farmService.createFarm(any(), any())).thenReturn(1L);
+  @WithMockCustomUser
+  @DisplayName("농가를 생성한다.")
+  @Test
+  void createFarm() throws Exception {
+    when(farmService.createFarm(any(), any())).thenReturn(1L);
 
-        mockMvc.perform(post("/api/farm/me")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(farmRequest)))
-            .andExpect(status().isCreated())
-            .andDo(print());
-    }
+    mockMvc.perform(post("/api/farm/me")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(farmRequest)))
+        .andExpect(status().isCreated())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("나의 모든 농가를 조회한다.")
-    @Test
-    void findMyFarms() throws Exception {
-        when(farmService.findMyFarms(any())).thenReturn(singletonList(farmResponse));
+  @WithMockCustomUser
+  @DisplayName("나의 모든 농가를 조회한다.")
+  @Test
+  void findMyFarms() throws Exception {
+    when(farmService.findMyFarms(any())).thenReturn(singletonList(farmResponse));
 
-        mockMvc.perform(get("/api/farm/me")
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(get("/api/farm/me")
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("나의 농가를 조회한다.")
-    @Test
-    void findMyFarm() throws Exception {
-        when(farmService.findMyFarm(any())).thenReturn(farmResponse);
+  @WithMockCustomUser
+  @DisplayName("나의 농가를 조회한다.")
+  @Test
+  void findMyFarm() throws Exception {
+    when(farmService.findMyFarm(any())).thenReturn(farmResponse);
 
-        mockMvc.perform(get("/api/farm/me/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(get("/api/farm/me/{farmId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("나의 농가를 수정한다.")
-    @Test
-    void updateFarm() throws Exception {
-        doNothing().when(farmService).updateMyFarm(any(), any(), any());
+  @WithMockCustomUser
+  @DisplayName("나의 농가를 수정한다.")
+  @Test
+  void updateFarm() throws Exception {
+    doNothing().when(farmService).updateMyFarm(any(), any(), any());
 
-        mockMvc.perform(patch("/api/farm/me/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(farmRequest)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(patch("/api/farm/me/{farmId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(farmRequest)))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("나의 농가를 삭제한다.")
-    @Test
-    void deleteMyFarm() throws Exception {
-        doNothing().when(farmService).deleteMyFarm(any(), any());
+  @WithMockCustomUser
+  @DisplayName("나의 농가를 삭제한다.")
+  @Test
+  void deleteMyFarm() throws Exception {
+    doNothing().when(farmService).deleteMyFarm(any(), any());
 
-        mockMvc.perform(delete("/api/farm/me/{farmId}", 1L)
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNoContent())
-            .andDo(print());
-    }
+    mockMvc.perform(delete("/api/farm/me/{farmId}", 1L)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent())
+        .andDo(print());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("타 농가를 조회한다.")
-    @Test
-    void findOtherFarms() throws Exception {
-        FarmSearchCond farmSearchCond = FarmSearchCond.builder()
-            .farmType(FarmType.GLASS)
-            .cropType(CropType.PAPRIKA)
-            .build();
+  @WithMockCustomUser
+  @DisplayName("타 농가를 조회한다.")
+  @Test
+  void findOtherFarms() throws Exception {
+    FarmSearchCond farmSearchCond = FarmSearchCond.builder()
+        .farmType(FarmType.GLASS.toString())
+        .cropType(CropType.PAPRIKA.toString())
+        .build();
 
-        when(farmService.findOtherFarms(any(), any(), any())).thenReturn(emptyList());
+    when(farmService.findOtherFarms(any(), any(), any())).thenReturn(emptyList());
 
-        mockMvc.perform(get(String.format(
-                "/api/farm/other?farmGroup=%s&?farmType=%s&cropType=%s&?page=%d&size=%d"
-                , farmSearchCond.getFarmGroup(), farmSearchCond.getFarmType(),
-                farmSearchCond.getCropType(), 0, 10)))
-            .andExpect(status().isOk())
-            .andDo(print());
-    }
+    mockMvc.perform(get(String.format(
+            "/api/farm/other?farmGroup=%s&?farmType=%s&cropType=%s&?page=%d&size=%d"
+            , farmSearchCond.getFarmGroup(), farmSearchCond.getFarmType(),
+            farmSearchCond.getCropType(), 0, 10)))
+        .andExpect(status().isOk())
+        .andDo(print());
+  }
 }
