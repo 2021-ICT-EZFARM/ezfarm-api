@@ -19,27 +19,23 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Alert extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "alert_id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "alert_id")
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "farm_id")
-    private Farm farm;
+  @ManyToOne
+  @JoinColumn(name = "farm_id")
+  private Farm farm;
 
-    private AlertType alertType;
+  private AlertType alertType;
 
-    private AlertFacilityType alertFacilityType;
+  private AlertFacilityType alertFacilityType;
 
-    private Boolean isChecked;
-
-    @Builder
-    public Alert(Farm farm, AlertType alertType, AlertFacilityType alertFacilityType) {
-        this.farm = farm;
-        this.alertType = alertType;
-        this.alertFacilityType = alertFacilityType;
-        this.isChecked = false;
-    }
-
+  @Builder
+  public Alert(Farm farm, AlertType alertType, AlertFacilityType alertFacilityType) {
+    this.farm = farm;
+    this.alertType = alertType;
+    this.alertFacilityType = alertFacilityType;
+  }
 }

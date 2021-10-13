@@ -52,8 +52,7 @@ public class AlertServiceTest {
 
     @BeforeEach
     void setUp() {
-        alertService = new AlertService(alertRangeRepository, farmRepository, modelMapper,
-            fcmListener);
+        alertService = new AlertService(alertRangeRepository, farmRepository, modelMapper);
 
         user = User.builder()
             .id(1L)

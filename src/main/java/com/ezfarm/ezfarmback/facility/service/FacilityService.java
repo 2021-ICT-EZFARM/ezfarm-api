@@ -43,66 +43,48 @@ public class FacilityService {
   private final FacilityRepository facilityRepository;
 
   public FacilityPeriodResponse findFacilitySearchPeriod(Long farmId) {
-    Farm findFarm = confirmExistingFarm(farmId);
-    return facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(findFarm);
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    return facilityDayAvgRepository.findMinAndMaxMeasureDateByFarm(farm);
   }
 
-  public List<FacilityAvgResponse> findFacilityDailyAvg(Long farmId,
-      FacilityDailyAvgRequest facilityDailyAvgRequest) {
-    Farm findFarm = confirmExistingFarm(farmId);
-
-    String date = facilityDailyAvgRequest.getYear() + "-" + facilityDailyAvgRequest.getMonth();
-    List<FacilityDayAvg> DayAvgs = facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(
-        findFarm, date);
-
-    return FacilityAvgResponse.listOfDayAvg(DayAvgs);
+  public List<FacilityAvgResponse> findFacilityDailyAvg(Long farmId, FacilityDailyAvgRequest req) {
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    List<FacilityDayAvg> avg = facilityDayAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+        farm, req.getYear() + "-" + req.getMonth());
+    return FacilityAvgResponse.listOfDayAvg(avg);
   }
 
-  public List<FacilityAvgResponse> findFacilityWeekAvg(Long farmId,
-      FacilityWeekAvgRequest facilityWeekAvgRequest) {
-    Farm findFarm = confirmExistingFarm(farmId);
-
-    List<FacilityWeekAvg> weekAvgs = facilityWeekAvgRepository
-        .findAllByFarmAndMeasureDateStartsWith(
-            findFarm, facilityWeekAvgRequest);
-    return FacilityAvgResponse.listOfWeekAvg(weekAvgs);
+  public List<FacilityAvgResponse> findFacilityWeekAvg(Long farmId, FacilityWeekAvgRequest req) {
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    List<FacilityWeekAvg> avg = facilityWeekAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+        farm, req);
+    return FacilityAvgResponse.listOfWeekAvg(avg);
   }
 
   public List<FacilityAvgResponse> findFacilityMonthlyAvg(Long farmId,
-      FacilityMonthAvgRequest facilityYearAvgRequest) {
-    Farm findFarm = confirmExistingFarm(farmId);
-
-    List<FacilityMonthAvg> monthAvgs = facilityMonthAvgRepository
-        .findAllByFarmAndMeasureDateStartsWith(
-            findFarm, facilityYearAvgRequest.getYear());
-
-    return FacilityAvgResponse.listOfMonthAvg(monthAvgs);
+      FacilityMonthAvgRequest req) {
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    List<FacilityMonthAvg> avg = facilityMonthAvgRepository.findAllByFarmAndMeasureDateStartsWith(
+        farm, req.getYear());
+    return FacilityAvgResponse.listOfMonthAvg(avg);
   }
 
-  private Farm confirmExistingFarm(Long farmId) {
+  private Farm validateFarmIdAndGetFarm(Long farmId) {
     return farmRepository.findById(farmId).orElseThrow(
         () -> new CustomException(ErrorCode.INVALID_FARM_ID));
   }
 
   public FacilityResponse findLiveFacility(User user, Long farmId) {
-    Farm farm = confirmExistingFarm(farmId);
-
-    /*
-    if (!farm.isMyFarm(user.getId())) {
-      throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
-    }*/
-
-    String output = iotConnector.getLiveSensorValue(farmId);
-    return FacilityResponse.stringParseToFacilityRes(output);
+    Farm farm = validateFarmIdAndGetFarm(farmId);
+    farm.validateIsMyFarm(user);
+    return FacilityResponse.stringParseToFacilityRes(iotConnector.getLiveSensorValue(farmId));
   }
 
   public FacilityResponse findMainFarmFacility(User user) {
-    Farm mainFarm = farmRepository.findByUserAndIsMain(user, true)
-        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_MAIN_FARM));
-
-    Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(mainFarm)
-        .orElseGet(Facility::new);
-
+    Farm farm = farmRepository.findByUserAndIsMain(user, true)
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_MAIN_FARM));
+    Facility facility = facilityRepository.findTop1ByFarmOrderByMeasureDateDesc(farm)
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_FACILITY_DATA));
     return FacilityResponse.of(facility);
   }
 }

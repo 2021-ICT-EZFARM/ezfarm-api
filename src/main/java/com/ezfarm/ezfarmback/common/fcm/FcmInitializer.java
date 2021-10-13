@@ -20,15 +20,12 @@ public class FcmInitializer {
       FirebaseOptions options = new FirebaseOptions.Builder().setCredentials(
           GoogleCredentials.fromStream(new ClassPathResource(firebaseConfig).getInputStream()))
           .build();
-
       if (FirebaseApp.getApps().isEmpty()) {
         FirebaseApp.initializeApp(options);
         log.info("firebase success initialized");
       }
-
     } catch (Exception e) {
       log.info("firebase error");
     }
   }
-
 }

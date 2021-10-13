@@ -117,7 +117,7 @@ public class UserServiceTest {
 
     assertThatThrownBy(() -> userService.updateUser(user, userUpdateRequest))
         .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.NON_EXISTENT_USER.getMessage());
+        .hasMessage(ErrorCode.NOT_EXIST_USER.getMessage());
   }
 
   @DisplayName("유저 정보를 수정 시 프로필을 기본 이미지로 변경한다.")

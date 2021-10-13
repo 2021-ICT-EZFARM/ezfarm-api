@@ -1,11 +1,6 @@
 package com.ezfarm.ezfarmback.common.fcm;
 
-import com.ezfarm.ezfarmback.alert.domain.AlertFacilityType;
-import com.ezfarm.ezfarmback.alert.domain.AlertType;
 import com.ezfarm.ezfarmback.alert.dto.AlertRequest;
-import com.ezfarm.ezfarmback.alert.service.AlertService;
-import com.ezfarm.ezfarmback.facility.domain.hour.Facility;
-import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -18,20 +13,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FcmListener {
 
-  private final AlertService alertService;
+  private final FcmService fcmService;
 
   @EventListener
-  public void sendMessage(FcmEvent fcmEvent) {
-    Facility facility = fcmEvent.getFacility();
-    AlertFacilityType alertFacilityType = fcmEvent.getAlertFacilityType();
-    AlertType alertType = fcmEvent.getAlertType();
-    User user = facility.getFarm().getUser();
-
+  public void sendMessage(FcmEvent e) {
     AlertRequest alertRequest = AlertRequest.builder()
-        .title("실시간 농가 예외")
-        .token(alertService.getToken(user.getId()))
-        .message(alertFacilityType + "이 " + alertType + "되었습니다.")
+        .token(fcmService.getToken(e.getFacility().getFarm().getUser().getId()))
+        .message(
+            e.getAlertFacilityType().getName() + "가(이) " + e.getAlertType().getName() + "되었습니다.")
         .build();
-    alertService.sendNotification(alertRequest);
+    fcmService.send(alertRequest);
   }
 }

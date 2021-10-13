@@ -90,7 +90,7 @@ public class PublicFarmParser {
     log.info("{} {} 농가 데이터 등록 시작 startTime:{}", cropType, farmType, LocalDateTime.now());
 
     User admin = userRepository.findByEmail("admin@email.com")
-        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_USER));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
 
     Files.readAllLines(resource.getFile().toPath(), StandardCharsets.UTF_8)
         .stream()

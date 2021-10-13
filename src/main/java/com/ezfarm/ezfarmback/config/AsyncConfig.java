@@ -20,7 +20,6 @@ public class AsyncConfig implements AsyncConfigurer {
     executor.setQueueCapacity(50);
     executor.setKeepAliveSeconds(60);
     executor.setThreadNamePrefix("AsyncExecutor-");
-
     return executor;
   }
 

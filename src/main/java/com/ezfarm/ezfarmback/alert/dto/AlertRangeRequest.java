@@ -11,51 +11,51 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AlertRangeRequest {
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float tmpMax;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float tmpMax;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float tmpMin;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float tmpMin;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float humidityMax;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float humidityMax;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float humidityMin;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float humidityMin;
 
-    @NotNull
-    @ApiModelProperty(value = "최대 조도", required = true)
-    private float imnMax;
+  @NotNull
+  @ApiModelProperty(value = "최대 조도", required = true)
+  private float imnMax;
 
-    @NotNull
-    @ApiModelProperty(value = "최소 조도", required = true)
-    private float imnMin;
+  @NotNull
+  @ApiModelProperty(value = "최소 조도", required = true)
+  private float imnMin;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float co2Max;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float co2Max;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float co2Min;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float co2Min;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float phMax;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float phMax;
 
-    @NotNull
-    @ApiModelProperty(required = true)
-    private float phMin;
+  @NotNull
+  @ApiModelProperty(required = true)
+  private float phMin;
 
-    @NotNull
-    @ApiModelProperty(value = "최대 토양 수분", required = true)
-    private float mosMax;
+  @NotNull
+  @ApiModelProperty(value = "최대 토양 수분", required = true)
+  private float mosMax;
 
-    @NotNull
-    @ApiModelProperty(value = "최소 토양 수분", required = true)
-    private float mosMin;
+  @NotNull
+  @ApiModelProperty(value = "최소 토양 수분", required = true)
+  private float mosMin;
 }

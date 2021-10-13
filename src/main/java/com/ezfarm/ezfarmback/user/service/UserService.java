@@ -57,7 +57,7 @@ public class UserService {
 
   public User validateUserIdAndGetUser(User loginUser) {
     return userRepository.findById(loginUser.getId())
-        .orElseThrow(() -> new CustomException(ErrorCode.NON_EXISTENT_USER));
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
   }
 
   private void uploadImageUrl(User user, MultipartFile image, IsDefaultImage isDefaultImage) {

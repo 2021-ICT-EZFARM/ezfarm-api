@@ -9,15 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AlertRequest {
 
-  private String title;
   private String message;
   private String token;
 
   @Builder
-  public AlertRequest(String title, String message, String token) {
-    this.title = title;
+  public AlertRequest(String message, String token) {
     this.message = message;
     this.token = token;
   }
-
 }

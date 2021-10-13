@@ -227,7 +227,7 @@ public class FacilityServiceTest {
         .farm(mainFarm)
         .tmp(21.4F)
         .humidity(12.5F)
-        .illuminance(11)
+        .illuminance(11F)
         .co2(16.2f)
         .ph(18.9f)
         .mos(55.1f)
