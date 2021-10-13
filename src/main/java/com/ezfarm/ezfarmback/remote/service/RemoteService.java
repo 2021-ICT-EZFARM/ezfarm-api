@@ -1,0 +1,115 @@
+package com.ezfarm.ezfarmback.remote.service;
+
+import com.ezfarm.ezfarmback.common.exception.CustomException;
+import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
+import com.ezfarm.ezfarmback.common.utils.iot.IotUtils;
+import com.ezfarm.ezfarmback.farm.domain.Farm;
+import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
+import com.ezfarm.ezfarmback.remote.domain.OnOff;
+import com.ezfarm.ezfarmback.remote.domain.Remote;
+import com.ezfarm.ezfarmback.remote.domain.RemoteHistory;
+import com.ezfarm.ezfarmback.remote.domain.RemoteHistoryRepository;
+import com.ezfarm.ezfarmback.remote.domain.RemoteRepository;
+import com.ezfarm.ezfarmback.remote.dto.RemoteRequest;
+import com.ezfarm.ezfarmback.remote.dto.RemoteResponse;
+import com.ezfarm.ezfarmback.user.domain.User;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@RequiredArgsConstructor
+@Transactional
+@Service
+public class RemoteService {
+
+    private final FarmRepository farmRepository;
+
+    private final RemoteRepository remoteRepository;
+
+    private final IotUtils iotUtils;
+
+    private final RemoteHistoryRepository remoteHistoryRepository;
+
+    @Transactional(readOnly = true)
+    public RemoteResponse findRemote(User user, Long farmId) {
+        Farm findFarm = farmRepository.findById(farmId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+
+        if (!findFarm.isMyFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
+
+        Remote remote = remoteRepository.findByFarm(findFarm)
+            .orElseGet(() -> createRemote(findFarm));
+
+        return RemoteResponse.of(remote);
+    }
+
+    private Remote createRemote(Farm findFarm) {
+        return remoteRepository.save(
+            Remote.builder()
+                .farm(findFarm)
+                .co2(OnOff.OFF)
+                .illuminance(OnOff.OFF)
+                .temperature(0.0f)
+                .water(OnOff.OFF)
+                .build()
+        );
+    }
+
+    public void updateRemote(User user, RemoteRequest remoteRequest) {
+        Remote findRemote = remoteRepository.findById(remoteRequest.getRemoteId())
+            .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+        if (!findRemote.getFarm().isMyFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
+
+        boolean isRemoteSuccess = iotUtils.updateRemote(remoteRequest);
+        if (!isRemoteSuccess) {
+            throw new CustomException(ErrorCode.INTERNAL_IOT_SERVER_ERROR);
+        }
+
+        List<RemoteHistory> remoteHistories = new ArrayList<>();
+        if (!findRemote.getWater().equals(remoteRequest.getWater())) {
+            RemoteHistory remoteHistory = RemoteHistory.builder()
+                .farm(findRemote.getFarm())
+                .value("Water 설정을 " + findRemote.getWater() + "에서 " + remoteRequest.getWater()
+                    + "(으)로 변경하였습니다")
+                .build();
+            remoteHistories.add(remoteHistory);
+        }
+
+        if (findRemote.getTemperature() != remoteRequest.getTemperature()) {
+            RemoteHistory remoteHistory = RemoteHistory.builder()
+                .farm(findRemote.getFarm())
+                .value("Temperature 설정을 " + findRemote.getTemperature() + "에서 "
+                    + remoteRequest.getTemperature() + "(으)로 변경하였습니다")
+                .build();
+            remoteHistories.add(remoteHistory);
+        }
+
+        if (!findRemote.getIlluminance().equals(remoteRequest.getIlluminance())) {
+            RemoteHistory remoteHistory = RemoteHistory.builder()
+                .farm(findRemote.getFarm())
+                .value("Illuminance 설정을 " + findRemote.getIlluminance() + "에서 "
+                    + remoteRequest.getIlluminance() + "(으)로 변경하였습니다")
+                .build();
+            remoteHistories.add(remoteHistory);
+        }
+
+        if (!findRemote.getCo2().equals(remoteRequest.getCo2())) {
+            RemoteHistory remoteHistory = RemoteHistory.builder()
+                .farm(findRemote.getFarm())
+                .value("Co2 설정을 " + findRemote.getCo2() + "에서 " + remoteRequest.getCo2()
+                    + "(으)로 변경하였습니다")
+                .build();
+            remoteHistories.add(remoteHistory);
+        }
+        remoteHistoryRepository.saveAll(remoteHistories);
+
+        findRemote.updateRemote(remoteRequest);
+    }
+}

@@ -1,6 +1,5 @@
 package com.ezfarm.ezfarmback.farm.dto;
 
-import com.ezfarm.ezfarmback.common.validator.ValueOfEnum;
 import com.ezfarm.ezfarmback.farm.domain.enums.CropType;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmGroup;
 import com.ezfarm.ezfarmback.farm.domain.enums.FarmType;
@@ -12,19 +11,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FarmSearchCond {
 
-  @ValueOfEnum(enumClass = FarmGroup.class)
-  private String farmGroup;
+    private FarmGroup farmGroup;
+    private FarmType farmType;
+    private CropType cropType;
 
-  @ValueOfEnum(enumClass = FarmType.class)
-  private String farmType;
-  
-  @ValueOfEnum(enumClass = CropType.class)
-  private String cropType;
-
-  @Builder
-  public FarmSearchCond(String farmGroup, String farmType, String cropType) {
-    this.farmGroup = farmGroup;
-    this.farmType = farmType;
-    this.cropType = cropType;
-  }
+    @Builder
+    public FarmSearchCond(FarmGroup farmGroup,
+        FarmType farmType, CropType cropType) {
+        this.farmGroup = farmGroup;
+        this.farmType = farmType;
+        this.cropType = cropType;
+    }
 }

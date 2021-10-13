@@ -32,8 +32,8 @@ public class UserAcceptanceTest extends CommonAcceptanceTest {
             "010-2222-2222",
             "100",
             true,
-            FarmType.GLASS.toString(),
-            CropType.PAPRIKA.toString(),
+            FarmType.GLASS,
+            CropType.PAPRIKA,
             LocalDate.now()
         );
     }

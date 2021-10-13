@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface FarmRepositoryCustom {
 
-  Page<FarmSearchResponse> findByNotUserAndNotFavoritesAndFarmSearchCond(User user,
-      FarmSearchCond farmSearchCond,
-      Pageable pageable);
+    Page<FarmSearchResponse> findByNotUserAndNotFavoritesAndFarmSearchCond(User user,
+        FarmSearchCond farmSearchCond,
+        Pageable pageable);
 }

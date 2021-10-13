@@ -115,11 +115,12 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
+# query
+database\
+
 # yml
 application-security.yml
+.idea\
 
-# idea
-.idea/
-
-# firebase
-ezfarm-back-firebase-adminsdk-i6piu-63998a7f47.json
+#csv
+farm\

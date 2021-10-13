@@ -11,4 +11,6 @@ public interface FarmRepository extends JpaRepository<Farm, Long>, FarmRepositor
   List<Farm> findAllByUser(User user);
 
   Optional<Farm> findByUserAndIsMain(User user, boolean main);
+
+  boolean existsByUser(User user);
 }

@@ -5,6 +5,5 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AlertRangeRepository extends JpaRepository<AlertRange, Long> {
-
-  Optional<AlertRange> findByFarm(Farm farm);
+    Optional<AlertRange> findByFarm(Farm farm);
 }

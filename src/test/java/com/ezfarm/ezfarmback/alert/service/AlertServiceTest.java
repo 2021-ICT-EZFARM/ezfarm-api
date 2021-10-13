@@ -12,7 +12,6 @@ import com.ezfarm.ezfarmback.alert.dto.AlertRangeRequest;
 import com.ezfarm.ezfarmback.alert.dto.AlertRangeResponse;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.fcm.FcmListener;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.user.domain.User;
@@ -40,9 +39,6 @@ public class AlertServiceTest {
     private ModelMapper modelMapper;
 
     private AlertService alertService;
-
-    @Mock
-        private FcmListener fcmListener;
 
     Farm farm;
 

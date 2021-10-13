@@ -53,8 +53,8 @@ public class FacilityAcceptanceTest extends CommonAcceptanceTest {
         "010-2222-2222",
         "100",
         true,
-        FarmType.GLASS.toString(),
-        CropType.PAPRIKA.toString(),
+        FarmType.GLASS,
+        CropType.PAPRIKA,
         LocalDate.now()
     );
 
@@ -64,7 +64,7 @@ public class FacilityAcceptanceTest extends CommonAcceptanceTest {
   @Test
   void findMainFarmFacility() throws Exception {
     ExtractableResponse<Response> farmResponse = FarmAcceptanceStep
-        .requestToCreateFarm(authResponse, farmRequest);
+        .requestToCreateFarm(authResponse, farmRequest, objectMapper);
     Long farmId = FarmAcceptanceStep.getLocation(farmResponse);
     createFacilityData(farmId);
 

@@ -21,46 +21,46 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class FarmRepositoryCustomImpl implements FarmRepositoryCustom {
 
-  private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
-  @Override
-  public Page<FarmSearchResponse> findByNotUserAndNotFavoritesAndFarmSearchCond(User user,
-      FarmSearchCond farmSearchCond,
-      Pageable pageable) {
-    QueryResults<FarmSearchResponse> results = queryFactory
-        .select(new QFarmSearchResponse(
-            farm.id,
-            farm.name,
-            farm.address,
-            farm.area,
-            farm.farmType,
-            farm.cropType
-        ))
-        .from(farm)
-        .leftJoin(favorite)
-        .on(farm.eq(favorite.farm), favorite.user.eq(user))
-        .where(
-            favorite.isNull(),
-            farm.user.ne(user),
-            farmGroupEq(farmSearchCond.getFarmGroup()),
-            farmTypeEq(farmSearchCond.getFarmType()),
-            cropTypeEq(farmSearchCond.getCropType())
-        )
-        .offset(pageable.getOffset())
-        .limit(pageable.getPageSize())
-        .fetchResults();
-    return new PageImpl<>(results.getResults(), pageable, results.getTotal());
-  }
+    @Override
+    public Page<FarmSearchResponse> findByNotUserAndNotFavoritesAndFarmSearchCond(User user,
+        FarmSearchCond farmSearchCond,
+        Pageable pageable) {
+        QueryResults<FarmSearchResponse> results = queryFactory
+            .select(new QFarmSearchResponse(
+                farm.id,
+                farm.name,
+                farm.address,
+                farm.area,
+                farm.farmType,
+                farm.cropType
+            ))
+            .from(farm)
+            .leftJoin(favorite)
+            .on(farm.eq(favorite.farm), favorite.user.eq(user))
+            .where(
+                favorite.isNull(),
+                farm.user.ne(user),
+                farmGroupEq(farmSearchCond.getFarmGroup()),
+                farmTypeEq(farmSearchCond.getFarmType()),
+                cropTypeEq(farmSearchCond.getCropType())
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
 
-  public static BooleanExpression farmTypeEq(String farmType) {
-    return farmType != null ? farm.farmType.eq(FarmType.valueOf(farmType)) : null;
-  }
+    public static BooleanExpression farmTypeEq(FarmType farmType) {
+        return farmType != null ? farm.farmType.eq(farmType) : null;
+    }
 
-  public static BooleanExpression cropTypeEq(String cropType) {
-    return cropType != null ? farm.cropType.eq(CropType.valueOf(cropType)) : null;
-  }
+    public static BooleanExpression cropTypeEq(CropType cropType) {
+        return cropType != null ? farm.cropType.eq(cropType) : null;
+    }
 
-  public static BooleanExpression farmGroupEq(String farmGroup) {
-    return farmGroup != null ? farm.farmGroup.eq(FarmGroup.valueOf(farmGroup)) : null;
-  }
+    public static BooleanExpression farmGroupEq(FarmGroup farmGroup) {
+        return farmGroup != null ? farm.farmGroup.eq(farmGroup) : null;
+    }
 }

@@ -20,57 +20,57 @@ import lombok.NoArgsConstructor;
 @Entity
 public class AlertRange extends BaseTimeEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "alert_range_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "alert_range_id")
+    private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "farm_id")
-  private Farm farm;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
 
-  private float tmpMax;
+    private float tmpMax;
 
-  private float tmpMin;
+    private float tmpMin;
 
-  private float humidityMax;
+    private float humidityMax;
 
-  private float humidityMin;
+    private float humidityMin;
 
-  private float imnMax;
+    private float imnMax;
 
-  private float imnMin;
+    private float imnMin;
 
-  @Column(name = "co2_max")
-  private float co2Max;
+    @Column(name = "co2_max")
+    private float co2Max;
 
-  @Column(name = "co2_min")
-  private float co2Min;
+    @Column(name = "co2_min")
+    private float co2Min;
 
-  private float phMax;
+    private float phMax;
 
-  private float phMin;
+    private float phMin;
 
-  private float mosMax;
+    private float mosMax;
 
-  private float mosMin;
+    private float mosMin;
 
-  public AlertRange(Farm farm) {
-    this.farm = farm;
-  }
+    public AlertRange(Farm farm) {
+        this.farm = farm;
+    }
 
-  public void updateAlertRange(AlertRangeRequest alertRangeRequest) {
-    this.tmpMax = alertRangeRequest.getTmpMax();
-    this.tmpMin = alertRangeRequest.getTmpMin();
-    this.humidityMax = alertRangeRequest.getHumidityMax();
-    this.humidityMin = alertRangeRequest.getHumidityMin();
-    this.imnMax = alertRangeRequest.getImnMax();
-    this.imnMin = alertRangeRequest.getImnMin();
-    this.co2Max = alertRangeRequest.getCo2Max();
-    this.co2Min = alertRangeRequest.getCo2Min();
-    this.phMax = alertRangeRequest.getPhMax();
-    this.phMin = alertRangeRequest.getPhMin();
-    this.mosMax = alertRangeRequest.getMosMax();
-    this.mosMin = alertRangeRequest.getMosMin();
-  }
+    public void updateAlertRange(AlertRangeRequest alertRangeRequest) {
+        this.tmpMax = alertRangeRequest.getTmpMax();
+        this.tmpMin = alertRangeRequest.getTmpMin();
+        this.humidityMax = alertRangeRequest.getHumidityMax();
+        this.humidityMin = alertRangeRequest.getHumidityMin();
+        this.imnMax = alertRangeRequest.getImnMax();
+        this.imnMin = alertRangeRequest.getImnMin();
+        this.co2Max = alertRangeRequest.getCo2Max();
+        this.co2Min = alertRangeRequest.getCo2Min();
+        this.phMax = alertRangeRequest.getPhMax();
+        this.phMin = alertRangeRequest.getPhMin();
+        this.mosMax = alertRangeRequest.getMosMax();
+        this.mosMin = alertRangeRequest.getMosMin();
+    }
 }

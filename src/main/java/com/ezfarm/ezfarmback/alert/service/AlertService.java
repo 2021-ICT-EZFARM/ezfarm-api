@@ -10,44 +10,46 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class AlertService {
 
-  private final AlertRangeRepository alertRangeRepository;
+    private final AlertRangeRepository alertRangeRepository;
 
-  private final FarmRepository farmRepository;
+    private final FarmRepository farmRepository;
 
-  private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-  public AlertRangeResponse findAlertRange(User user, Long farmId) {
-    Farm farm = validateFarmIdAndGetFarm(farmId);
-    farm.validateIsMyFarm(user);
-    AlertRange alertRange = alertRangeRepository.findByFarm(farm)
-        .orElseGet(() -> {
-          AlertRange savedAlertRange = new AlertRange(farm);
-          return alertRangeRepository.save(savedAlertRange);
-        });
-    return modelMapper.map(alertRange, AlertRangeResponse.class);
-  }
+    public AlertRangeResponse findAlertRange(User user, Long farmId) {
+        Farm findFarm = farmRepository.findById(farmId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
 
-  public Farm validateFarmIdAndGetFarm(Long farmId) {
-    return farmRepository.findById(farmId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
-  }
+        if (!findFarm.isMyFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
 
-  public void updateAlertRange(User user, Long alertRangeId,
-      AlertRangeRequest alertRangeRequest) {
-    AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
-    alertRange.getFarm().validateIsMyFarm(user);
-    alertRange.updateAlertRange(alertRangeRequest);
-  }
+        AlertRange alertRange = alertRangeRepository.findByFarm(findFarm)
+            .orElseGet(() -> {
+                AlertRange savedAlertRange = new AlertRange(findFarm);
+                return alertRangeRepository.save(savedAlertRange);
+            });
+        return modelMapper.map(alertRange, AlertRangeResponse.class);
+    }
+
+    public void updateAlertRange(User user, Long alertRangeId,
+        AlertRangeRequest alertRangeRequest) {
+        AlertRange alertRange = alertRangeRepository.findById(alertRangeId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+
+        if (!alertRange.getFarm().isMyFarm(user.getId())) {
+            throw new CustomException(ErrorCode.FARM_ACCESS_DENIED);
+        }
+
+        alertRange.updateAlertRange(alertRangeRequest);
+    }
 }

@@ -18,7 +18,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ComponentScan(basePackages = {"com.ezfarm.ezfarmback.security",
-    "com.ezfarm.ezfarmback.config.security", "com.ezfarm.ezfarmback.common.fcm"})
+    "com.ezfarm.ezfarmback.config.security"})
 public class CommonApiTest {
 
     @Autowired

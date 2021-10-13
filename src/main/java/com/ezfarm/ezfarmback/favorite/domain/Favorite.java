@@ -20,33 +20,22 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Favorite {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "favorite_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "favorite_id")
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @ManyToOne
-  @JoinColumn(name = "farm_id")
-  private Farm farm;
+    @ManyToOne
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
 
-  @Builder
-  public Favorite(User user, Farm farm) {
-    this.user = user;
-    this.farm = farm;
-  }
-
-  public static Favorite create(User loginUser, Farm farm) {
-    return Favorite.builder()
-        .user(loginUser)
-        .farm(farm)
-        .build();
-  }
-
-  public boolean isDuplicated(Farm farm) {
-    return this.farm.getId().equals(farm.getId());
-  }
+    @Builder
+    public Favorite(User user, Farm farm) {
+        this.user = user;
+        this.farm = farm;
+    }
 }
