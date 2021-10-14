@@ -48,5 +48,4 @@ public class FavoriteController {
     favoriteService.deleteFavorite(favoriteId);
     return ResponseEntity.noContent().build();
   }
-
 }

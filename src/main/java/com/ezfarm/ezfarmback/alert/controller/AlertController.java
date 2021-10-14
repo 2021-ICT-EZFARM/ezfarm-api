@@ -25,22 +25,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AlertController {
 
-    private final AlertService alertService;
+  private final AlertService alertService;
 
-    @ApiOperation(value = "알림 범위 조회")
-    @GetMapping("/alert-range")
-    public ResponseEntity<AlertRangeResponse> findAlertRange(@CurrentUser User user,
-        @RequestParam Long farmId) {
-        AlertRangeResponse alertRange = alertService.findAlertRange(user, farmId);
-        return ResponseEntity.ok(alertRange);
-    }
+  @ApiOperation(value = "알림 범위 조회")
+  @GetMapping("/alert-range")
+  public ResponseEntity<AlertRangeResponse> findAlertRange(@CurrentUser User user,
+      @RequestParam Long farmId) {
+    AlertRangeResponse alertRange = alertService.findAlertRange(user, farmId);
+    return ResponseEntity.ok(alertRange);
+  }
 
-    @ApiOperation(value = "알림 범위 수정")
-    @PatchMapping("/alert-range")
-    public ResponseEntity<Void> updateAlertRange(@CurrentUser User user,
-        @RequestParam Long alertRangeId,
-        @RequestBody AlertRangeRequest alertRangeRequest) {
-        alertService.updateAlertRange(user, alertRangeId, alertRangeRequest);
-        return ResponseEntity.ok().build();
-    }
+  @ApiOperation(value = "알림 범위 수정")
+  @PatchMapping("/alert-range")
+  public ResponseEntity<Void> updateAlertRange(@CurrentUser User user,
+      @RequestParam Long alertRangeId,
+      @RequestBody AlertRangeRequest alertRangeRequest) {
+    alertService.updateAlertRange(user, alertRangeId, alertRangeRequest);
+    return ResponseEntity.ok().build();
+  }
 }
