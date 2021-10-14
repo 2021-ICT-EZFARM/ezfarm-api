@@ -3,20 +3,15 @@ package com.ezfarm.ezfarmback.facility.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ezfarm.ezfarmback.common.WithMockCustomUser;
 import com.ezfarm.ezfarmback.common.controller.CommonApiTest;
-import com.ezfarm.ezfarmback.facility.dto.FacilityDailyAvgRequest;
-import com.ezfarm.ezfarmback.facility.dto.FacilityMonthAvgRequest;
-import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityAvgResponse;
+import com.ezfarm.ezfarmback.facility.dto.FacilityPeriodResponse;
 import com.ezfarm.ezfarmback.facility.dto.FacilityResponse;
-import com.ezfarm.ezfarmback.facility.dto.FacilityWeekAvgRequest;
 import com.ezfarm.ezfarmback.facility.service.FacilityService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -68,8 +63,6 @@ public class FacilityControllerTest extends CommonApiTest {
   @DisplayName("타 농가 일 평균 데이터를 조회한다.")
   @Test
   void findFacilityDailyAvg() throws Exception {
-    FacilityDailyAvgRequest facilityDailyAvgRequest = new FacilityDailyAvgRequest("2020", "01");
-
     FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
         .avgCo2(1)
         .measureDate("2020-01-01")
@@ -78,9 +71,7 @@ public class FacilityControllerTest extends CommonApiTest {
     when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
         List.of(facilityResponse));
 
-    mockMvc.perform(post("/api/facility/daily-avg/{farmId}", 1L)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(facilityDailyAvgRequest)))
+    mockMvc.perform(get("/api/facility/daily-avg/{farmId}?year=%s&month=%s", 1L, "2021", "01"))
         .andExpect(status().isOk())
         .andDo(print());
   }
@@ -89,8 +80,6 @@ public class FacilityControllerTest extends CommonApiTest {
   @DisplayName("타 농가 주 평균 데이터를 조회한다.")
   @Test
   void findFacilityWeekAvg() throws Exception {
-    FacilityWeekAvgRequest facilityWeekAvgRequest = new FacilityWeekAvgRequest();
-
     FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
         .avgCo2(1)
         .measureDate("2020-01-01")
@@ -99,9 +88,9 @@ public class FacilityControllerTest extends CommonApiTest {
     when(facilityService.findFacilityDailyAvg(any(), any())).thenReturn(
         List.of(facilityResponse));
 
-    mockMvc.perform(post("/api/facility/week-avg/{farmId}", 1L)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(facilityWeekAvgRequest)))
+    mockMvc.perform(
+            get("/api/facility/week-avg/{farmId}?dateOne=%s&dateTwo=%s&dateThr=%s", 1L, "2021-01",
+                "2021-02", "2021-03"))
         .andExpect(status().isOk())
         .andDo(print());
   }
@@ -110,8 +99,6 @@ public class FacilityControllerTest extends CommonApiTest {
   @DisplayName("타 농가 월 평균 데이터를 조회한다.")
   @Test
   void findFacilityYearAvg() throws Exception {
-    FacilityMonthAvgRequest facilityYearAvgRequest = new FacilityMonthAvgRequest("2020");
-
     FacilityAvgResponse facilityResponse = FacilityAvgResponse.builder()
         .avgCo2(1)
         .measureDate("2020-01-01")
@@ -120,15 +107,13 @@ public class FacilityControllerTest extends CommonApiTest {
     when(facilityService.findFacilityMonthlyAvg(any(), any())).thenReturn(
         List.of(facilityResponse));
 
-    mockMvc.perform(post("/api/facility/monthly-avg/{farmId}", 1L)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(facilityYearAvgRequest)))
+    mockMvc.perform(get("/api/facility/monthly-avg/{farmId}?year=%s", 1L, "2021"))
         .andExpect(status().isOk())
         .andDo(print());
   }
 
   @WithMockCustomUser
-  @DisplayName("타 농가 월 평균 데이터를 조회한다.")
+  @DisplayName("내 농가 실시간 센서값을 조회한다.")
   @Test
   void findLiveFacility() throws Exception {
     when(facilityService.findLiveFacility(any(), any())).thenReturn(facilityResponse);
