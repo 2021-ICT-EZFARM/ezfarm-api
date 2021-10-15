@@ -1,9 +1,12 @@
-package com.ezfarm.ezfarmback.alert.domain;
+package com.ezfarm.ezfarmback.notification.domain;
 
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
+import com.ezfarm.ezfarmback.user.domain.User;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,25 +20,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Alert extends BaseTimeEntity {
+public class Notification extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "alert_id")
+  @Column(name = "notification_id")
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  private User user;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "farm_id")
   private Farm farm;
 
-  private AlertType alertType;
-
-  private AlertFacilityType alertFacilityType;
+  private String content;
 
   @Builder
-  public Alert(Farm farm, AlertType alertType, AlertFacilityType alertFacilityType) {
+  public Notification(Long id, User user, Farm farm, String content) {
+    this.id = id;
+    this.user = user;
     this.farm = farm;
-    this.alertType = alertType;
-    this.alertFacilityType = alertFacilityType;
+    this.content = content;
   }
 }
