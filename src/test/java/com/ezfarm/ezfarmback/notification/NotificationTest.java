@@ -5,7 +5,6 @@ import static com.ezfarm.ezfarmback.notification.domain.NotificationSupport.SUBS
 import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.notification.domain.Notification;
@@ -16,12 +15,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.restassured.RestAssured;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +54,6 @@ public class NotificationTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
-      RestAssured.port = port;
-    }
-
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -69,13 +64,13 @@ public class NotificationTest {
     // STOMP + Web Socket 연결
     session = stompClient.connect(format("ws://localhost:%d" + WS_ENDPOINT, port),
         new StompSessionHandlerAdapter() {
-        }).get(1, SECONDS);
+        }).get(60, SECONDS);
 
     stompClient.setMessageConverter(new ByteArrayMessageConverter());
   }
 
-
-  @DisplayName("채팅방에 메세지를 보내면 채팅방을 구독한 유저는 메세지를 받는다.")
+  @Disabled
+  @DisplayName("푸시 알림을 보낸다.")
   @Test
   void verifyNotificationIsReceived() throws JsonProcessingException, InterruptedException {
     long userId = 1L;
@@ -91,7 +86,7 @@ public class NotificationTest {
     NotificationResponse response = objectMapper.readValue(blockingQueue.poll(1, SECONDS),
         NotificationResponse.class);
 
-    assertThat(response.getContent()).isNotNull();
+    assertThat(response.getContent()).isEqualTo(notification.getContent());
   }
 
 
