@@ -134,30 +134,10 @@ create table notification
     notification_id     BIGINT(20) NOT NULL AUTO_INCREMENT,
     created_date TIMESTAMP,
     updated_date TIMESTAMP,
-    type   VARCHAR(10),
     content VARCHAR(50),
     user_id      BIGINT(20),
     farm_id      BIGINT(20),
     primary key (notification_id)
-);
-
-create table farm_compare_history
-(
-    fm_cp_hstr_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    farm_id       BIGINT(20),
-    user_id       BIGINT(20),
-    primary key (fm_cp_hstr_id)
-);
-
-create table remote_history
-(
-    remote_history_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    farm_id           BIGINT(20),
-    success_yn        BOOLEAN,
-    value             VARCHAR(255),
-    created_date      TIMESTAMP,
-    updated_date      TIMESTAMP,
-    primary key (remote_history_id)
 );
 
 create table screen

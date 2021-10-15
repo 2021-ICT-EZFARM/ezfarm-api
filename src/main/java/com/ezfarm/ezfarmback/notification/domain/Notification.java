@@ -3,6 +3,7 @@ package com.ezfarm.ezfarmback.notification.domain;
 import com.ezfarm.ezfarmback.common.BaseTimeEntity;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.user.domain.User;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,16 +35,13 @@ public class Notification extends BaseTimeEntity {
   @JoinColumn(name = "farm_id")
   private Farm farm;
 
-  private NotificationType type;
-
   private String content;
 
   @Builder
-  public Notification(Long id, User user, Farm farm, NotificationType type, String content) {
+  public Notification(Long id, User user, Farm farm, String content) {
     this.id = id;
     this.user = user;
     this.farm = farm;
-    this.type = type;
     this.content = content;
   }
 }

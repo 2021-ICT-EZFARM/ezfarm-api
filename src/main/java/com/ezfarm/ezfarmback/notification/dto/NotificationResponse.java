@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NotificationResponse {
 
-  String notificationType;
   String content;
 
   public static NotificationResponse of(Notification notification) {
-    return new NotificationResponse(notification.getType().getName(), notification.getContent());
+    return new NotificationResponse(notification.getContent());
   }
 
   public static List<NotificationResponse> listOf(List<Notification> notifications) {

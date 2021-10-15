@@ -6,8 +6,6 @@ import com.ezfarm.ezfarmback.common.iot.IotConnector;
 import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.iot.domain.Remote;
-import com.ezfarm.ezfarmback.iot.domain.RemoteHistory;
-import com.ezfarm.ezfarmback.iot.domain.RemoteHistoryRepository;
 import com.ezfarm.ezfarmback.iot.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.iot.domain.Screen;
 import com.ezfarm.ezfarmback.iot.domain.ScreenRepository;
@@ -28,7 +26,6 @@ public class IotService {
   private final FarmRepository farmRepository;
   private final ScreenRepository screenRepository;
   private final RemoteRepository remoteRepository;
-  private final RemoteHistoryRepository remoteHistoryRepository;
 
   public ScreenResponse findLiveScreen(User user, Long farmId) {
     Farm farm = validateFarmIdAndGetFarm(farmId);
@@ -60,7 +57,6 @@ public class IotService {
     Remote remote = validateRemoteIdAndGetRemote(request.getRemoteId());
     remote.getFarm().validateIsMyFarm(user);
     iotConnector.updateRemote(request);
-    remoteHistoryRepository.saveAll(RemoteHistory.create(remote, request));
     remote.updateRemote(request);
   }
 

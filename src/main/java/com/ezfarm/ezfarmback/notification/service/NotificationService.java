@@ -22,6 +22,7 @@ public class NotificationService {
 
   private final NotificationRepository notificationRepository;
 
+  @Transactional(readOnly = true)
   public List<NotificationResponse> findNotifications(User user, Long farmId) {
     Farm farm = validateFarmIdAndGetFarm(farmId);
     farm.validateIsMyFarm(user);
@@ -33,5 +34,9 @@ public class NotificationService {
   public Farm validateFarmIdAndGetFarm(Long farmId) {
     return farmRepository.findById(farmId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_FARM_ID));
+  }
+
+  public void saveNotifications(Notification notification) {
+    notificationRepository.save(notification);
   }
 }
