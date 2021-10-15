@@ -14,7 +14,6 @@ import com.ezfarm.ezfarmback.farm.domain.Farm;
 import com.ezfarm.ezfarmback.farm.domain.FarmRepository;
 import com.ezfarm.ezfarmback.iot.domain.OnOff;
 import com.ezfarm.ezfarmback.iot.domain.Remote;
-import com.ezfarm.ezfarmback.iot.domain.RemoteHistoryRepository;
 import com.ezfarm.ezfarmback.iot.domain.RemoteRepository;
 import com.ezfarm.ezfarmback.iot.domain.Screen;
 import com.ezfarm.ezfarmback.iot.domain.ScreenRepository;
@@ -49,9 +48,6 @@ public class IotServiceTest {
   @Mock
   IotConnector iotConnector;
 
-  @Mock
-  RemoteHistoryRepository remoteHistoryRepository;
-
   IotService iotService;
 
   User user;
@@ -67,8 +63,7 @@ public class IotServiceTest {
 
   @BeforeEach
   void setUp() {
-    iotService = new IotService(iotConnector, farmRepository, screenRepository, remoteRepository,
-        remoteHistoryRepository);
+    iotService = new IotService(iotConnector, farmRepository, screenRepository, remoteRepository);
 
     remoteResponse = RemoteResponse.builder()
         .id(1L)

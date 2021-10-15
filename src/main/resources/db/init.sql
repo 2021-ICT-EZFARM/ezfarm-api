@@ -1,4 +1,3 @@
---table--
 create table user
 (
     user_id      bigint(20)   NOT NULL AUTO_INCREMENT,
@@ -130,34 +129,15 @@ create table facility_week_avg
     primary key (facility_id)
 );
 
-create table alert
+create table notification
 (
-    alert_id     BIGINT(20) NOT NULL AUTO_INCREMENT,
+    notification_id     BIGINT(20) NOT NULL AUTO_INCREMENT,
     created_date TIMESTAMP,
     updated_date TIMESTAMP,
-    alert_type   INTEGER,
-    is_checked   BOOLEAN,
+    content VARCHAR(50),
+    user_id      BIGINT(20),
     farm_id      BIGINT(20),
-    primary key (alert_id)
-);
-
-create table farm_compare_history
-(
-    fm_cp_hstr_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    farm_id       BIGINT(20),
-    user_id       BIGINT(20),
-    primary key (fm_cp_hstr_id)
-);
-
-create table remote_history
-(
-    remote_history_id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    farm_id           BIGINT(20),
-    success_yn        BOOLEAN,
-    value             VARCHAR(255),
-    created_date      TIMESTAMP,
-    updated_date      TIMESTAMP,
-    primary key (remote_history_id)
+    primary key (notification_id)
 );
 
 create table screen
@@ -175,6 +155,16 @@ alter table alert_range
     add constraint alert_range_farm_id_fkey
         foreign key (farm_id)
             references farm (farm_id);
+
+alter table notification
+    add constraint notification_farm_id_fkey
+        foreign key (farm_id)
+            references farm (farm_id);
+
+alter table notification
+    add constraint notification_user_id_fkey
+        foreign key (user_id)
+            references user (user_id);
 
 alter table farm
     add constraint farm_user_id_fkey

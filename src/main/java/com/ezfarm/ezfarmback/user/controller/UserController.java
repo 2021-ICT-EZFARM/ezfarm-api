@@ -1,9 +1,7 @@
 package com.ezfarm.ezfarmback.user.controller;
 
-import com.ezfarm.ezfarmback.alert.dto.AlertRequest;
 import com.ezfarm.ezfarmback.common.exception.CustomException;
 import com.ezfarm.ezfarmback.common.exception.dto.ErrorCode;
-import com.ezfarm.ezfarmback.common.fcm.FcmService;
 import com.ezfarm.ezfarmback.security.CurrentUser;
 import com.ezfarm.ezfarmback.user.domain.User;
 import com.ezfarm.ezfarmback.user.dto.LoginRequest;
@@ -35,20 +33,10 @@ public class UserController {
 
   private final UserService userService;
 
-  private final FcmService fcmService;
-
   @ApiOperation(value = "유저 로그인")
   @PostMapping("/login")
   public void fakeLogin(@RequestBody LoginRequest loginRequest) {
     throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
-  }
-
-  @ApiOperation(value = "Fcm 토큰 등록")
-  @PostMapping("/register")
-  public ResponseEntity<Void> register(@RequestBody String token, @CurrentUser User user) {
-    fcmService.register(user.getId(), token);
-    fcmService.send(AlertRequest.builder().token(token).message("테스트 알림").build());
-    return ResponseEntity.ok().build();
   }
 
   @ApiOperation(value = "유저 회원가입")
