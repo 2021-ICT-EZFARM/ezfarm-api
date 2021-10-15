@@ -2,6 +2,7 @@ package com.ezfarm.ezfarmback.notification.controller;
 
 import com.ezfarm.ezfarmback.notification.domain.Notification;
 import com.ezfarm.ezfarmback.notification.domain.NotificationSupport;
+import com.ezfarm.ezfarmback.notification.dto.NotificationRequest;
 import com.ezfarm.ezfarmback.notification.dto.NotificationResponse;
 import com.ezfarm.ezfarmback.notification.service.NotificationService;
 import com.ezfarm.ezfarmback.security.CurrentUser;
@@ -13,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags = "푸시 알림 API")
@@ -29,20 +30,20 @@ public class NotificationController {
 
   @ApiOperation(value = "이전 푸시 알림 조회")
   @GetMapping("/api/notification")
-  public ResponseEntity<List<NotificationResponse>> findNotifications(@CurrentUser User user,
-      @RequestParam Long farmId) {
-    return ResponseEntity.ok(notificationService.findNotifications(user, farmId));
+  public ResponseEntity<List<NotificationResponse>> findNotifications(@CurrentUser User user) {
+    return ResponseEntity.ok(notificationService.findNotifications(user));
   }
 
   @ApiOperation(value = "푸시 알림 보내기(테스트)")
   @PostMapping("/api/notification/test")
-  public ResponseEntity<Void> sendNotification(@CurrentUser User user) {
+  public ResponseEntity<Void> sendNotification(@CurrentUser User user,
+      @RequestBody NotificationRequest request) {
     Notification notification = Notification.builder()
         .user(user)
-        .content("경고 알림 테스트 입니다.")
+        .content(request.getContent())
         .build();
-    notificationService.saveNotifications(notification);
-    notificationSupport.sendNotification(notification);
+    Notification saved = notificationService.saveNotifications(notification);
+    notificationSupport.sendNotification(saved);
     return ResponseEntity.ok().build();
   }
 }
